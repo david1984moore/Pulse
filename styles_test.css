@@ -1,0 +1,221 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo i {
+    font-size: 24px;
+    color: #007bff;
+    margin-right: 10px;
+}
+
+header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    color: #007bff;
+    margin: 0;
+}
+
+nav {
+    display: flex;
+    gap: 15px;
+}
+
+nav a {
+    font-family: 'Orbitron', sans-serif; /* Changed font-family */
+    font-weight: 700;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+nav a:hover {
+    color: #0056b3;
+}
+
+.hero {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.hero p {
+    margin-bottom: 40px;
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    gap: 0;
+    margin: 0;
+}
+
+.feature {
+    text-align: center;
+    width: 20%;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 50px 15px 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    margin: 0 15px;
+}
+
+.feature i {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.feature:nth-child(1) i {
+    color: #4caf50;
+}
+
+.feature:nth-child(2) i {
+    color: #2196f3;
+}
+
+.feature:nth-child(3) i {
+    color: #ff9800;
+}
+
+.feature h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    font-size: 16px;
+    color: #666;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 18px;
+    margin-top: 40px;
+    margin-bottom: 100px; /* Increased margin-bottom */
+    margin-left: auto; /* Center align */
+    margin-right: auto; /* Center align */
+    display: block; /* Center align */
+    font-family: 'Orbitron', sans-serif; /* Changed font-family */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+footer {
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 12px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+.how-it-works {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f9f9f9;
+}
+
+.how-it-works h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+.how-it-works .step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px; /* Reduced margin-bottom */
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px; /* Reduced padding */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px; /* Reduced max-width */
+    margin-left: auto; /* Center align */
+    margin-right: auto; /* Center align */
+}
+
+.how-it-works .step-right {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.how-it-works .step-left {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.how-it-works .step i {
+    font-size: 24px; /* Reduced font-size */
+    color: #4caf50; /* Changed color to green */
+    margin-right: 10px; /* Reduced margin-right */
+}
+
+.how-it-works .step .description {
+    font-size: 14px; /* Reduced font-size */
+    color: #666;
+}
+
+.how-it-works .step .description h3 {
+    font-size: 20px; /* Reduced font-size */
+    color: #333;
+    margin-bottom: 5px; /* Reduced margin-bottom */
+}
+
+.how-it-works .step .description i {
+    margin-right: 5px;
+    color: #007bff; /* Icon color */
+}
+
+.how-it-works .step .illustration {
+    width: 40%;
+    text-align: right;
+}
+
+.how-it-works .step .illustration img {
+    max-width: 100%;
+    height: auto;
+}
+
+.how-it-works .arrow {
+    font-size: 24px;
+    color: #007bff;
+    margin: 0 20px;
+}
+
+@media (max-width: 768px) {
+    .features {
+        flex-direction: column;
+        align-items: center;
+    }
+    .feature {
+        width: 80%;
+        margin-bottom: 5px;
+    }
+}
