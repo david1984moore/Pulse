@@ -1,0 +1,247 @@
+/* Dashboard-specific styles */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--card-bg);
+}
+
+.dashboard { 
+    display: grid; 
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px; /* Reduced to 10px to bring sections closer */
+    padding: 0;
+    flex: 1;
+}
+
+.calendar, .sidebar, .chat-form { 
+    background: var(--card-bg); 
+    padding: 15px;
+    border-radius: 12px; 
+    box-shadow: var(--card-shadow);
+    height: auto;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.chat-form { 
+    max-width: 300px;
+    margin: 0 auto 10px;
+}
+
+.chat-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-form label {
+    text-align: center;
+}
+
+.chat-form input {
+    width: 80px;
+    margin: 0 5px;
+}
+
+.chat-form .pill-button {
+    margin-top: 10px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+    padding-bottom: 10px;
+}
+
+.dashboard-section h1 {
+    text-align: center;
+    color: #2C3E50;
+    margin: 5px 0;
+    font-size: 2.2rem;
+    font-weight: 600;
+}
+
+.sidebar h3 {
+    margin: 0 0 15px 0;
+    padding-top: 0;
+}
+
+.sidebar .add-bill-btn {
+    margin-top: auto;
+    background-color: #66BB6A;
+    color: white;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .add-bill-btn:hover {
+    background-color: #4CAF50;
+    color: white;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar .add-bill-btn .material-icons-outlined {
+    font-size: 24px;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Calendar-specific styles */
+.calendar {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 0 0 auto;
+    overflow-x: auto;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.calendar-header h2 {
+    margin: 0;
+    font-size: var(--font-size-h2);
+    color: var(--text-primary);
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    padding: 5px 10px;
+    transition: color 0.3s ease;
+}
+
+.nav-button:hover {
+    color: #66BB6A;
+}
+
+#calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#calendar-table th,
+#calendar-table td {
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    font-size: var(--font-size-base);
+}
+
+#calendar-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+#calendar-table td {
+    height: 40px;
+    vertical-align: middle;
+    color: var(--text-dark);
+}
+
+#calendar-table td.empty {
+    background-color: #f9f9f9;
+    color: #ccc;
+}
+
+#calendar-table td.current-day {
+    background-color: #66BB6A;
+    color: white;
+    font-weight: bold;
+    border-radius: 50%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 10px;
+    }
+
+    .chat-form {
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .calendar {
+        margin: 10px auto;
+        max-width: 500px;
+    }
+}

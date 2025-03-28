@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Pulse</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Voltaire&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+    <header>
+        <nav role="navigation">
+            <div class="logo-container">
+                <a href="index.html" aria-label="Home">
+                    <img 
+                        src="assets/images/Logo_6.png" 
+                        alt="Pulse Logo" 
+                        class="logo-image"
+                        onerror="console.error('Failed to load logo'); this.src='https://via.placeholder.com/100'"
+                    >
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <a href="signup.html" class="nav-button sign-up">Sign Up</a>
+                <a href="dashboard.html" class="nav-button login">Login</a>
+            </div>
+            <button class="hamburger">☰</button>
+            <div class="dropdown-content">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="dashboard-section">
+            <h1>Dashboard</h1>
+            <section class="dashboard">
+                <div class="sidebar feature">
+                    <h3>Bills & Expenses</h3>
+                    <ul>
+                        <li>Electric Bill: $100 (Due: Mar 20)</li>
+                        <li>Rent: $800 (Due: Apr 1)</li>
+                    </ul>
+                    <a href="#" class="hero-cta add-bill-btn">
+                        <span class="material-icons-outlined">add</span>
+                    </a>
+                </div>
+                <div class="chat-form">
+                    <form>
+                        <label>If I spend <input type="number" min="0" placeholder="60" aria-label="Amount to spend"> today, what will I have left until payday?</label>
+                        <button class="pill-button" type="submit">Ask Alice</button>
+                    </form>
+                    <p id="calculation-result"></p>
+                </div>
+                <div class="calendar feature">
+                    <div class="calendar-header">
+                        <button id="prev-month" class="nav-button">←</button>
+                        <h2 id="calendar-title">March 2025</h2>
+                        <button id="next-month" class="nav-button">→</button>
+                    </div>
+                    <table id="calendar-table">
+                        <thead>
+                            <tr>
+                                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendar-body">
+                            <!-- Dynamically populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <div id="addBillModal" class="modal">
+                <div class="modal-content">
+                    <h2>Add New Bill/Expense</h2>
+                    <form id="billForm">
+                        <div class="form-group">
+                            <label for="billName">Name:</label>
+                            <input type="text" id="billName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="billAmount">Amount ($):</label>
+                            <input type="number" id="billAmount" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="billFrequency">Frequency:</label>
+                            <select id="billFrequency" required>
+                                <option value="monthly">Monthly</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="one-time">One-time</option>
+                            </select>
+                        </div>
+                        <div class="modal-buttons">
+                            <button type="submit" class="pill-button">Save</button>
+                            <button type="button" class="pill-button cancel">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 Pulse | <a href="#privacy">Privacy</a></p>
+        <div class="social-icons">
+            <a href="#" aria-label="X (formerly Twitter)"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        </div>
+    </footer>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'924961825dfcb063',t:'MTc0MjY4NTIyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

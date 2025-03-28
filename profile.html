@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Pulse</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav role="navigation">
+            <div class="logo-container">
+                <a href="./index.html" aria-label="Home">
+                    <img src="assets/images/Logo_6.png" alt="Pulse Logo" class="logo-image">
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <a href="./signup.html" class="nav-button sign-up">Sign&nbsp;Up</a>
+                <a href="./dashboard.html" class="nav-button login">Login</a>
+            </div>
+            <button class="hamburger">☰</button>
+            <div class="dropdown-content">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="profile-section">
+            <h1>Profile</h1>
+            <!-- Add profile content here -->
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 Pulse | <a href="#about">About</a> | <a href="#privacy">Privacy Policy</a> | <a href="#contact">Contact</a></p>
+        <div class="social-icons">
+            <a href="#" aria-label="X (formerly Twitter)"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        </div>
+    </footer>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

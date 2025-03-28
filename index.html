@@ -4,74 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pulse</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css" onerror="console.error('Failed to load CSS')">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Voltaire&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <div class="logo">
-            <i class="fas fa-hexagon"></i>
-            <h1>Pulse</h1>
-        </div>
-        <nav>
-            <a href="#signup">Sign Up</a>
-            <a href="#login">Login</a>
+        <nav role="navigation">
+            <div class="logo-container">
+                <a href="index.html" aria-label="Home">
+                    <img 
+                        src="assets/images/Logo_6.png" 
+                        alt="Pulse Logo" 
+                        class="logo-image"
+                        onerror="console.error('Failed to load logo'); this.src='https://via.placeholder.com/100'"
+                    >
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <a href="signup.html" class="nav-button sign-up">Sign Up</a>
+                <a href="dashboard.html" class="nav-button login">Login</a>
+            </div>
+            <button class="hamburger">☰</button>
+            <div class="dropdown-content">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#contact">Contact</a>
+            </div>
         </nav>
     </header>
     <main>
-        <section class="hero">
+        <section class="hero" style="background: linear-gradient(180deg, #003300 0%, #004400 40%, rgba(249, 249, 249, 0) 100%);">
             <h2>Know What You Can Spend, Stress-Free</h2>
-            <p>Track your money, stay ahead of bills, and get a clear “yes” or “no” on every dollar—right now.</p>
             <section class="features">
                 <div class="feature">
-                    <i class="fas fa-dollar-sign"></i>
-                    <h3>Track Your Spending</h3>
-                    <p>Monitor your expenses in real-time.</p>
+                    <span class="material-icons-outlined feature-icon">account_balance_wallet</span>
+                    <h3>Ask</h3>
+                    <p>Alice, your personal AI assistant, tracks your bills and tells you the amount of available cash you have at any moment.</p>
                 </div>
                 <div class="feature">
-                    <i class="fas fa-calendar"></i>
-                    <h3>Manage Bills</h3>
-                    <p>Stay on top of your bills and due dates.</p>
+                    <span class="material-icons-outlined feature-icon">calendar_month</span>
+                    <h3>Track</h3>
+                    <p>Calendar lets you visualize what's coming. Alice uses it to learn your schedule and improve output over time.</p>
                 </div>
                 <div class="feature">
-                    <i class="fas fa-chart-bar"></i>
-                    <h3>Financial Insights</h3>
-                    <p>Alice answers any financial questions you have.</p>
+                    <span class="material-icons-outlined feature-icon">query_stats</span>
+                    <h3>Feel Confident</h3>
+                    <p>Never burn out. Become a smooth operator using Alice, preserving precious brainpower for the things that matter in life.</p>
                 </div>
             </section>
+            <a href="./signup.html" class="hero-cta">Get Started</a>
         </section>
-
         <section class="how-it-works">
-            <h2>How it works</h2>
+            <h2>How It Works</h2>
             <div class="step step-right">
                 <i class="fas fa-pencil-alt"></i>
                 <div class="description">
                     <h3>Step 1</h3>
-                    <p>You log your payday amount, bills and expenses.</p>
+                    <p>Log your payday amount, bills, and expenses.</p>
                 </div>
             </div>
             <div class="step step-left">
                 <i class="fas fa-calendar-alt"></i>
                 <div class="description">
                     <h3>Step 2</h3>
-                    <p>View your calendar, add notes, goals.</p>
+                    <p>View your calendar, add notes, and set goals.</p>
                 </div>
             </div>
             <div class="step step-right">
                 <i class="fas fa-piggy-bank"></i>
                 <div class="description">
                     <h3>Step 3</h3>
-                    <p>Sit back and relax, Alice will do that math for you. No more wondering, worrying and calculating in your head! Alice does it for you at the drop of a hat!</p>
+                    <p>Relax—Alice handles the math for you instantly!</p>
                 </div>
             </div>
         </section>
-
-        <button>Get Started</button>
     </main>
     <footer>
-        <p>© 2025 Pulse</p>
+        <p>© 2025 Pulse | <a href="#about">About</a> | <a href="#privacy">Privacy Policy</a> | <a href="#contact">Contact</a></p>
+        <div class="social-icons">
+            <a href="#" aria-label="X (formerly Twitter)"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        </div>
     </footer>
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/main.js"></script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92496dd95b0bdd1d',t:'MTc0MjY4NTcyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
