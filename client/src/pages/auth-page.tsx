@@ -73,12 +73,12 @@ export default function AuthPage() {
     return <Redirect to="/dashboard" />;
   }
   
-  // Note about in-memory database in development mode
-  const devNoteContent = isLogin ? (
-    <div className="mt-4 p-3 bg-blue-50 text-blue-700 rounded-md text-sm">
-      <p className="font-medium">Development Note:</p>
-      <p>Since we're using an in-memory database, you need to create a new account each time the server restarts.</p>
-      <p className="mt-1">Please use the "create a new account" option below.</p>
+  // Welcome message
+  const welcomeContent = isLogin ? (
+    <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-md text-sm">
+      <p className="font-medium">Welcome to Pulse Finance!</p>
+      <p>Securely sign in to manage your finances, track bills, and get spending insights.</p>
+      <p className="mt-1">New user? Create an account to get started.</p>
     </div>
   ) : null;
   
@@ -99,7 +99,7 @@ export default function AuthPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        {devNoteContent}
+        {welcomeContent}
         <Card className="mt-4">
           <CardContent className="pt-6">
             {isLogin ? (

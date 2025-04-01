@@ -1,6 +1,7 @@
-import { pgTable, text, serial, integer, numeric, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, numeric, timestamp, primaryKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 // User schema
 export const users = pgTable("users", {
@@ -8,42 +9,63 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
+  created_at: timestamp("created_at").defaultNow()
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  name: true,
-  email: true,
-  password: true,
+// Relations for users (added at the end to avoid reference errors)
+export const usersRelations = relations(users, ({ many }) => ({
+  bills: many(bills),
+  income: many(income)
+}));
+
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  created_at: true
 });
 
 // Bill schema
 export const bills = pgTable("bills", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").notNull(),
+  user_id: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   name: text("name").notNull(),
   amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
   due_date: integer("due_date").notNull(), // Day of month (1-31)
+  created_at: timestamp("created_at").defaultNow()
 });
 
-export const insertBillSchema = createInsertSchema(bills).pick({
-  user_id: true,
-  name: true,
-  amount: true,
-  due_date: true,
+// Relations for bills
+export const billsRelations = relations(bills, ({ one }) => ({
+  user: one(users, {
+    fields: [bills.user_id],
+    references: [users.id]
+  })
+}));
+
+export const insertBillSchema = createInsertSchema(bills).omit({
+  id: true,
+  created_at: true
 });
 
 // Income schema
 export const income = pgTable("income", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").notNull(),
+  user_id: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
   frequency: text("frequency").notNull(), // 'Weekly', 'Bi-weekly', 'Monthly', or 'Custom'
+  created_at: timestamp("created_at").defaultNow()
 });
 
-export const insertIncomeSchema = createInsertSchema(income).pick({
-  user_id: true,
-  amount: true,
-  frequency: true,
+// Relations for income
+export const incomeRelations = relations(income, ({ one }) => ({
+  user: one(users, {
+    fields: [income.user_id],
+    references: [users.id]
+  })
+}));
+
+export const insertIncomeSchema = createInsertSchema(income).omit({
+  id: true,
+  created_at: true
 });
 
 // Type definitions

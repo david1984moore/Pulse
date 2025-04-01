@@ -6,16 +6,21 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User } from "@shared/schema";
-import createMemoryStore from "memorystore";
 
+// Fix for Express User interface
 declare global {
   namespace Express {
-    interface User extends User {}
+    // Use a different name to avoid recursive references
+    interface User {
+      id: number;
+      name: string;
+      email: string;
+      password: string;
+    }
   }
 }
 
 const scryptAsync = promisify(scrypt);
-const MemoryStore = createMemoryStore(session);
 
 async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
@@ -109,21 +114,21 @@ export function setupAuth(app: Express) {
       // Create sample data for new user
       await storage.createIncome({
         user_id: user.id,
-        amount: 1000,
+        amount: "1000",
         frequency: "Weekly",
       });
 
       await storage.createBill({
         user_id: user.id,
         name: "Rent",
-        amount: 500,
+        amount: "500",
         due_date: 1,
       });
 
       await storage.createBill({
         user_id: user.id,
         name: "Electric",
-        amount: 250,
+        amount: "250",
         due_date: 2,
       });
 
@@ -137,7 +142,7 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: any, user: Express.User | false, info: any) => {
       console.log("Login attempt result:", { err, user: !!user, info });
       
       if (err) {

@@ -1,10 +1,16 @@
 import { 
-  User, InsertUser, Bill, InsertBill, Income, InsertIncome 
+  User, InsertUser, Bill, InsertBill, Income, InsertIncome,
+  users, bills, income as incomeTable
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+import connectPg from "connect-pg-simple";
+import { Pool } from "@neondatabase/serverless";
 
 const MemoryStore = createMemoryStore(session);
+const PostgresSessionStore = connectPg(session);
 
 // Interface definition for storage operations
 export interface IStorage {
@@ -27,6 +33,7 @@ export interface IStorage {
   sessionStore: session.Store;
 }
 
+// In-memory implementation (kept for reference but no longer used)
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private bills: Map<number, Bill>;
@@ -100,4 +107,76 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// New database implementation
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+
+  constructor() {
+    // Create a pool for session store
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    
+    // Set up PostgreSQL session store
+    this.sessionStore = new PostgresSessionStore({
+      pool,
+      createTableIfMissing: true,
+      tableName: 'session',
+    });
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      return user;
+    } catch (error) {
+      console.error("getUser error:", error);
+      return undefined;
+    }
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    try {
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+      return user;
+    } catch (error) {
+      console.error("getUserByEmail error:", error);
+      return undefined;
+    }
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  // Bill methods
+  async getBillsByUserId(userId: number): Promise<Bill[]> {
+    return await db.select().from(bills).where(eq(bills.user_id, userId));
+  }
+
+  async createBill(insertBill: InsertBill): Promise<Bill> {
+    const [bill] = await db.insert(bills).values(insertBill).returning();
+    return bill;
+  }
+
+  async deleteBill(billId: number): Promise<void> {
+    await db.delete(bills).where(eq(bills.id, billId));
+  }
+
+  // Income methods
+  async getIncomeByUserId(userId: number): Promise<Income[]> {
+    return await db.select().from(incomeTable).where(eq(incomeTable.user_id, userId));
+  }
+
+  async createIncome(insertIncomeData: InsertIncome): Promise<Income> {
+    const [incomeResult] = await db.insert(incomeTable).values(insertIncomeData).returning();
+    return incomeResult;
+  }
+
+  async deleteIncome(incomeId: number): Promise<void> {
+    await db.delete(incomeTable).where(eq(incomeTable.id, incomeId));
+  }
+}
+
+// Export the database storage implementation
+export const storage = new DatabaseStorage();
