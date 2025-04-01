@@ -2,7 +2,12 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
-import { insertBillSchema, insertIncomeSchema } from "@shared/schema";
+import { 
+  insertBillSchema, 
+  insertIncomeSchema, 
+  billFormSchema, 
+  incomeFormSchema 
+} from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -28,10 +33,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
-      // Validate request data
-      const validatedData = insertBillSchema.parse({
+      // Parse the amount as a number AFTER validation
+      const validationData = {
         ...req.body,
         user_id: userId,
+      };
+      
+      // First validate the format with billFormSchema
+      billFormSchema.parse(req.body);
+      
+      // Then use insertBillSchema for database insertion
+      const validatedData = insertBillSchema.parse({
+        ...validationData,
         amount: Number(req.body.amount),
       });
       
@@ -41,6 +54,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid bill data", details: error.errors });
       }
+      console.error("Bill creation error:", error);
       res.status(500).json({ message: "Failed to create bill" });
     }
   });
@@ -82,10 +96,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
-      // Validate request data
-      const validatedData = insertIncomeSchema.parse({
+      // Parse the amount as a number AFTER validation
+      const validationData = {
         ...req.body,
         user_id: userId,
+      };
+      
+      // First validate the format with incomeFormSchema
+      incomeFormSchema.parse(req.body);
+      
+      // Then use insertIncomeSchema for database insertion
+      const validatedData = insertIncomeSchema.parse({
+        ...validationData,
         amount: Number(req.body.amount),
       });
       
@@ -95,6 +117,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid income data", details: error.errors });
       }
+      console.error("Income creation error:", error);
       res.status(500).json({ message: "Failed to create income" });
     }
   });
