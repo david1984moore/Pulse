@@ -1,0 +1,79 @@
+I want to build an app called ‘pulse’ to help users track finances and instantly see how much they can spend. The app includes a landing page, user authentication, and a dashboard with three sections (Income/Bills, Calendar, Chatbot). Build the app with a visual, user-friendly, simplistic, and clean design applied consistently across all pages. Include a ‘Home’ navigation button on every page linking to the landing page. Use the following requirements, ensuring all features listed are fully functional:
+
+
+
+1. Landing Page:
+
+• Create a landing page (route: /) with a navigation bar (links: ‘Login’ to /login, ‘Sign Up’ to /signup), a main section with brief placeholder text (e.g., ‘Track your finances easily…’), and a footer (e.g., ‘© 2025 pulse’).
+
+• Ensure all navigation links are functional.
+
+2. Authentication:
+
+• /signup: Build a form with fields for name, email, and password. Store user data in a simple database. Display a ‘Verification email sent’ message on submission and simulate verification by providing a clickable link (e.g., /verify?email=<email>). On verification, redirect to /dashboard.
+
+• /login: Build a form with email and password fields. Validate credentials against stored data and redirect to /dashboard on success. Use session management to track logged-in users.
+
+• Restrict /dashboard to authenticated users only.
+
+3. Dashboard:
+
+• /dashboard (protected route): Design a page with three sections in an F-pattern layout:
+
+• Left Column: ‘Income/Bills’ section with placeholder text (e.g., ‘Your finances at a glance’) and functional buttons:
+
+• ‘Add Bill’: Allows users to input a bill name, amount, and due date, saving it to the database.
+
+• ‘Remove Bill’: Displays a list of existing bills and allows users to delete one from the database.
+
+• ‘Add Income’: Allows users to input an income amount and select a payment frequency (‘Weekly’, ‘Bi-weekly’, ‘Monthly’, or ‘Custom’), saving it to the database.
+
+• ‘Remove Income’: Displays a list of existing income entries and allows users to delete one from the database.
+
+• Top-Right: ‘Calendar’ section with a basic month-view grid (highlight the current day) and display bill icons or markers on due dates based on stored bill data.
+
+• Bottom-Right: ‘Chatbot’ section with a text input box and a dropdown (options: ‘Can I spend $10?’, ‘Can I spend $50?’, ‘Can I spend $100?’). The chatbot responds dynamically based on the user’s current balance (total income minus upcoming bills) and the selected amount. Rules:
+
+• If balance after spending and upcoming bills ≥ $0, reply: ‘Yes, you can spend $[amount]. New balance: $[balance]. After [bill name] ($[bill amount]) due in [days], balance will be $[new balance].’
+
+• If balance would drop below $0, reply: ‘No, you cannot spend $[amount] due to upcoming bills reducing your balance below safe levels.’
+
+• Use stored data (income and bills) for real-time calculations and display.
+
+4. Data:
+
+• Store persistently in a database:
+
+• Users: fields (id, name, email, password).
+
+• Bills: fields (id, user_id, name, amount, due_date).
+
+• Income: fields (id, user_id, amount, frequency), where frequency is one of ‘Weekly’, ‘Bi-weekly’, ‘Monthly’, or ‘Custom’.
+
+• On signup, auto-populate each user’s data with:
+
+• Sample Income: $1,000, frequency set to ‘Weekly’.
+
+• Sample Bills:
+
+• ‘Electric’, $250, due on the 2nd of each month.
+
+• ‘Rent’, $500, due on the 1st of each month.
+
+5. Code Deliverables:
+
+• Provide functional code including:
+
+• A main app file (e.g., handling routes and logic).
+
+• HTML templates for landing page, login, signup, and dashboard.
+
+• CSS styling for a visual, user-friendly, simplistic, and clean design.
+
+• Comments explaining the logic and structure for key features (e.g., authentication, chatbot response, data storage).
+
+• Ensure all components (navigation, forms, buttons, chatbot, calendar) are fully operational.
+
+
+
+Note: Prioritize a visually appealing design that feels simplistic, user-friendly, and seamless. Every element—layout, colors, typography, and interactions—should contribute to an intuitive and effortless user experience.
