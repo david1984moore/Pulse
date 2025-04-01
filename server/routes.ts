@@ -33,25 +33,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
-      // Parse the amount as a number AFTER validation
-      const validationData = {
-        ...req.body,
+      // First validate the request body with billFormSchema (client-side schema)
+      const formData = billFormSchema.parse(req.body);
+      
+      console.log("Validated form data:", formData);
+      
+      // Prepare data for database insertion
+      const billData = {
         user_id: userId,
+        name: formData.name,
+        amount: formData.amount,
+        due_date: formData.due_date
       };
       
-      // First validate the format with billFormSchema
-      billFormSchema.parse(req.body);
+      console.log("Prepared bill data for insertion:", billData);
       
-      // Then use insertBillSchema for database insertion
-      const validatedData = insertBillSchema.parse({
-        ...validationData,
-        amount: Number(req.body.amount),
-      });
+      const bill = await storage.createBill(billData);
+      console.log("Created bill:", bill);
       
-      const bill = await storage.createBill(validatedData);
       res.status(201).json(bill);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
         return res.status(400).json({ message: "Invalid bill data", details: error.errors });
       }
       console.error("Bill creation error:", error);
@@ -96,25 +99,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
-      // Parse the amount as a number AFTER validation
-      const validationData = {
-        ...req.body,
+      // First validate the request body with incomeFormSchema (client-side schema)
+      const formData = incomeFormSchema.parse(req.body);
+      
+      console.log("Validated income form data:", formData);
+      
+      // Prepare data for database insertion
+      const incomeData = {
         user_id: userId,
+        amount: formData.amount,
+        frequency: formData.frequency
       };
       
-      // First validate the format with incomeFormSchema
-      incomeFormSchema.parse(req.body);
+      console.log("Prepared income data for insertion:", incomeData);
       
-      // Then use insertIncomeSchema for database insertion
-      const validatedData = insertIncomeSchema.parse({
-        ...validationData,
-        amount: Number(req.body.amount),
-      });
+      const income = await storage.createIncome(incomeData);
+      console.log("Created income:", income);
       
-      const income = await storage.createIncome(validatedData);
       res.status(201).json(income);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Income validation error:", error.errors);
         return res.status(400).json({ message: "Invalid income data", details: error.errors });
       }
       console.error("Income creation error:", error);
