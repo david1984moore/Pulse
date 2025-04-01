@@ -46,10 +46,16 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
-      await apiRequest("POST", "/api/income", {
+      console.log("Submitting income with data:", data);
+      const response = await apiRequest("POST", "/api/income", {
         amount: data.amount,
         frequency: data.frequency,
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add income");
+      }
       
       // Invalidate income query to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/income"] });
@@ -63,9 +69,10 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
       form.reset();
       onOpenChange(false);
     } catch (error) {
+      console.error("Add income error:", error);
       toast({
         title: "Failed to add income",
-        description: "There was an error adding your income. Please try again.",
+        description: error instanceof Error ? error.message : "There was an error adding your income. Please try again.",
         variant: "destructive",
       });
     } finally {
