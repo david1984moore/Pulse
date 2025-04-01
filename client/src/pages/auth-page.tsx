@@ -52,6 +52,7 @@ export default function AuthPage() {
   });
   
   function onLoginSubmit(data: LoginFormValues) {
+    console.log("Login form submitted:", data);
     loginMutation.mutate({
       email: data.email,
       password: data.password,
@@ -59,6 +60,7 @@ export default function AuthPage() {
   }
   
   function onSignupSubmit(data: SignupFormValues) {
+    console.log("Signup form submitted:", data);
     registerMutation.mutate({
       name: data.name,
       email: data.email,
@@ -70,6 +72,15 @@ export default function AuthPage() {
   if (user) {
     return <Redirect to="/dashboard" />;
   }
+  
+  // Note about in-memory database in development mode
+  const devNoteContent = isLogin ? (
+    <div className="mt-4 p-3 bg-blue-50 text-blue-700 rounded-md text-sm">
+      <p className="font-medium">Development Note:</p>
+      <p>Since we're using an in-memory database, you need to create a new account each time the server restarts.</p>
+      <p className="mt-1">Please use the "create a new account" option below.</p>
+    </div>
+  ) : null;
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -88,7 +99,8 @@ export default function AuthPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <Card>
+        {devNoteContent}
+        <Card className="mt-4">
           <CardContent className="pt-6">
             {isLogin ? (
               <Form {...loginForm}>
