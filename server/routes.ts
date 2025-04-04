@@ -275,51 +275,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const spendAmount = Number(amount);
-      const userIncome = await storage.getIncomeByUserId(userId);
+      const user = await storage.getUser(userId);
       const userBills = await storage.getBillsByUserId(userId);
       
-      // Calculate total income based on frequency
-      const totalIncome = userIncome.reduce((sum, inc) => {
-        let monthlyAmount = 0;
-        switch (inc.frequency) {
-          case "Weekly":
-            monthlyAmount = Number(inc.amount) * 4;
-            break;
-          case "Bi-weekly":
-            monthlyAmount = Number(inc.amount) * 2;
-            break;
-          case "Monthly":
-            monthlyAmount = Number(inc.amount);
-            break;
-          default:
-            monthlyAmount = Number(inc.amount);
-        }
-        return sum + monthlyAmount;
-      }, 0);
+      if (!user || !user.account_balance) {
+        return res.status(400).json({ 
+          message: "Account balance not set. Please update your balance first." 
+        });
+      }
       
-      // Calculate total bills
-      const totalBills = userBills.reduce((sum, bill) => sum + Number(bill.amount), 0);
+      // Get account balance
+      const accountBalance = Number(user.account_balance);
       
-      // Calculate available balance
-      const availableBalance = totalIncome - totalBills;
+      // Get the current date to find upcoming bills
+      const today = new Date();
+      const currentDate = today.getDate();
       
-      // Check if user can spend the amount
-      if (spendAmount <= availableBalance) {
-        // Find the upcoming bill
-        const today = new Date();
-        const currentDate = today.getDate();
-        
-        let upcomingBill = userBills
-          .filter(bill => bill.due_date > currentDate)
-          .sort((a, b) => a.due_date - b.due_date)[0];
-        
-        // If no upcoming bill this month, find the earliest bill next month
-        if (!upcomingBill) {
-          upcomingBill = userBills.sort((a, b) => a.due_date - b.due_date)[0];
-        }
-        
-        const newBalance = availableBalance - spendAmount;
-        
+      // Find upcoming bills
+      const upcomingBills = userBills.filter(bill => bill.due_date > currentDate);
+      
+      // Calculate total of upcoming bills
+      const upcomingBillsTotal = upcomingBills.reduce((sum, bill) => sum + Number(bill.amount), 0);
+      
+      // Calculate available balance considering upcoming bills
+      const availableBalance = accountBalance;
+      // Make spending recommendation based on current balance and upcoming bills
+      const safeToSpend = spendAmount <= (availableBalance - upcomingBillsTotal*0.5); // Keep half of upcoming bills as buffer
+      const riskToSpend = !safeToSpend && spendAmount <= availableBalance;
+      
+      // Calculate the balance after spending
+      const newBalance = availableBalance - spendAmount;
+      
+      // Find the upcoming bill for additional context in response
+      let upcomingBill = upcomingBills.length > 0 
+          ? upcomingBills.sort((a, b) => a.due_date - b.due_date)[0]
+          : userBills.sort((a, b) => a.due_date - b.due_date)[0];
+      
+      if (safeToSpend) {
+        // Can safely spend with enough buffer for upcoming bills
         if (upcomingBill) {
           const daysUntilBill = upcomingBill.due_date > currentDate 
             ? upcomingBill.due_date - currentDate 
@@ -329,18 +322,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           res.json({
             canSpend: true,
-            message: `Yes, you can spend $${spendAmount}. New balance: $${newBalance.toFixed(2)}. After ${upcomingBill.name} ($${Number(upcomingBill.amount).toFixed(2)}) due in ${daysUntilBill} days, balance will be $${balanceAfterBill.toFixed(2)}.`
+            message: `Yes, you can spend $${spendAmount}. Your balance after this purchase will be $${newBalance.toFixed(2)}. Your next bill ${upcomingBill.name} ($${Number(upcomingBill.amount).toFixed(2)}) is due in ${daysUntilBill} days, which will leave you with $${balanceAfterBill.toFixed(2)}.`
           });
         } else {
           res.json({
             canSpend: true,
-            message: `Yes, you can spend $${spendAmount}. New balance: $${newBalance.toFixed(2)}.`
+            message: `Yes, you can spend $${spendAmount}. Your balance after this purchase will be $${newBalance.toFixed(2)}.`
+          });
+        }
+      } else if (riskToSpend) {
+        // Can spend but it might be tight with upcoming bills
+        if (upcomingBills.length > 0) {
+          const totalUpcoming = upcomingBills.reduce((sum, bill) => sum + Number(bill.amount), 0);
+          const balanceAfterAll = newBalance - totalUpcoming;
+          
+          res.json({
+            canSpend: true,
+            message: `You can spend $${spendAmount}, but be careful. Your balance after this purchase will be $${newBalance.toFixed(2)}, and you have $${totalUpcoming.toFixed(2)} in upcoming bills which would leave you with $${balanceAfterAll.toFixed(2)}.`
+          });
+        } else {
+          res.json({
+            canSpend: true,
+            message: `Yes, you can spend $${spendAmount}. Your balance after this purchase will be $${newBalance.toFixed(2)}.`
           });
         }
       } else {
+        // Cannot spend this amount
         res.json({
           canSpend: false,
-          message: `No, you cannot spend $${spendAmount} due to upcoming bills reducing your balance below safe levels.`
+          message: `Sorry, you cannot spend $${spendAmount} as it would exceed your current account balance of $${availableBalance.toFixed(2)}.`
         });
       }
     } catch (error) {

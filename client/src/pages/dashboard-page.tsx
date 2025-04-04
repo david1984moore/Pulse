@@ -127,7 +127,7 @@ export default function DashboardPage() {
             <CalendarView bills={bills || []} />
             
             {/* Chatbot */}
-            <Chatbot bills={bills || []} income={income || []} />
+            <Chatbot bills={bills || []} />
           </div>
         </div>
       </main>
