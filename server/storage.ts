@@ -24,11 +24,13 @@ export interface IStorage {
   // Bill operations
   getBillsByUserId(userId: number): Promise<Bill[]>;
   createBill(bill: InsertBill): Promise<Bill>;
+  updateBill(bill: { id: number; name: string; amount: string; due_date: number }): Promise<Bill>;
   deleteBill(billId: number): Promise<void>;
   
   // Income operations
   getIncomeByUserId(userId: number): Promise<Income[]>;
   createIncome(income: InsertIncome): Promise<Income>;
+  updateIncome(income: { id: number; source: string; amount: string; frequency: string }): Promise<Income>;
   deleteIncome(incomeId: number): Promise<void>;
   
   // Session store
@@ -120,6 +122,23 @@ export class MemStorage implements IStorage {
     return bill;
   }
 
+  async updateBill(bill: { id: number; name: string; amount: string; due_date: number }): Promise<Bill> {
+    const existingBill = this.bills.get(bill.id);
+    if (!existingBill) {
+      throw new Error(`Bill with ID ${bill.id} not found`);
+    }
+    
+    const updatedBill: Bill = {
+      ...existingBill,
+      name: bill.name,
+      amount: bill.amount,
+      due_date: bill.due_date
+    };
+    
+    this.bills.set(bill.id, updatedBill);
+    return updatedBill;
+  }
+  
   async deleteBill(billId: number): Promise<void> {
     this.bills.delete(billId);
   }
@@ -142,6 +161,23 @@ export class MemStorage implements IStorage {
     return income;
   }
 
+  async updateIncome(income: { id: number; source: string; amount: string; frequency: string }): Promise<Income> {
+    const existingIncome = this.income.get(income.id);
+    if (!existingIncome) {
+      throw new Error(`Income with ID ${income.id} not found`);
+    }
+    
+    const updatedIncome: Income = {
+      ...existingIncome,
+      source: income.source,
+      amount: income.amount,
+      frequency: income.frequency
+    };
+    
+    this.income.set(income.id, updatedIncome);
+    return updatedIncome;
+  }
+  
   async deleteIncome(incomeId: number): Promise<void> {
     this.income.delete(incomeId);
   }
@@ -236,6 +272,25 @@ export class DatabaseStorage implements IStorage {
     return bill;
   }
 
+  async updateBill(bill: { id: number; name: string; amount: string; due_date: number }): Promise<Bill> {
+    try {
+      const [updatedBill] = await db
+        .update(bills)
+        .set({
+          name: bill.name,
+          amount: bill.amount,
+          due_date: bill.due_date
+        })
+        .where(eq(bills.id, bill.id))
+        .returning();
+      
+      return updatedBill;
+    } catch (error) {
+      console.error("Error updating bill:", error);
+      throw error;
+    }
+  }
+  
   async deleteBill(billId: number): Promise<void> {
     await db.delete(bills).where(eq(bills.id, billId));
   }
@@ -248,6 +303,25 @@ export class DatabaseStorage implements IStorage {
   async createIncome(insertIncomeData: InsertIncome): Promise<Income> {
     const [incomeResult] = await db.insert(incomeTable).values(insertIncomeData).returning();
     return incomeResult;
+  }
+
+  async updateIncome(income: { id: number; source: string; amount: string; frequency: string }): Promise<Income> {
+    try {
+      const [updatedIncome] = await db
+        .update(incomeTable)
+        .set({
+          source: income.source,
+          amount: income.amount,
+          frequency: income.frequency
+        })
+        .where(eq(incomeTable.id, income.id))
+        .returning();
+      
+      return updatedIncome;
+    } catch (error) {
+      console.error("Error updating income:", error);
+      throw error;
+    }
   }
 
   async deleteIncome(incomeId: number): Promise<void> {

@@ -1,8 +1,11 @@
 import { Bill, Income } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Trash2 } from "lucide-react";
+import { Plus, Minus, Trash2, Pencil } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import EditBillModal from "@/components/ui/edit-bill-modal";
+import EditIncomeModal from "@/components/ui/edit-income-modal";
 
 interface BillDeduction {
   id: number;
@@ -33,9 +36,15 @@ export default function IncomeBills({
   onAddBill,
   onDeleteBill,
   onAddIncome,
-  onRemoveIncome,
+  onDeleteIncome,
   onUpdateBalance,
 }: IncomeBillsProps) {
+  // State for edit modals
+  const [isEditBillModalOpen, setIsEditBillModalOpen] = useState(false);
+  const [isEditIncomeModalOpen, setIsEditIncomeModalOpen] = useState(false);
+  const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+  const [selectedIncome, setSelectedIncome] = useState<Income | null>(null);
+  
   // Fetch account balance
   const { data: balanceData } = useQuery<BalanceData>({
     queryKey: ["/api/calculated-balance"],
@@ -66,12 +75,43 @@ export default function IncomeBills({
   // Calculate remaining amount
   const availableToSpend = totalIncome - totalBills;
 
+  // Handle closing edit bill modal
+  const handleEditBillModalClose = (open: boolean) => {
+    setIsEditBillModalOpen(open);
+    if (!open) {
+      setSelectedBill(null);
+    }
+  };
+  
+  // Handle closing edit income modal
+  const handleEditIncomeModalClose = (open: boolean) => {
+    setIsEditIncomeModalOpen(open);
+    if (!open) {
+      setSelectedIncome(null);
+    }
+  };
+  
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle>Income & Bills</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <>
+      {/* Edit Bill Modal */}
+      <EditBillModal 
+        open={isEditBillModalOpen} 
+        onOpenChange={handleEditBillModalClose} 
+        bill={selectedBill} 
+      />
+      
+      {/* Edit Income Modal */}
+      <EditIncomeModal
+        open={isEditIncomeModalOpen}
+        onOpenChange={handleEditIncomeModalClose}
+        income={selectedIncome}
+      />
+      
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Income & Bills</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
         {/* Account Balance - Primary Feature */}
         <div className="bg-primary/10 p-4 rounded-md border border-primary/30">
           <div className="flex justify-between items-center">
@@ -158,10 +198,21 @@ export default function IncomeBills({
                         : "th"}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <p className={`text-sm font-medium ${bill.name === "Rent" ? "text-red-500" : "text-amber-500"}`}>
                       ${Number(bill.amount).toFixed(2)}
                     </p>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50"
+                      onClick={() => {
+                        setSelectedBill(bill);
+                        setIsEditBillModalOpen(true);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Button
                       size="icon"
                       variant="ghost"
@@ -196,8 +247,19 @@ export default function IncomeBills({
                       {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/mo)`}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <p className="text-sm font-medium text-green-600">${Number(inc.amount).toFixed(2)}</p>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50"
+                      onClick={() => {
+                        setSelectedIncome(inc);
+                        setIsEditIncomeModalOpen(true);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Button
                       size="icon"
                       variant="ghost"
@@ -226,5 +288,6 @@ export default function IncomeBills({
         </div>
       </CardContent>
     </Card>
+    </>
   );
 }

@@ -79,6 +79,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to delete bill" });
     }
   });
+  
+  app.put("/api/bills/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const billId = parseInt(req.params.id);
+      if (isNaN(billId)) {
+        return res.status(400).json({ message: "Invalid bill ID" });
+      }
+      
+      // Validate the request body with billFormSchema
+      const formData = billFormSchema.parse(req.body);
+      
+      // Prepare data for database update
+      const billData = {
+        id: billId,
+        name: formData.name,
+        amount: formData.amount,
+        due_date: formData.due_date
+      };
+      
+      console.log("Updating bill:", billData);
+      
+      const updatedBill = await storage.updateBill(billData);
+      
+      res.status(200).json(updatedBill);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
+        return res.status(400).json({ message: "Invalid bill data", details: error.errors });
+      }
+      console.error("Bill update error:", error);
+      res.status(500).json({ message: "Failed to update bill" });
+    }
+  });
 
   // Income routes
   app.get("/api/income", async (req, res) => {
@@ -143,6 +180,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(200).json({ message: "Income deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete income" });
+    }
+  });
+  
+  app.put("/api/income/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const incomeId = parseInt(req.params.id);
+      if (isNaN(incomeId)) {
+        return res.status(400).json({ message: "Invalid income ID" });
+      }
+      
+      // Validate the request body with incomeFormSchema
+      const formData = incomeFormSchema.parse(req.body);
+      
+      // Prepare data for database update
+      const incomeData = {
+        id: incomeId,
+        source: formData.source,
+        amount: formData.amount,
+        frequency: formData.frequency
+      };
+      
+      console.log("Updating income:", incomeData);
+      
+      const updatedIncome = await storage.updateIncome(incomeData);
+      
+      res.status(200).json(updatedIncome);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
+        return res.status(400).json({ message: "Invalid income data", details: error.errors });
+      }
+      console.error("Income update error:", error);
+      res.status(500).json({ message: "Failed to update income" });
     }
   });
 
