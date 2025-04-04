@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Bill, Income } from "@shared/schema";
+import { Trash } from "lucide-react"; // Import trash icon
+import { useToast } from "@/components/ui/use-toast"; // Assuming this hook exists
+
 
 interface AccountBalanceData {
   accountBalance: string | null;
@@ -14,19 +17,20 @@ import CalendarView from "@/components/ui/calendar-view";
 import Chatbot from "@/components/ui/chatbot";
 import IncomeBills from "@/components/ui/income-bills";
 import AddBillModal from "@/components/ui/add-bill-modal";
-import RemoveBillModal from "@/components/ui/remove-bill-modal";
+//import RemoveBillModal from "@/components/ui/remove-bill-modal"; // Removed
 import AddIncomeModal from "@/components/ui/add-income-modal";
 import RemoveIncomeModal from "@/components/ui/remove-income-modal";
 import VerifyBalanceModal from "@/components/ui/verify-balance-modal";
 
 export default function DashboardPage() {
-  const { user, logoutMutation } = useAuth();
-  const [addBillOpen, setAddBillOpen] = useState(false);
-  const [removeBillOpen, setRemoveBillOpen] = useState(false);
-  const [addIncomeOpen, setAddIncomeOpen] = useState(false);
-  const [removeIncomeOpen, setRemoveIncomeOpen] = useState(false);
-  const [balanceModalOpen, setBalanceModalOpen] = useState(false);
-  
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [addBillOpen, setAddBillOpen] = useState<boolean>(false);
+  //const [removeBillOpen, setRemoveBillOpen] = useState<boolean>(false); // Removed
+  const [addIncomeOpen, setAddIncomeOpen] = useState<boolean>(false);
+  const [removeIncomeOpen, setRemoveIncomeOpen] = useState<boolean>(false);
+  const [balanceModalOpen, setBalanceModalOpen] = useState<boolean>(false);
+
   // Fetch account balance
   const { data: accountBalance } = useQuery<AccountBalanceData>({
     queryKey: ["/api/account-balance"],
@@ -52,14 +56,14 @@ export default function DashboardPage() {
 
   // Refetch data when modals close
   useEffect(() => {
-    if (!addBillOpen || !removeBillOpen) {
+    if (!addBillOpen ) {
       refetchBills();
     }
     if (!addIncomeOpen || !removeIncomeOpen) {
       refetchIncome();
     }
-  }, [addBillOpen, removeBillOpen, addIncomeOpen, removeIncomeOpen, refetchBills, refetchIncome]);
-  
+  }, [addBillOpen, addIncomeOpen, removeIncomeOpen, refetchBills, refetchIncome]);
+
   // Show balance modal when account balance is loaded
   useEffect(() => {
     // Only show the balance modal on initial load if user doesn't have a balance set
@@ -114,10 +118,15 @@ export default function DashboardPage() {
               bills={bills || []} 
               income={income || []} 
               onAddBill={() => setAddBillOpen(true)}
-              onRemoveBill={() => setRemoveBillOpen(true)}
               onAddIncome={() => setAddIncomeOpen(true)}
               onRemoveIncome={() => setRemoveIncomeOpen(true)}
               onUpdateBalance={() => setBalanceModalOpen(true)}
+              onDeleteBill={(billId) => {
+                // Implement delete bill logic here, potentially using a mutation
+                // and then refetching bills.  Use toast for feedback.
+                console.log("Delete bill with ID:", billId);
+                toast({ title: 'Bill deleted successfully!'});
+              }}
             />
           </div>
 
@@ -125,7 +134,7 @@ export default function DashboardPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Calendar */}
             <CalendarView bills={bills || []} />
-            
+
             {/* Chatbot */}
             <Chatbot bills={bills || []} />
           </div>
@@ -134,7 +143,6 @@ export default function DashboardPage() {
 
       {/* Modals */}
       <AddBillModal open={addBillOpen} onOpenChange={setAddBillOpen} />
-      <RemoveBillModal open={removeBillOpen} onOpenChange={setRemoveBillOpen} bills={bills || []} />
       <AddIncomeModal open={addIncomeOpen} onOpenChange={setAddIncomeOpen} />
       <RemoveIncomeModal open={removeIncomeOpen} onOpenChange={setRemoveIncomeOpen} income={income || []} />
       <VerifyBalanceModal 

@@ -1,7 +1,7 @@
 import { Bill, Income } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 interface BillDeduction {
@@ -21,7 +21,7 @@ interface IncomeBillsProps {
   bills: Bill[];
   income: Income[];
   onAddBill: () => void;
-  onRemoveBill: () => void;
+  onRemoveBill: (billId: number) => void;
   onAddIncome: () => void;
   onRemoveIncome: () => void;
   onUpdateBalance: () => void;
@@ -127,19 +127,12 @@ export default function IncomeBills({
         </div>
 
         {/* Bill Management Buttons */}
-        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
+        <div className="flex">
           <Button
             onClick={onAddBill}
-            className="flex-1 bg-primary hover:bg-primary-600"
+            className="w-full bg-primary hover:bg-primary-600"
           >
             <Plus className="mr-2 h-4 w-4" /> Add Bill
-          </Button>
-          <Button
-            onClick={onRemoveBill}
-            className="flex-1 bg-red-600 hover:bg-red-700"
-            disabled={bills.length === 0}
-          >
-            <Minus className="mr-2 h-4 w-4" /> Remove Bill
           </Button>
         </div>
 
@@ -151,7 +144,7 @@ export default function IncomeBills({
           {bills.length > 0 ? (
             <ul className="divide-y divide-gray-200">
               {bills.map((bill) => (
-                <li key={bill.id} className="py-3 flex justify-between">
+                <li key={bill.id} className="py-3 flex justify-between items-center">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{bill.name}</p>
                     <p className="text-xs text-gray-500">
@@ -165,9 +158,19 @@ export default function IncomeBills({
                         : "th"}
                     </p>
                   </div>
-                  <p className={`text-sm font-medium ${bill.name === "Rent" ? "text-red-500" : "text-amber-500"}`}>
-                    ${Number(bill.amount).toFixed(2)}
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <p className={`text-sm font-medium ${bill.name === "Rent" ? "text-red-500" : "text-amber-500"}`}>
+                      ${Number(bill.amount).toFixed(2)}
+                    </p>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-red-600 hover:text-red-900 hover:bg-red-50"
+                      onClick={() => onRemoveBill(bill.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>
