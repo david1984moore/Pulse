@@ -61,7 +61,8 @@ export default function VerifyBalanceModal({
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
-      await apiRequest("/api/account-balance", "POST", {
+      // Correct parameter order: method, url, data
+      await apiRequest("POST", "/api/account-balance", {
         balance: data.balance
       });
       
@@ -91,7 +92,8 @@ export default function VerifyBalanceModal({
     if (currentBalance) {
       setIsSubmitting(true);
       try {
-        await apiRequest("/api/account-balance", "POST", {
+        // Correct parameter order: method, url, data
+        await apiRequest("POST", "/api/account-balance", {
           balance: currentBalance
         });
         
