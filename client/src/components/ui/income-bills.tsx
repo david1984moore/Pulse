@@ -201,7 +201,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-amber-600 hover:text-amber-900 hover:bg-amber-50"
+                      className="h-8 w-8 text-red-600 hover:text-red-900 hover:bg-red-50"
                       onClick={() => onDeleteIncome(inc.id)}
                     >
                       <Trash2 className="h-4 w-4" />

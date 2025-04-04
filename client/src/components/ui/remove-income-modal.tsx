@@ -75,7 +75,7 @@ export default function RemoveIncomeModal({ open, onOpenChange, income }: Remove
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="text-amber-600 hover:text-amber-900 hover:bg-amber-50"
+                        className="text-red-600 hover:text-red-900 hover:bg-red-50"
                         onClick={() => handleDeleteIncome(inc.id)}
                         disabled={deletingIncomeId === inc.id}
                       >
