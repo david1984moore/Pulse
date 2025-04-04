@@ -23,7 +23,7 @@ interface IncomeBillsProps {
   onAddBill: () => void;
   onDeleteBill: (billId: number) => void;
   onAddIncome: () => void;
-  onRemoveIncome: () => void;
+  onDeleteIncome: (incomeId: number) => void;
   onUpdateBalance: () => void;
 }
 
@@ -187,7 +187,7 @@ export default function IncomeBills({
           {income.length > 0 ? (
             <ul className="divide-y divide-gray-200">
               {income.map((inc) => (
-                <li key={inc.id} className="py-3 flex justify-between">
+                <li key={inc.id} className="py-3 flex justify-between items-center">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{inc.source || 'Job'}</p>
                     <p className="text-xs text-gray-500">
@@ -196,7 +196,17 @@ export default function IncomeBills({
                       {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/mo)`}
                     </p>
                   </div>
-                  <p className="text-sm font-medium text-green-600">${Number(inc.amount).toFixed(2)}</p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-sm font-medium text-green-600">${Number(inc.amount).toFixed(2)}</p>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-amber-600 hover:text-amber-900 hover:bg-amber-50"
+                      onClick={() => onDeleteIncome(inc.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -205,19 +215,12 @@ export default function IncomeBills({
           )}
           
           {/* Income Management Buttons */}
-          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 mt-3">
+          <div className="flex mt-3">
             <Button
               onClick={onAddIncome}
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="w-full bg-green-600 hover:bg-green-700"
             >
               <Plus className="mr-2 h-4 w-4" /> Add Income
-            </Button>
-            <Button
-              onClick={onRemoveIncome}
-              className="flex-1 bg-amber-600 hover:bg-amber-700"
-              disabled={income.length === 0}
-            >
-              <Minus className="mr-2 h-4 w-4" /> Remove Income
             </Button>
           </div>
         </div>

@@ -19,7 +19,6 @@ import IncomeBills from "@/components/ui/income-bills";
 import AddBillModal from "@/components/ui/add-bill-modal";
 //import RemoveBillModal from "@/components/ui/remove-bill-modal"; // Removed
 import AddIncomeModal from "@/components/ui/add-income-modal";
-import RemoveIncomeModal from "@/components/ui/remove-income-modal";
 import VerifyBalanceModal from "@/components/ui/verify-balance-modal";
 
 export default function DashboardPage() {
@@ -28,7 +27,6 @@ export default function DashboardPage() {
   const [addBillOpen, setAddBillOpen] = useState<boolean>(false);
   //const [removeBillOpen, setRemoveBillOpen] = useState<boolean>(false); // Removed
   const [addIncomeOpen, setAddIncomeOpen] = useState<boolean>(false);
-  const [removeIncomeOpen, setRemoveIncomeOpen] = useState<boolean>(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState<boolean>(false);
   
   // Add logout mutation
@@ -73,13 +71,13 @@ export default function DashboardPage() {
 
   // Refetch data when modals close
   useEffect(() => {
-    if (!addBillOpen ) {
+    if (!addBillOpen) {
       refetchBills();
     }
-    if (!addIncomeOpen || !removeIncomeOpen) {
+    if (!addIncomeOpen) {
       refetchIncome();
     }
-  }, [addBillOpen, addIncomeOpen, removeIncomeOpen, refetchBills, refetchIncome]);
+  }, [addBillOpen, addIncomeOpen, refetchBills, refetchIncome]);
 
   // Show balance modal when account balance is loaded
   useEffect(() => {
@@ -136,8 +134,6 @@ export default function DashboardPage() {
               income={income || []} 
               onAddBill={() => setAddBillOpen(true)}
               onDeleteBill={(billId) => {
-                // Implement delete bill logic here, potentially using a mutation
-                // and then refetching bills.  Use toast for feedback.
                 fetch(`/api/bills/${billId}`, {
                   method: 'DELETE',
                 }).then(response => {
@@ -153,7 +149,21 @@ export default function DashboardPage() {
                 });
               }}
               onAddIncome={() => setAddIncomeOpen(true)}
-              onRemoveIncome={() => setRemoveIncomeOpen(true)}
+              onDeleteIncome={(incomeId) => {
+                fetch(`/api/income/${incomeId}`, {
+                  method: 'DELETE',
+                }).then(response => {
+                  if (response.ok) {
+                    refetchIncome();
+                    toast({ title: 'Income deleted successfully!'});
+                  } else {
+                    toast({ title: 'Failed to delete income', variant: 'destructive' });
+                  }
+                }).catch(error => {
+                  console.error("Error deleting income:", error);
+                  toast({ title: 'Failed to delete income', variant: 'destructive' });
+                });
+              }}
               onUpdateBalance={() => setBalanceModalOpen(true)}
             />
           </div>
@@ -172,7 +182,6 @@ export default function DashboardPage() {
       {/* Modals */}
       <AddBillModal open={addBillOpen} onOpenChange={setAddBillOpen} />
       <AddIncomeModal open={addIncomeOpen} onOpenChange={setAddIncomeOpen} />
-      <RemoveIncomeModal open={removeIncomeOpen} onOpenChange={setRemoveIncomeOpen} income={income || []} />
       <VerifyBalanceModal 
         open={balanceModalOpen} 
         onOpenChange={setBalanceModalOpen} 
