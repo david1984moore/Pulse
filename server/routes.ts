@@ -183,8 +183,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Valid balance is required" });
       }
       
+      // Make sure we're working with a numeric value, not a string
       const numericBalance = Number(balance);
+      console.log("Updating balance for user", userId, "to", numericBalance);
+      
+      // Update the user's balance
       const user = await storage.updateUserBalance(userId, numericBalance);
+      
+      console.log("Updated user balance:", user);
       
       res.json({ 
         accountBalance: user.account_balance,

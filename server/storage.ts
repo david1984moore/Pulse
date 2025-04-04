@@ -191,15 +191,31 @@ export class DatabaseStorage implements IStorage {
 
   async updateUserBalance(userId: number, balance: number): Promise<User> {
     const now = new Date();
-    const [user] = await db
-      .update(users)
-      .set({ 
-        account_balance: balance.toString(),
-        last_balance_update: now
-      })
-      .where(eq(users.id, userId))
-      .returning();
-    return user;
+    
+    try {
+      // Ensure balance is a valid number and convert to string with 2 decimal places for storage
+      if (isNaN(balance)) {
+        throw new Error(`Invalid balance value: ${balance}`);
+      }
+      
+      const balanceString = balance.toFixed(2);
+      console.log(`Updating user ${userId} balance to ${balanceString}`);
+      
+      const [user] = await db
+        .update(users)
+        .set({ 
+          account_balance: balanceString,
+          last_balance_update: now
+        })
+        .where(eq(users.id, userId))
+        .returning();
+      
+      console.log(`User updated:`, user);
+      return user;
+    } catch (error) {
+      console.error(`Error updating balance for user ${userId}:`, error);
+      throw error;
+    }
   }
 
   async updateLastBalanceUpdate(userId: number): Promise<void> {
