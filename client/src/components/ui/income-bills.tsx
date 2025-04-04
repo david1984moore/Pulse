@@ -21,7 +21,7 @@ interface IncomeBillsProps {
   bills: Bill[];
   income: Income[];
   onAddBill: () => void;
-  onRemoveBill: (billId: number) => void;
+  onDeleteBill: (billId: number) => void;
   onAddIncome: () => void;
   onRemoveIncome: () => void;
   onUpdateBalance: () => void;
@@ -31,7 +31,7 @@ export default function IncomeBills({
   bills,
   income,
   onAddBill,
-  onRemoveBill,
+  onDeleteBill,
   onAddIncome,
   onRemoveIncome,
   onUpdateBalance,
@@ -166,7 +166,7 @@ export default function IncomeBills({
                       size="icon"
                       variant="ghost"
                       className="h-8 w-8 text-red-600 hover:text-red-900 hover:bg-red-50"
-                      onClick={() => onRemoveBill(bill.id)}
+                      onClick={() => onDeleteBill(bill.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

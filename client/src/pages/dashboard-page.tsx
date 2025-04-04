@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Bill, Income } from "@shared/schema";
 import { Trash } from "lucide-react"; // Import trash icon
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +30,23 @@ export default function DashboardPage() {
   const [addIncomeOpen, setAddIncomeOpen] = useState<boolean>(false);
   const [removeIncomeOpen, setRemoveIncomeOpen] = useState<boolean>(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState<boolean>(false);
+  
+  // Add logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to logout");
+      }
+      return true;
+    },
+    onSuccess: () => {
+      window.location.href = "/";
+    },
+  });
 
   // Fetch account balance
   const { data: accountBalance } = useQuery<AccountBalanceData>({
@@ -118,15 +135,26 @@ export default function DashboardPage() {
               bills={bills || []} 
               income={income || []} 
               onAddBill={() => setAddBillOpen(true)}
-              onAddIncome={() => setAddIncomeOpen(true)}
-              onRemoveIncome={() => setRemoveIncomeOpen(true)}
-              onUpdateBalance={() => setBalanceModalOpen(true)}
               onDeleteBill={(billId) => {
                 // Implement delete bill logic here, potentially using a mutation
                 // and then refetching bills.  Use toast for feedback.
-                console.log("Delete bill with ID:", billId);
-                toast({ title: 'Bill deleted successfully!'});
+                fetch(`/api/bills/${billId}`, {
+                  method: 'DELETE',
+                }).then(response => {
+                  if (response.ok) {
+                    refetchBills();
+                    toast({ title: 'Bill deleted successfully!'});
+                  } else {
+                    toast({ title: 'Failed to delete bill', variant: 'destructive' });
+                  }
+                }).catch(error => {
+                  console.error("Error deleting bill:", error);
+                  toast({ title: 'Failed to delete bill', variant: 'destructive' });
+                });
               }}
+              onAddIncome={() => setAddIncomeOpen(true)}
+              onRemoveIncome={() => setRemoveIncomeOpen(true)}
+              onUpdateBalance={() => setBalanceModalOpen(true)}
             />
           </div>
 
