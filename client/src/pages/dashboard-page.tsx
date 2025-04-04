@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Bill, Income } from "@shared/schema";
 import { Trash } from "lucide-react"; // Import trash icon
-import { useToast } from "@/components/ui/use-toast"; // Assuming this hook exists
+import { useToast } from "@/hooks/use-toast";
 
 
 interface AccountBalanceData {
