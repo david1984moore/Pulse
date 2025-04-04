@@ -143,23 +143,6 @@ export default function IncomeBills({
           </Button>
         </div>
 
-        {/* Income Management Buttons */}
-        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
-          <Button
-            onClick={onAddIncome}
-            className="flex-1 bg-green-600 hover:bg-green-700"
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add Income
-          </Button>
-          <Button
-            onClick={onRemoveIncome}
-            className="flex-1 bg-amber-600 hover:bg-amber-700"
-            disabled={income.length === 0}
-          >
-            <Minus className="mr-2 h-4 w-4" /> Remove Income
-          </Button>
-        </div>
-
         {/* Bills List */}
         <div className="mt-4">
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
@@ -217,6 +200,23 @@ export default function IncomeBills({
           ) : (
             <p className="text-sm text-gray-500 py-2">No income added yet.</p>
           )}
+          
+          {/* Income Management Buttons */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 mt-3">
+            <Button
+              onClick={onAddIncome}
+              className="flex-1 bg-green-600 hover:bg-green-700"
+            >
+              <Plus className="mr-2 h-4 w-4" /> Add Income
+            </Button>
+            <Button
+              onClick={onRemoveIncome}
+              className="flex-1 bg-amber-600 hover:bg-amber-700"
+              disabled={income.length === 0}
+            >
+              <Minus className="mr-2 h-4 w-4" /> Remove Income
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
