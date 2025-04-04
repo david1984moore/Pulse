@@ -65,7 +65,7 @@ export default function RemoveIncomeModal({ open, onOpenChange, income }: Remove
                   <div className="px-4 py-4 flex items-center sm:px-6">
                     <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                       <div>
-                        <p className="text-sm font-medium text-primary truncate">Income</p>
+                        <p className="text-sm font-medium text-primary truncate">{inc.source || 'Job'}</p>
                         <p className="mt-1 text-sm text-gray-500">
                           {inc.frequency} - ${Number(inc.amount).toFixed(2)}
                         </p>

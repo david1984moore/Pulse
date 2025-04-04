@@ -203,7 +203,7 @@ export default function IncomeBills({
               {income.map((inc) => (
                 <li key={inc.id} className="py-3 flex justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Income</p>
+                    <p className="text-sm font-medium text-gray-900">{inc.source || 'Job'}</p>
                     <p className="text-xs text-gray-500">
                       {inc.frequency}
                       {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/mo)`}

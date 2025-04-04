@@ -52,6 +52,7 @@ export const insertBillSchema = createInsertSchema(bills).omit({
 export const income = pgTable("income", {
   id: serial("id").primaryKey(),
   user_id: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  source: text("source").notNull(), // Job name or income source
   amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
   frequency: text("frequency").notNull(), // 'Weekly', 'Bi-weekly', 'Monthly', or 'Custom'
   created_at: timestamp("created_at").defaultNow()
@@ -95,6 +96,7 @@ export const billFormSchema = insertBillSchema.omit({ user_id: true }).extend({
 });
 
 export const incomeFormSchema = insertIncomeSchema.omit({ user_id: true }).extend({
+  source: z.string().min(1, { message: "Please enter your job title or income source" }),
   amount: z.string().refine(
     (val) => !isNaN(Number(val)) && Number(val) > 0,
     { message: "Amount must be a positive number" }

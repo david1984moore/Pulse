@@ -38,6 +38,7 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
   const form = useForm<FormValues>({
     resolver: zodResolver(incomeFormSchema),
     defaultValues: {
+      source: "",
       amount: "",
       frequency: "Weekly",
     },
@@ -48,6 +49,7 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
     try {
       console.log("Submitting income with data:", data);
       const response = await apiRequest("POST", "/api/income", {
+        source: data.source,
         amount: data.amount,
         frequency: data.frequency,
       });
@@ -89,6 +91,20 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="source"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Income Source</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Job Title / Income Source" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
             <FormField
               control={form.control}
               name="amount"

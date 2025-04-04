@@ -107,6 +107,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Prepare data for database insertion
       const incomeData = {
         user_id: userId,
+        source: formData.source,
         amount: formData.amount,
         frequency: formData.frequency
       };
