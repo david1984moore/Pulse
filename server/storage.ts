@@ -18,6 +18,8 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserBalance(userId: number, balance: number): Promise<User>;
+  updateLastBalanceUpdate(userId: number): Promise<void>;
   
   // Bill operations
   getBillsByUserId(userId: number): Promise<Bill[]>;
@@ -65,9 +67,39 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      created_at: new Date(),
+      account_balance: null,
+      last_balance_update: null
+    };
     this.users.set(id, user);
     return user;
+  }
+
+  async updateUserBalance(userId: number, balance: number): Promise<User> {
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+    
+    const updatedUser = { 
+      ...user, 
+      account_balance: balance.toString(), 
+      last_balance_update: new Date() 
+    };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  async updateLastBalanceUpdate(userId: number): Promise<void> {
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+    
+    this.users.set(userId, { ...user, last_balance_update: new Date() });
   }
 
   // Bill methods
@@ -79,7 +111,11 @@ export class MemStorage implements IStorage {
 
   async createBill(insertBill: InsertBill): Promise<Bill> {
     const id = this.billId++;
-    const bill: Bill = { ...insertBill, id };
+    const bill: Bill = { 
+      ...insertBill, 
+      id, 
+      created_at: new Date() 
+    };
     this.bills.set(id, bill);
     return bill;
   }
@@ -97,7 +133,11 @@ export class MemStorage implements IStorage {
 
   async createIncome(insertIncome: InsertIncome): Promise<Income> {
     const id = this.incomeId++;
-    const income: Income = { ...insertIncome, id };
+    const income: Income = { 
+      ...insertIncome, 
+      id, 
+      created_at: new Date() 
+    };
     this.income.set(id, income);
     return income;
   }
@@ -147,6 +187,27 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db.insert(users).values(insertUser).returning();
     return user;
+  }
+
+  async updateUserBalance(userId: number, balance: number): Promise<User> {
+    const now = new Date();
+    const [user] = await db
+      .update(users)
+      .set({ 
+        account_balance: balance.toString(),
+        last_balance_update: now
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async updateLastBalanceUpdate(userId: number): Promise<void> {
+    const now = new Date();
+    await db
+      .update(users)
+      .set({ last_balance_update: now })
+      .where(eq(users.id, userId));
   }
 
   // Bill methods

@@ -9,6 +9,8 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
+  account_balance: numeric("account_balance", { precision: 10, scale: 2 }),
+  last_balance_update: timestamp("last_balance_update"),
   created_at: timestamp("created_at").defaultNow()
 });
 

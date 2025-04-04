@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Bill, Income } from "@shared/schema";
+
+interface AccountBalanceData {
+  accountBalance: string | null;
+  lastUpdate: string | null;
+}
 import CalendarView from "@/components/ui/calendar-view";
 import Chatbot from "@/components/ui/chatbot";
 import IncomeBills from "@/components/ui/income-bills";
@@ -12,6 +17,7 @@ import AddBillModal from "@/components/ui/add-bill-modal";
 import RemoveBillModal from "@/components/ui/remove-bill-modal";
 import AddIncomeModal from "@/components/ui/add-income-modal";
 import RemoveIncomeModal from "@/components/ui/remove-income-modal";
+import VerifyBalanceModal from "@/components/ui/verify-balance-modal";
 
 export default function DashboardPage() {
   const { user, logoutMutation } = useAuth();
@@ -19,6 +25,12 @@ export default function DashboardPage() {
   const [removeBillOpen, setRemoveBillOpen] = useState(false);
   const [addIncomeOpen, setAddIncomeOpen] = useState(false);
   const [removeIncomeOpen, setRemoveIncomeOpen] = useState(false);
+  const [balanceModalOpen, setBalanceModalOpen] = useState(false);
+  
+  // Fetch account balance
+  const { data: accountBalance } = useQuery<AccountBalanceData>({
+    queryKey: ["/api/account-balance"],
+  });
 
   // Fetch bills
   const { 
@@ -47,6 +59,14 @@ export default function DashboardPage() {
       refetchIncome();
     }
   }, [addBillOpen, removeBillOpen, addIncomeOpen, removeIncomeOpen, refetchBills, refetchIncome]);
+  
+  // Show balance modal when account balance is loaded
+  useEffect(() => {
+    // Only show the balance modal on initial load if user doesn't have a balance set
+    if (accountBalance && accountBalance.accountBalance === null) {
+      setBalanceModalOpen(true);
+    }
+  }, [accountBalance]);
 
   if (isLoadingBills || isLoadingIncome) {
     return (
@@ -97,6 +117,7 @@ export default function DashboardPage() {
               onRemoveBill={() => setRemoveBillOpen(true)}
               onAddIncome={() => setAddIncomeOpen(true)}
               onRemoveIncome={() => setRemoveIncomeOpen(true)}
+              onUpdateBalance={() => setBalanceModalOpen(true)}
             />
           </div>
 
@@ -116,6 +137,11 @@ export default function DashboardPage() {
       <RemoveBillModal open={removeBillOpen} onOpenChange={setRemoveBillOpen} bills={bills || []} />
       <AddIncomeModal open={addIncomeOpen} onOpenChange={setAddIncomeOpen} />
       <RemoveIncomeModal open={removeIncomeOpen} onOpenChange={setRemoveIncomeOpen} income={income || []} />
+      <VerifyBalanceModal 
+        open={balanceModalOpen} 
+        onOpenChange={setBalanceModalOpen} 
+        currentBalance={accountBalance?.accountBalance} 
+      />
     </div>
   );
 }

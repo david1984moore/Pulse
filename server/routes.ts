@@ -145,6 +145,114 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Account balance routes
+  app.get("/api/account-balance", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const userId = req.user!.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({ 
+        accountBalance: user.account_balance,
+        lastUpdate: user.last_balance_update
+      });
+    } catch (error) {
+      console.error("Get account balance error:", error);
+      res.status(500).json({ message: "Failed to get account balance" });
+    }
+  });
+
+  app.post("/api/account-balance", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const userId = req.user!.id;
+      const { balance } = req.body;
+      
+      if (balance === undefined || isNaN(Number(balance))) {
+        return res.status(400).json({ message: "Valid balance is required" });
+      }
+      
+      const numericBalance = Number(balance);
+      const user = await storage.updateUserBalance(userId, numericBalance);
+      
+      res.json({ 
+        accountBalance: user.account_balance,
+        lastUpdate: user.last_balance_update
+      });
+    } catch (error) {
+      console.error("Update account balance error:", error);
+      res.status(500).json({ message: "Failed to update account balance" });
+    }
+  });
+
+  // Calculate balance after bill deductions based on current date
+  app.get("/api/calculated-balance", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const userId = req.user!.id;
+      const user = await storage.getUser(userId);
+      const bills = await storage.getBillsByUserId(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      if (!user.account_balance) {
+        return res.json({ calculatedBalance: null, deductedBills: [] });
+      }
+      
+      const currentDate = new Date().getDate(); // Get current day of month (1-31)
+      const lastUpdateDate = user.last_balance_update ? new Date(user.last_balance_update).getDate() : 0;
+      
+      // Find bills that are due between the last update and current date
+      const billsToPay = bills.filter(bill => {
+        // If bill due date is between last update and today
+        // or if last update was in previous month and bill is due between 1 and today
+        return (bill.due_date > lastUpdateDate && bill.due_date <= currentDate) ||
+               (lastUpdateDate > currentDate && bill.due_date <= currentDate); 
+      });
+      
+      // Calculate new balance
+      const totalDeductions = billsToPay.reduce((sum, bill) => sum + Number(bill.amount), 0);
+      const initialBalance = Number(user.account_balance);
+      const calculatedBalance = initialBalance - totalDeductions;
+      
+      // If there were deductions, update the user's balance
+      if (totalDeductions > 0) {
+        await storage.updateUserBalance(userId, calculatedBalance);
+      } else {
+        await storage.updateLastBalanceUpdate(userId);
+      }
+      
+      res.json({
+        calculatedBalance: calculatedBalance.toFixed(2),
+        previousBalance: initialBalance.toFixed(2),
+        deductedBills: billsToPay.map(bill => ({
+          id: bill.id,
+          name: bill.name,
+          amount: Number(bill.amount).toFixed(2),
+          dueDate: bill.due_date
+        }))
+      });
+    } catch (error) {
+      console.error("Calculate balance error:", error);
+      res.status(500).json({ message: "Failed to calculate balance" });
+    }
+  });
+
   // Chatbot spending recommendation API
   app.post("/api/spending-advisor", async (req, res) => {
     if (!req.isAuthenticated()) {

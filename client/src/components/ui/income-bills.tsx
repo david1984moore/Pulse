@@ -2,6 +2,20 @@ import { Bill, Income } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+interface BillDeduction {
+  id: number;
+  name: string;
+  amount: string;
+  dueDate: number;
+}
+
+interface BalanceData {
+  calculatedBalance: string | null;
+  previousBalance?: string;
+  deductedBills: BillDeduction[];
+}
 
 interface IncomeBillsProps {
   bills: Bill[];
@@ -10,6 +24,7 @@ interface IncomeBillsProps {
   onRemoveBill: () => void;
   onAddIncome: () => void;
   onRemoveIncome: () => void;
+  onUpdateBalance: () => void;
 }
 
 export default function IncomeBills({
@@ -19,7 +34,13 @@ export default function IncomeBills({
   onRemoveBill,
   onAddIncome,
   onRemoveIncome,
+  onUpdateBalance,
 }: IncomeBillsProps) {
+  // Fetch account balance
+  const { data: balanceData } = useQuery<BalanceData>({
+    queryKey: ["/api/calculated-balance"],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
   // Calculate total monthly income
   const totalIncome = income.reduce((sum, inc) => {
     let monthlyAmount = 0;
@@ -51,6 +72,41 @@ export default function IncomeBills({
         <CardTitle>Income & Bills</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Account Balance - Primary Feature */}
+        <div className="bg-primary/10 p-4 rounded-md border border-primary/30">
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium text-primary uppercase tracking-wider">
+              Account Balance
+            </h3>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onUpdateBalance}
+              className="h-7 text-xs text-primary hover:text-primary-700"
+            >
+              Update
+            </Button>
+          </div>
+          <div className="mt-2">
+            <p className="text-2xl font-bold text-primary">
+              ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
+            </p>
+          </div>
+          {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
+            <div className="mt-2 text-xs text-gray-600">
+              <p>Recent deductions:</p>
+              <ul className="mt-1">
+                {balanceData.deductedBills.map((bill) => (
+                  <li key={bill.id} className="flex justify-between">
+                    <span>{bill.name}</span>
+                    <span className="text-red-500">-${bill.amount}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        
         {/* Financial Summary */}
         <div className="bg-gray-50 p-4 rounded-md">
           <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
@@ -148,7 +204,11 @@ export default function IncomeBills({
                 <li key={inc.id} className="py-3 flex justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-900">Income</p>
-                    <p className="text-xs text-gray-500">{inc.frequency}</p>
+                    <p className="text-xs text-gray-500">
+                      {inc.frequency}
+                      {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/mo)`}
+                      {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/mo)`}
+                    </p>
                   </div>
                   <p className="text-sm font-medium text-green-600">${Number(inc.amount).toFixed(2)}</p>
                 </li>
