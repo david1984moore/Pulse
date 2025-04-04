@@ -1,0 +1,41 @@
+1. Income Functionality Update:
+• Update the “Income” field in the “Income & Bills” section to only track the user’s earnings from their job (e.g., salary or wages).
+• On user login, display a pop-up modal with the message “Please verify your account balance” and an input field for the user to enter their balance. This input will not affect the “Income” field but will instead populate the “Account Balance” field (see point 4).
+• Store the user-entered account balance and ensure it persists during the user session.
+• Persist the account balance across sessions, linked to the user’s account.
+• Automatically deduct bill amounts from the account balance on their scheduled days (e.g., Rent of $500 on the 1st, Electric of $250 on the 2nd, Water of $50 on the 25th). Update the balance and reflect the changes in the “Account Balance” field in the dashboard and the “Payment Calendar”.
+• Recalculate the account balance over time: if a bill’s due date has passed (based on the current date), deduct the bill amount from the balance. For example, if today is April 3rd, deduct Rent ($500) and Electric ($250) from the balance, leaving the remaining amount.
+2. Bank Statement Upload and Analysis:
+• Add a feature to allow users to upload a monthly bank statement file (support PDF and CSV formats).
+• Implement a backend service to parse the uploaded file and analyze the data to categorize transactions into:
+• Income (e.g., salary deposits, which should populate the “Income” field in the “Income & Bills” section).
+• Bills (e.g., rent, utilities like electric and water).
+• Populate the dashboard (“Income & Bills” section) and “Payment Calendar” with the categorized data:
+• Update the “Income” field with the total job earnings.
+• List bills under “Your Bills” with their amounts and due dates.
+• Mark the due dates on the calendar (red for rent, yellow for other bills, as shown in the screenshot).
+• Calculate the account balance from the statement (e.g., final balance after all transactions).
+• Populate the “Account Balance” field in the “Income & Bills” section with the calculated balance.
+• Display a pop-up modal asking, “Is $X your account balance?” where $X is the calculated balance.
+• Add two buttons in the pop-up: “Verify” and “Reject”.
+• If the user clicks “Verify”, close the pop-up and save the balance.
+• If the user clicks “Reject”, show an input field for the user to enter the correct balance, then save the new balance and update the “Account Balance” field in the dashboard, and close the pop-up.
+3. Persist Account Balance Across Sessions:
+• Store the account balance, linked to the user’s account, so it persists across sessions.
+• On each login, retrieve the balance.
+• Recalculate the balance based on the current date and any passed bill due dates (as described in point 1).
+• Update the “Account Balance” field in the dashboard and the “Payment Calendar” to reflect the recalculated balance.
+4. Add Account Balance as a Primary Feature in Income & Bills Section:
+• Update the “Income & Bills” section of the dashboard to include two distinct features:
+• Income: This field should only track the user’s earnings from their job (e.g., salary or wages). It can be populated either manually by the user or automatically from the bank statement upload (as described in point 2).
+• Account Balance: Add a new, separate field called “Account Balance” as the primary feature in the “Income & Bills” section. This field should be prominently displayed (e.g., at the top of the section or in a highlighted format) to emphasize its importance.
+• The “Account Balance” field should be populated in one of two ways:
+• Option A: From the user’s input in the pop-up modal upon login (as described in point 1).
+• Option B: From the calculated balance after uploading and analyzing a bank statement (as described in point 2), subject to user verification or correction.
+• Ensure the “Account Balance” field updates dynamically whenever the balance changes (e.g., after bill deductions or user updates).
+
+Functional Requirements:
+
+• Ensure the app updates dynamically when the balance or bills change.
+• Follow best practices for security (e.g., sanitize user inputs, secure file uploads).
+• Implement user authentication to link data to specific users.
