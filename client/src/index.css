@@ -13,35 +13,43 @@
 }
 
 @layer components {
-  .card-highlight {
-    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
-  }
-  
-  .gradient-bg {
-    @apply bg-gradient-to-r from-blue-50 to-slate-50;
+  .button-highlight {
+    @apply transition-all duration-200 hover:shadow hover:scale-105;
   }
   
   .badge-primary {
-    @apply bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium;
+    @apply bg-gray-100 text-gray-700 px-2 py-1 rounded-md text-xs font-medium;
   }
   
   .badge-success {
-    @apply bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium;
+    @apply bg-green-50 text-green-600 px-2 py-1 rounded-md text-xs font-medium;
   }
   
   .badge-warning {
-    @apply bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs font-medium;
+    @apply bg-amber-50 text-amber-600 px-2 py-1 rounded-md text-xs font-medium;
   }
   
   .badge-danger {
-    @apply bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium;
+    @apply bg-red-50 text-red-600 px-2 py-1 rounded-md text-xs font-medium;
   }
   
-  .input-highlight:focus {
-    @apply ring-2 ring-primary/20 border-primary/30;
+  .interactive-element {
+    @apply hover:shadow hover:scale-105 transition-all duration-200;
   }
   
-  .list-item-card {
-    @apply p-3 bg-white rounded-lg border border-blue-50 shadow-sm hover:shadow-md transition-shadow;
+  .list-item {
+    @apply p-3 bg-white rounded-lg border border-gray-200;
+  }
+  
+  .list-item:hover {
+    @apply border-gray-300 bg-gray-50/50;
+  }
+  
+  .amount-display {
+    @apply font-bold text-3xl text-primary;
+  }
+  
+  .section-header {
+    @apply text-base font-semibold text-gray-700 uppercase tracking-wider;
   }
 }

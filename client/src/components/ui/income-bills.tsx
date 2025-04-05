@@ -110,27 +110,27 @@ export default function IncomeBills({
       <Card className="h-full">
         <CardContent className="space-y-6 pt-6">
         {/* Account Balance - Primary Feature */}
-        <div className="bg-gradient-to-r from-primary/20 to-primary/5 p-6 rounded-xl border border-primary/20 shadow-inner">
+        <div className="bg-primary/5 p-5 rounded-lg border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm font-bold text-primary uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
               Account Balance
             </h3>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={onUpdateBalance}
-              className="h-7 text-xs text-primary hover:text-primary-700 border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-colors"
+              className="h-7 text-xs hover:bg-gray-100"
             >
               Update
             </Button>
           </div>
           <div className="mt-3">
-            <p className="text-3xl font-bold text-primary drop-shadow-sm">
+            <p className="text-3xl font-bold text-primary">
               ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
             </p>
           </div>
           {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
-            <div className="mt-3 text-xs text-gray-600 bg-white/70 p-2 rounded-md">
+            <div className="mt-3 text-xs text-gray-600 bg-white p-2 rounded border border-gray-100">
               <p className="font-medium">Recent deductions:</p>
               <ul className="mt-1 space-y-1">
                 {balanceData.deductedBills.map((bill) => (
@@ -145,27 +145,27 @@ export default function IncomeBills({
         </div>
         
         {/* Financial Summary */}
-        <div className="bg-gradient-to-r from-blue-50 to-slate-50 p-5 rounded-xl border border-blue-100 shadow-sm">
-          <h3 className="text-sm font-bold text-primary uppercase tracking-wider mb-3">
+        <div className="bg-gray-50 p-5 rounded-lg border border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
             Financial Summary
           </h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center p-2 bg-white rounded-lg shadow-sm">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center p-2 bg-white rounded border border-gray-100">
               <span className="text-sm font-medium text-gray-600 flex items-center">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                 Monthly Income:
               </span>
               <span className="text-sm font-bold text-green-600">${totalIncome.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center p-2 bg-white rounded-lg shadow-sm">
+            <div className="flex justify-between items-center p-2 bg-white rounded border border-gray-100">
               <span className="text-sm font-medium text-gray-600 flex items-center">
                 <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
                 Monthly Bills:
               </span>
               <span className="text-sm font-bold text-red-500">${totalBills.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center p-3 mt-2 bg-primary/5 rounded-lg border border-primary/20">
-              <span className="text-sm font-bold text-primary">Available to spend:</span>
+            <div className="flex justify-between items-center p-2 mt-1 bg-primary/5 rounded border border-gray-200">
+              <span className="text-sm font-bold text-gray-700">Available to spend:</span>
               <span className="text-sm font-bold text-primary">${availableToSpend.toFixed(2)}</span>
             </div>
           </div>
@@ -174,12 +174,12 @@ export default function IncomeBills({
         {/* Bills List */}
         <div className="mt-4">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-bold text-gray-700 uppercase tracking-wider">
+            <h3 className="text-base font-semibold text-gray-700 uppercase tracking-wider">
               Your Bills
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-primary hover:bg-primary-600 h-8 w-8 p-0 shadow-md hover:shadow-lg transition-all"
+              className="bg-primary hover:bg-primary-600 h-8 w-8 p-0"
               size="icon"
             >
               <Plus className="h-4 w-4" />
@@ -189,9 +189,9 @@ export default function IncomeBills({
           {bills.length > 0 ? (
             <ul className="space-y-2">
               {bills.map((bill) => (
-                <li key={bill.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <li key={bill.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{bill.name}</p>
+                    <p className="text-sm font-medium text-gray-800">{bill.name}</p>
                     <p className="text-xs text-gray-500">
                       Due on the {bill.due_date}
                       {["1", "21", "31"].includes(bill.due_date.toString())
@@ -204,15 +204,15 @@ export default function IncomeBills({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className={`px-3 py-1 rounded-full ${bill.name === "Rent" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"}`}>
-                      <p className="text-sm font-bold">
+                    <div className={`px-2.5 py-1 rounded-md ${bill.name === "Rent" ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-600"}`}>
+                      <p className="text-sm font-semibold">
                         ${Number(bill.amount).toFixed(2)}
                       </p>
                     </div>
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-full"
+                      className="h-8 w-8 text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors"
                       onClick={() => {
                         setSelectedBill(bill);
                         setIsEditBillModalOpen(true);
@@ -223,7 +223,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-full"
+                      className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-gray-100 transition-colors"
                       onClick={() => onDeleteBill(bill.id)}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -240,12 +240,12 @@ export default function IncomeBills({
         {/* Income List */}
         <div className="mt-4">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-bold text-gray-700 uppercase tracking-wider">
+            <h3 className="text-base font-semibold text-gray-700 uppercase tracking-wider">
               Your Income
             </h3>
             <Button
               onClick={onAddIncome}
-              className="bg-green-600 hover:bg-green-700 h-8 w-8 p-0 shadow-md hover:shadow-lg transition-all"
+              className="bg-green-600 hover:bg-green-700 h-8 w-8 p-0"
               size="icon"
             >
               <Plus className="h-4 w-4" />
@@ -255,9 +255,9 @@ export default function IncomeBills({
           {income.length > 0 ? (
             <ul className="space-y-2">
               {income.map((inc) => (
-                <li key={inc.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <li key={inc.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{inc.source || 'Job'}</p>
+                    <p className="text-sm font-medium text-gray-800">{inc.source || 'Job'}</p>
                     <p className="text-xs text-gray-500">
                       {inc.frequency}
                       {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/mo)`}
@@ -265,13 +265,13 @@ export default function IncomeBills({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="px-3 py-1 rounded-full bg-green-100 text-green-700">
-                      <p className="text-sm font-bold">${Number(inc.amount).toFixed(2)}</p>
+                    <div className="px-2.5 py-1 rounded-md bg-green-50 text-green-600">
+                      <p className="text-sm font-semibold">${Number(inc.amount).toFixed(2)}</p>
                     </div>
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-full"
+                      className="h-8 w-8 text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors"
                       onClick={() => {
                         setSelectedIncome(inc);
                         setIsEditIncomeModalOpen(true);
@@ -282,7 +282,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-full"
+                      className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-gray-100 transition-colors"
                       onClick={() => onDeleteIncome(inc.id)}
                     >
                       <Trash2 className="h-4 w-4" />

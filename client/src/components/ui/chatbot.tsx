@@ -80,20 +80,17 @@ export default function Chatbot({ bills }: ChatbotProps) {
 
   return (
     <Card>
-      <CardHeader className="pb-2 border-b border-blue-50">
-        <CardTitle className="flex items-center">
-          <span className="inline-block w-6 h-6 mr-2 bg-primary/10 rounded-full flex items-center justify-center">
-            <DollarSign className="h-3 w-3 text-primary" />
-          </span>
+      <CardHeader className="pb-2 border-b border-gray-100">
+        <CardTitle>
           Spending Assistant
         </CardTitle>
-        <CardDescription className="flex items-center mt-1.5 bg-gradient-to-r from-primary/10 to-primary/5 px-3 py-1.5 rounded-full w-fit">
+        <CardDescription className="flex items-center mt-1.5 bg-gray-100 px-3 py-1.5 rounded-md w-fit">
           <DollarSign className="h-4 w-4 mr-1.5 text-primary" />
-          <span className="font-medium">Balance: ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+          <span className="font-medium text-gray-700">Balance: ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-4">
-        <ScrollArea className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 mb-5 h-64 border border-blue-100 shadow-inner">
+        <ScrollArea className="bg-gray-50 rounded-lg p-4 mb-5 h-64 border border-gray-200">
           {messages.map((message, index) => (
             <div key={index} className="mb-3">
               <div
@@ -102,13 +99,13 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 } mb-2`}
               >
                 <div
-                  className={`p-3 rounded-xl max-w-xs shadow-sm ${
+                  className={`p-3 rounded-lg max-w-xs ${
                     message.sender === "user"
-                      ? "bg-primary/20 text-primary-700 rounded-tr-none"
-                      : "bg-white text-gray-800 rounded-tl-none border border-blue-100"
+                      ? "bg-primary/10 text-gray-800 rounded-tr-none"
+                      : "bg-white text-gray-800 rounded-tl-none border border-gray-200"
                   }`}
                 >
-                  <p className="text-sm font-medium">{message.text}</p>
+                  <p className="text-sm">{message.text}</p>
                 </div>
               </div>
             </div>
@@ -117,7 +114,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
 
         <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
           <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-            <SelectTrigger className="flex-1 border-blue-100 focus:ring-primary/20">
+            <SelectTrigger className="flex-1 border-gray-200">
               <SelectValue placeholder="Can I spend..." />
             </SelectTrigger>
             <SelectContent>
@@ -131,7 +128,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
           <Button
             onClick={handleSubmit}
             disabled={!selectedAmount || isPending}
-            className="w-full sm:w-auto shadow-md hover:shadow-lg transition-all"
+            className="w-full sm:w-auto"
           >
             {isPending ? (
               <>
