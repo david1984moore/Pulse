@@ -163,21 +163,20 @@ export default function IncomeBills({
           </div>
         </div>
 
-        {/* Bill Management Buttons */}
-        <div className="flex">
-          <Button
-            onClick={onAddBill}
-            className="w-full bg-primary hover:bg-primary-600"
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add Bill
-          </Button>
-        </div>
-
         {/* Bills List */}
         <div className="mt-4">
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
-            Your Bills
-          </h3>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-base font-medium text-gray-700 uppercase tracking-wider">
+              Your Bills
+            </h3>
+            <Button
+              onClick={onAddBill}
+              className="bg-primary hover:bg-primary-600"
+              size="sm"
+            >
+              <Plus className="mr-1 h-4 w-4" /> Add Bill
+            </Button>
+          </div>
           {bills.length > 0 ? (
             <ul className="divide-y divide-gray-200">
               {bills.map((bill) => (
