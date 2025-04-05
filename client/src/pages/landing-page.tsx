@@ -53,7 +53,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-blue-700 to-blue-900 opacity-75"></div>
         <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">Keep your finger on the pulse of your money</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">Take control of your finances</h1>
           <p className="mt-6 max-w-3xl text-xl text-gray-100">Track your money, manage bills, and know exactly what you can spend with Pulse - your personal financial assistant.</p>
           <div className="mt-10">
             {!user ? (
