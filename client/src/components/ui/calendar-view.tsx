@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   format, 
   startOfMonth, 
   endOfMonth, 
   eachDayOfInterval, 
-  isSameMonth, 
   isSameDay,
   addMonths,
-  subMonths
+  subMonths,
+  startOfWeek,
+  endOfWeek,
+  addWeeks,
+  subWeeks
 } from "date-fns";
 
 interface CalendarViewProps {
@@ -20,19 +23,30 @@ interface CalendarViewProps {
 
 export default function CalendarView({ bills }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [viewMode, setViewMode] = useState<"week" | "month">("week");
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   
-  // Get all days in the current month
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  // Get days based on view mode
+  let displayDays: Date[] = [];
+  let placeholderCount = 0;
   
-  // Calculate the starting day of the week (0-6)
-  const startDayOfWeek = monthStart.getDay();
+  if (viewMode === "month") {
+    // Monthly view logic
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(currentDate);
+    displayDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
+    placeholderCount = monthStart.getDay();
+  } else {
+    // Weekly view logic
+    const weekStart = startOfWeek(currentDate);
+    const weekEnd = endOfWeek(currentDate);
+    displayDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
+    placeholderCount = 0; // No placeholders for weekly view
+  }
   
   // Create array of placeholder elements for days before the month starts
-  const placeholders = Array.from({ length: startDayOfWeek }, (_, i) => (
-    <div key={`empty-${i}`} className="h-10 border border-gray-100 bg-gray-50"></div>
+  const placeholders = Array.from({ length: placeholderCount }).map((_, i) => (
+    <div key={`empty-${i}`} className="h-14 border border-gray-100 bg-gray-50/50 rounded"></div>
   ));
   
   // Function to check if a day has a bill due
@@ -40,13 +54,37 @@ export default function CalendarView({ bills }: CalendarViewProps) {
     return bills.filter(bill => bill.due_date === day);
   };
   
-  // Handle month navigation
-  const previousMonth = () => {
-    setCurrentDate(subMonths(currentDate, 1));
+  // Handle period navigation
+  const navigatePrevious = () => {
+    if (viewMode === "month") {
+      setCurrentDate(subMonths(currentDate, 1));
+    } else {
+      setCurrentDate(subWeeks(currentDate, 1));
+    }
   };
   
-  const nextMonth = () => {
-    setCurrentDate(addMonths(currentDate, 1));
+  const navigateNext = () => {
+    if (viewMode === "month") {
+      setCurrentDate(addMonths(currentDate, 1));
+    } else {
+      setCurrentDate(addWeeks(currentDate, 1));
+    }
+  };
+
+  // Toggle view mode
+  const toggleViewMode = () => {
+    setViewMode(viewMode === "week" ? "month" : "week");
+  };
+  
+  // Format the heading title
+  const formatDateHeading = () => {
+    if (viewMode === "month") {
+      return format(currentDate, "MMMM yyyy");
+    } else {
+      const weekStart = startOfWeek(currentDate);
+      const weekEnd = endOfWeek(currentDate);
+      return `${format(weekStart, "MMM d")} - ${format(weekEnd, "MMM d, yyyy")}`;
+    }
   };
   
   return (
@@ -59,8 +97,20 @@ export default function CalendarView({ bills }: CalendarViewProps) {
           <div className="flex space-x-2">
             <Button 
               variant="outline" 
+              size="sm"
+              onClick={toggleViewMode}
+              className="mr-2 text-xs"
+            >
+              {viewMode === "week" ? (
+                <><CalendarIcon className="h-3 w-3 mr-1" /> Monthly View</>
+              ) : (
+                <><List className="h-3 w-3 mr-1" /> Weekly View</>
+              )}
+            </Button>
+            <Button 
+              variant="outline" 
               size="icon" 
-              onClick={previousMonth}
+              onClick={navigatePrevious}
               className="hover:bg-gray-100"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -68,7 +118,7 @@ export default function CalendarView({ bills }: CalendarViewProps) {
             <Button 
               variant="outline" 
               size="icon" 
-              onClick={nextMonth}
+              onClick={navigateNext}
               className="hover:bg-gray-100"
             >
               <ChevronRight className="h-4 w-4" />
@@ -80,7 +130,7 @@ export default function CalendarView({ bills }: CalendarViewProps) {
         <div className="bg-white rounded-lg">
           <div className="mb-4">
             <h3 className="text-lg font-bold text-gray-800">
-              {format(currentDate, "MMMM yyyy")}
+              {formatDateHeading()}
             </h3>
           </div>
           
@@ -93,12 +143,10 @@ export default function CalendarView({ bills }: CalendarViewProps) {
             ))}
             
             {/* Empty placeholders */}
-            {placeholders.map((placeholder, index) => (
-              <div key={`empty-${index}`} className="h-10 bg-gray-50/50 rounded border border-gray-100"></div>
-            ))}
+            {placeholders}
             
             {/* Day cells */}
-            {days.map((day) => {
+            {displayDays.map((day) => {
               const dayOfMonth = day.getDate();
               const isToday = isSameDay(day, new Date());
               const dayBills = getBillForDay(dayOfMonth);
@@ -108,7 +156,7 @@ export default function CalendarView({ bills }: CalendarViewProps) {
                 <div 
                   key={day.toString()}
                   className={`
-                    relative h-10 rounded border
+                    relative ${viewMode === "week" ? "h-16" : "h-14"} rounded border
                     ${isToday 
                       ? "border-primary bg-primary/5 text-primary" 
                       : hasBills
@@ -117,28 +165,52 @@ export default function CalendarView({ bills }: CalendarViewProps) {
                     }
                   `}
                 >
-                  <span className={`text-sm absolute top-1 left-1.5 ${isToday ? "font-bold" : ""}`}>
-                    {dayOfMonth}
-                  </span>
-                  
-                  {/* Bill indicators */}
-                  {hasBills && (
-                    <div className="absolute bottom-1 right-1 flex flex-wrap justify-end gap-0.5">
-                      {dayBills.map((bill) => (
-                        <div 
-                          key={bill.id}
-                          className={`
-                            w-3 h-3 rounded-full border
-                            ${bill.name === "Rent" 
-                              ? "bg-red-400 border-red-500" 
-                              : "bg-amber-400 border-amber-500"
-                            }
-                          `}
-                          title={`${bill.name}: $${Number(bill.amount).toFixed(2)}`}
-                        />
-                      ))}
-                    </div>
-                  )}
+                  <div className="flex flex-col h-full">
+                    <span className={`text-sm p-1 ${isToday ? "font-bold" : ""}`}>
+                      {dayOfMonth}
+                    </span>
+                    
+                    {/* Bill indicators */}
+                    {hasBills && (
+                      <div className={`
+                        ${viewMode === "week" 
+                          ? "flex flex-col px-1 gap-1 mt-auto mb-1" 
+                          : "absolute bottom-1 right-1 flex flex-wrap justify-end gap-0.5"
+                        }
+                      `}>
+                        {dayBills.map((bill) => (
+                          viewMode === "week" ? (
+                            <div 
+                              key={bill.id}
+                              className="flex items-center gap-1 text-xs"
+                              title={`${bill.name}: $${Number(bill.amount).toFixed(2)}`}
+                            >
+                              <div className={`
+                                w-2 h-2 rounded-full
+                                ${bill.name === "Rent" 
+                                  ? "bg-red-400" 
+                                  : "bg-amber-400"
+                                }
+                              `}></div>
+                              <span className="truncate">{bill.name}</span>
+                            </div>
+                          ) : (
+                            <div 
+                              key={bill.id}
+                              className={`
+                                w-3 h-3 rounded-full border
+                                ${bill.name === "Rent" 
+                                  ? "bg-red-400 border-red-500" 
+                                  : "bg-amber-400 border-amber-500"
+                                }
+                              `}
+                              title={`${bill.name}: $${Number(bill.amount).toFixed(2)}`}
+                            />
+                          )
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}
