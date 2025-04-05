@@ -228,9 +228,18 @@ export default function IncomeBills({
 
         {/* Income List */}
         <div className="mt-4">
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
-            Your Income
-          </h3>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-base font-medium text-gray-700 uppercase tracking-wider">
+              Your Income
+            </h3>
+            <Button
+              onClick={onAddIncome}
+              className="bg-green-600 hover:bg-green-700"
+              size="sm"
+            >
+              <Plus className="mr-1 h-4 w-4" /> Add Income
+            </Button>
+          </div>
           {income.length > 0 ? (
             <ul className="divide-y divide-gray-200">
               {income.map((inc) => (
@@ -272,15 +281,7 @@ export default function IncomeBills({
             <p className="text-sm text-gray-500 py-2">No income added yet.</p>
           )}
           
-          {/* Income Management Buttons */}
-          <div className="flex mt-3">
-            <Button
-              onClick={onAddIncome}
-              className="w-full bg-green-600 hover:bg-green-700"
-            >
-              <Plus className="mr-2 h-4 w-4" /> Add Income
-            </Button>
-          </div>
+          
         </div>
       </CardContent>
     </Card>
