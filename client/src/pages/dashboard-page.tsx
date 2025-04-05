@@ -96,21 +96,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-slate-50">
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-white shadow-md border-b border-blue-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-              <span className="text-primary font-bold text-2xl mr-8 cursor-pointer">pulse</span>
+              <span className="text-primary font-bold text-3xl mr-8 cursor-pointer drop-shadow-sm">pulse</span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-sm font-medium text-gray-500">Welcome, {user?.name}</span>
+            <div className="bg-primary/10 px-3 py-1.5 rounded-full">
+              <span className="text-sm font-medium text-primary">Welcome, {user?.name}</span>
+            </div>
             <Button
               variant="outline"
               size="sm"
+              className="border-primary/20 hover:bg-primary/10 hover:text-primary transition-all duration-200"
               onClick={() => logoutMutation.mutate()}
               disabled={logoutMutation.isPending}
             >
@@ -125,56 +128,62 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Dashboard Content */}
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex-grow">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex-grow">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column - Income & Bills */}
           <div className="lg:col-span-1">
-            <IncomeBills 
-              bills={bills || []} 
-              income={income || []} 
-              onAddBill={() => setAddBillOpen(true)}
-              onDeleteBill={(billId) => {
-                fetch(`/api/bills/${billId}`, {
-                  method: 'DELETE',
-                }).then(response => {
-                  if (response.ok) {
-                    refetchBills();
-                    toast({ title: 'Bill deleted successfully!'});
-                  } else {
+            <div className="transform transition-all duration-200 hover:translate-y-[-5px]">
+              <IncomeBills 
+                bills={bills || []} 
+                income={income || []} 
+                onAddBill={() => setAddBillOpen(true)}
+                onDeleteBill={(billId) => {
+                  fetch(`/api/bills/${billId}`, {
+                    method: 'DELETE',
+                  }).then(response => {
+                    if (response.ok) {
+                      refetchBills();
+                      toast({ title: 'Bill deleted successfully!'});
+                    } else {
+                      toast({ title: 'Failed to delete bill', variant: 'destructive' });
+                    }
+                  }).catch(error => {
+                    console.error("Error deleting bill:", error);
                     toast({ title: 'Failed to delete bill', variant: 'destructive' });
-                  }
-                }).catch(error => {
-                  console.error("Error deleting bill:", error);
-                  toast({ title: 'Failed to delete bill', variant: 'destructive' });
-                });
-              }}
-              onAddIncome={() => setAddIncomeOpen(true)}
-              onDeleteIncome={(incomeId) => {
-                fetch(`/api/income/${incomeId}`, {
-                  method: 'DELETE',
-                }).then(response => {
-                  if (response.ok) {
-                    refetchIncome();
-                    toast({ title: 'Income deleted successfully!'});
-                  } else {
+                  });
+                }}
+                onAddIncome={() => setAddIncomeOpen(true)}
+                onDeleteIncome={(incomeId) => {
+                  fetch(`/api/income/${incomeId}`, {
+                    method: 'DELETE',
+                  }).then(response => {
+                    if (response.ok) {
+                      refetchIncome();
+                      toast({ title: 'Income deleted successfully!'});
+                    } else {
+                      toast({ title: 'Failed to delete income', variant: 'destructive' });
+                    }
+                  }).catch(error => {
+                    console.error("Error deleting income:", error);
                     toast({ title: 'Failed to delete income', variant: 'destructive' });
-                  }
-                }).catch(error => {
-                  console.error("Error deleting income:", error);
-                  toast({ title: 'Failed to delete income', variant: 'destructive' });
-                });
-              }}
-              onUpdateBalance={() => setBalanceModalOpen(true)}
-            />
+                  });
+                }}
+                onUpdateBalance={() => setBalanceModalOpen(true)}
+              />
+            </div>
           </div>
 
           {/* Right columns - Calendar & Chatbot */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Calendar */}
-            <CalendarView bills={bills || []} />
+            <div className="transform transition-all duration-200 hover:translate-y-[-5px]">
+              <CalendarView bills={bills || []} />
+            </div>
 
             {/* Chatbot */}
-            <Chatbot bills={bills || []} />
+            <div className="transform transition-all duration-200 hover:translate-y-[-5px]">
+              <Chatbot bills={bills || []} />
+            </div>
           </div>
         </div>
       </main>
