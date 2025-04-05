@@ -171,7 +171,7 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-primary hover:bg-primary-600"
+              className="bg-primary hover:bg-primary-600 w-[105px]"
               size="sm"
             >
               <Plus className="mr-1 h-4 w-4" /> Add Bill
@@ -234,7 +234,7 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddIncome}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 w-[105px]"
               size="sm"
             >
               <Plus className="mr-1 h-4 w-4" /> Add Income
