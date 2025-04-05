@@ -171,10 +171,11 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-primary hover:bg-primary-600 w-[105px]"
-              size="sm"
+              className="bg-primary hover:bg-primary-600 h-8 w-8 p-0"
+              size="icon"
             >
-              <Plus className="mr-1 h-4 w-4" /> Add Bill
+              <Plus className="h-4 w-4" />
+              <span className="sr-only">Add Bill</span>
             </Button>
           </div>
           {bills.length > 0 ? (
@@ -234,10 +235,11 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddIncome}
-              className="bg-green-600 hover:bg-green-700 w-[105px]"
-              size="sm"
+              className="bg-green-600 hover:bg-green-700 h-8 w-8 p-0"
+              size="icon"
             >
-              <Plus className="mr-1 h-4 w-4" /> Add Income
+              <Plus className="h-4 w-4" />
+              <span className="sr-only">Add Income</span>
             </Button>
           </div>
           {income.length > 0 ? (
