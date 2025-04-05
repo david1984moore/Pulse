@@ -108,10 +108,7 @@ export default function IncomeBills({
       />
       
       <Card className="h-full">
-        <CardHeader>
-          <CardTitle>Income & Bills</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5 pt-6">
         {/* Account Balance - Primary Feature */}
         <div className="bg-primary/10 p-4 rounded-md border border-primary/30">
           <div className="flex justify-between items-center">
