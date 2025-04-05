@@ -20,9 +20,6 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-              <Link href="/">
-                <span className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">Home</span>
-              </Link>
               {user ? (
                 <>
                   <Link href="/dashboard">
