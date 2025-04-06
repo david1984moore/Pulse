@@ -50,43 +50,43 @@ export function EkgAnimation({
   const animationStyles = `
     @keyframes drawLeadingPoint {
       0% {
-        stroke-dasharray: 6, ${width * 3};
+        stroke-dasharray: 8, ${width * 3};
         stroke-dashoffset: ${width * 3};
       }
       20% {
-        stroke-dasharray: 6, ${width * 3};
-        stroke-dashoffset: ${width * 2.4}; /* Slower at beginning */
+        stroke-dasharray: 8, ${width * 3};
+        stroke-dashoffset: ${width * 2.5}; /* Slower at beginning */
       }
       40% {
-        stroke-dasharray: 6, ${width * 3};
-        stroke-dashoffset: ${width * 1.8}; /* Speed up before peak */
+        stroke-dasharray: 8, ${width * 3};
+        stroke-dashoffset: ${width * 2.0}; /* Speed up before peak */
       }
       60% {
-        stroke-dasharray: 6, ${width * 3};
-        stroke-dashoffset: ${width * 1.2}; /* Faster at peak */
+        stroke-dasharray: 8, ${width * 3};
+        stroke-dashoffset: ${width * 1.5}; /* Faster at peak */
       }
       80% {
-        stroke-dasharray: 6, ${width * 3};
-        stroke-dashoffset: ${width * 0.6}; /* Even faster going down */
+        stroke-dasharray: 8, ${width * 3};
+        stroke-dashoffset: ${width * 0.7}; /* Even faster going down */
       }
-      90% {
-        stroke-dasharray: 6, ${width * 3};
-        stroke-dashoffset: ${width * 0.3}; /* Almost done */
+      95% {
+        stroke-dasharray: 8, ${width * 3};
+        stroke-dashoffset: ${width * 0.2}; /* Almost done */
       }
       100% {
-        stroke-dasharray: 6, ${width * 3};
+        stroke-dasharray: 8, ${width * 3};
         stroke-dashoffset: 0; /* Leading point completes */
       }
     }
     
     @keyframes completeTail {
-      0%, 20% {
-        /* Keep dash array unchanged for first 20% of animation - tail doesn't start yet */
-        stroke-dasharray: 6, ${width * 3};
+      0%, 40% {
+        /* Keep dash array unchanged for first 40% of animation - tail doesn't start for longer */
+        stroke-dasharray: 8, ${width * 3};
       }
-      85% {
-        /* Start the tail later, but still keep the gap before completion */
-        stroke-dasharray: 6, ${width * 3};
+      90% {
+        /* Start the tail much later, but still keep the gap before completion */
+        stroke-dasharray: 8, ${width * 3};
       }
       100% {
         stroke-dasharray: 0, 0; /* Tail catches up and completes */
@@ -96,7 +96,7 @@ export function EkgAnimation({
     .animate-draw {
       animation: 
         drawLeadingPoint ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
-        completeTail ${duration * 1.2}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards;
+        completeTail ${duration * 1.25}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards;
     }
   `;
   
@@ -125,7 +125,7 @@ export function EkgAnimation({
           points={points}
           fill="none"
           stroke={color}
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           className="animate-draw"
