@@ -81,14 +81,7 @@ async function migrateSecurityColumns() {
   }
 }
 
-// If this file is run directly, execute the migration
-if (require.main === module) {
-  migrateSecurityColumns()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error('Migration failed:', error);
-      process.exit(1);
-    });
-}
+// For ES modules, we don't have require.main anymore
+// This will be run when imported directly from run-migration.ts
 
 export { migrateSecurityColumns };

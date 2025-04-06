@@ -158,6 +158,110 @@ export default function AuthPage() {
     });
   }
   
+  // Function to check if an email is already taken (for real-time validation)
+  const [emailCheckState, setEmailCheckState] = useState<{
+    checking: boolean;
+    taken: boolean;
+    email: string;
+  }>({
+    checking: false,
+    taken: false,
+    email: '',
+  });
+  
+  // Reset form when switching between login and signup
+  useEffect(() => {
+    // Reset any validation/error messages when toggling between forms
+    if (isLogin) {
+      loginForm.reset();
+      loginMutation.reset();
+    } else {
+      signupForm.reset();
+      registerMutation.reset();
+      setEmailCheckState({
+        checking: false,
+        taken: false,
+        email: ''
+      });
+    }
+  }, [isLogin]);
+  
+  // Effect to check if email already exists when user types
+  useEffect(() => {
+    if (!isLogin) { // Only in signup mode
+      const emailValue = signupForm.getValues('email');
+      
+      // Skip the check for emails that are too short or invalid format
+      if (!emailValue || emailValue.length < 5 || !emailRegex.test(emailValue)) {
+        setEmailCheckState({
+          checking: false,
+          taken: false,
+          email: emailValue
+        });
+        return;
+      }
+      
+      // Avoid duplicate checks and only check valid emails
+      if (emailValue !== emailCheckState.email && emailRegex.test(emailValue)) {
+        const normalizedEmail = emailValue.toLowerCase().trim();
+        
+        // Only check valid emails with valid domains
+        const domain = normalizedEmail.split('@')[1]?.toLowerCase();
+        if (!domain || 
+            (!validEmailDomains.includes(domain) && !allowedTestDomains.includes(domain)) || 
+            invalidDomains.includes(domain) || 
+            domain.match(/(.)\1{2,}/)) {
+          return;
+        }
+        
+        // Set checking state
+        setEmailCheckState({
+          checking: true,
+          taken: false,
+          email: normalizedEmail
+        });
+        
+        // Create a debounced function to avoid too many requests
+        const checkTimer = setTimeout(async () => {
+          try {
+            // Use CSRF-protected API request helper
+            const response = await fetch(`/api/email-check?email=${encodeURIComponent(normalizedEmail)}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (!response.ok) {
+              console.error('Email check failed:', response.statusText);
+              setEmailCheckState(prevState => ({
+                ...prevState,
+                checking: false
+              }));
+              return;
+            }
+            
+            const data = await response.json();
+            setEmailCheckState({
+              checking: false,
+              taken: data.exists,
+              email: normalizedEmail
+            });
+          } catch (error) {
+            console.error('Email check error:', error);
+            setEmailCheckState(prevState => ({
+              ...prevState,
+              checking: false
+            }));
+          }
+        }, 500); // 500ms debounce
+        
+        // Cleanup the timer if component unmounts or email changes
+        return () => clearTimeout(checkTimer);
+      }
+    }
+  }, [isLogin, signupForm.watch('email')]);
+  
   // Redirect to dashboard if already logged in
   if (user) {
     return <Redirect to="/dashboard" />;
@@ -460,6 +564,10 @@ export default function AuthPage() {
                       const errorMessage = registerMutation.error?.message || '';
                       const isEmailTakenError = errorMessage.includes('already registered') || 
                                               errorMessage.includes('email address has been taken');
+                                              
+                      // Check real-time email validation status
+                      const isCheckingEmail = emailCheckState.checking;
+                      const isEmailTaken = emailCheckState.taken;
                       
                       return (
                         <FormItem>
@@ -469,10 +577,44 @@ export default function AuthPage() {
                               <Input 
                                 placeholder="your@email.com" 
                                 {...field} 
-                                className={isEmailTakenError ? "border-red-500 pr-10" : "pr-10"}
+                                className={
+                                  isEmailTakenError || isEmailTaken 
+                                    ? "border-red-500 pr-10" 
+                                    : isCheckingEmail 
+                                      ? "border-yellow-300 pr-10" 
+                                      : "pr-10"
+                                }
                               />
                             </FormControl>
-                            {isEmailValid && field.value && !isEmailTakenError && (
+                            
+                            {/* Spinner for checking email */}
+                            {isCheckingEmail && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  className="animate-spin h-5 w-5 text-yellow-500" 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  fill="none" 
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle 
+                                    className="opacity-25" 
+                                    cx="12" 
+                                    cy="12" 
+                                    r="10" 
+                                    stroke="currentColor" 
+                                    strokeWidth="4"
+                                  />
+                                  <path 
+                                    className="opacity-75" 
+                                    fill="currentColor" 
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                            
+                            {/* Checkmark for valid email */}
+                            {isEmailValid && field.value && !isEmailTakenError && !isEmailTaken && !isCheckingEmail && (
                               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                                 <svg 
                                   xmlns="http://www.w3.org/2000/svg" 
@@ -488,7 +630,9 @@ export default function AuthPage() {
                                 </svg>
                               </div>
                             )}
-                            {isEmailTakenError && (
+                            
+                            {/* X mark for taken email */}
+                            {(isEmailTakenError || isEmailTaken) && (
                               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                                 <svg 
                                   xmlns="http://www.w3.org/2000/svg" 
@@ -505,9 +649,15 @@ export default function AuthPage() {
                               </div>
                             )}
                           </div>
+                          
+                          {/* Error messages */}
                           {isEmailTakenError ? (
                             <p className="text-sm font-medium text-red-500 mt-1">
                               {errorMessage}
+                            </p>
+                          ) : isEmailTaken ? (
+                            <p className="text-sm font-medium text-red-500 mt-1">
+                              This email is already registered. Please use a different email.
                             </p>
                           ) : (
                             <FormMessage />
@@ -664,7 +814,7 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full mt-8" 
-                    disabled={registerMutation.isPending || !passwordRequirementsMet()}
+                    disabled={registerMutation.isPending || !passwordRequirementsMet() || emailCheckState.taken || emailCheckState.checking}
                   >
                     {registerMutation.isPending ? (
                       <>

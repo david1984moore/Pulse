@@ -38,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const csrfProtection = csrf({ cookie: true });
   
   // Define which routes to exempt from CSRF protection
-  const csrfExemptRoutes = ['/api/login', '/api/register', '/api/logout'];
+  const csrfExemptRoutes = ['/api/login', '/api/register', '/api/logout', '/api/email-check'];
   
   // Add route to get CSRF token
   app.get('/api/csrf-token', csrfProtection, (req, res) => {
@@ -70,6 +70,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Setup auth routes
   setupAuth(app);
+  
+  // Email availability check endpoint
+  app.get("/api/email-check", async (req, res) => {
+    try {
+      const email = req.query.email as string;
+      
+      if (!email) {
+        return res.status(400).json({ 
+          message: "Email parameter is required" 
+        });
+      }
+      
+      // Normalize email for consistent comparison
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      // Check if email exists in the database
+      const existingUser = await storage.getUserByEmail(normalizedEmail);
+      
+      // Return result (don't expose user details, just whether email exists)
+      res.json({
+        exists: !!existingUser
+      });
+    } catch (error) {
+      console.error("Email check error:", error);
+      res.status(500).json({ message: "Error checking email availability" });
+    }
+  });
 
   // Bill routes
   app.get("/api/bills", async (req, res) => {
