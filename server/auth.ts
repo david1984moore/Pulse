@@ -98,10 +98,13 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
+      console.log("==========================================================");
+      console.log("Registration attempt with request body:", req.body);
       const { name, email, password } = req.body;
       
       // Step 1: Basic format validation (quick check)
       if (!email || !isValidEmailFormat(email)) {
+        console.log(`REGISTER API: Email format invalid: '${email}'`);
         return res.status(400).json({ 
           message: "Please enter a valid email address format. Make sure you're using a real email provider." 
         });
@@ -110,51 +113,66 @@ export function setupAuth(app: Express) {
       // Step 2: Full validation with domain checking
       const validation = await validateEmail(email);
       if (!validation.isValid) {
+        console.log(`REGISTER API: Email validation failed: '${email}', reason: ${validation.reason}`);
         return res.status(400).json({ 
           message: `Invalid email: ${validation.reason || 'Please use a valid email address'}`
         });
       }
       
-      // Check if email is already in use - normalize to lowercase for comparison
+      // Normalize email for consistent handling
       const normalizedEmail = email.toLowerCase().trim();
       console.log(`REGISTER API: Checking if email exists: '${normalizedEmail}'`);
       
       try {
-        // Force a thorough check for existing email
+        // With our new database constraint, a simple check is enough
         console.log(`REGISTER API: About to call storage.getUserByEmail with '${normalizedEmail}'`);
         const existingUser = await storage.getUserByEmail(normalizedEmail);
         
-        console.log(`REGISTER API: Existing user found: ${!!existingUser}`, existingUser ? `ID: ${existingUser.id}, Email: '${existingUser.email}'` : '');
-        
         if (existingUser) {
-          console.log(`REGISTER API: Rejecting registration - email exists: '${normalizedEmail}'`);
+          console.log(`REGISTER API: DUPLICATE EMAIL DETECTED: '${normalizedEmail}' matches existing email: '${existingUser.email}'`);
           return res.status(400).json({ 
             message: "This email is already registered. Choose a different email." 
           });
         }
-      } catch (error) {
-        console.error("Error checking for existing email:", error);
-        return res.status(500).json({ 
-          message: "An error occurred while checking email availability." 
-        });
+        
+        console.log(`REGISTER API: No duplicates found, proceeding with registration`);
+      } catch (checkError) {
+        console.error(`REGISTER API: Error checking for existing email:`, checkError);
+        // Try to continue with registration, but the database constraint will prevent duplicates
       }
 
       const hashedPassword = await hashPassword(password);
-      // Create new user with empty values and normalized email
-      const user = await storage.createUser({
-        name,
-        email: normalizedEmail, // Use the normalized email to ensure consistency
-        password: hashedPassword,
-      });
       
-      // No sample data will be created for new users
-      // This ensures all values start at 0 on the dashboard
-
-      req.login(user, (err) => {
-        if (err) return next(err);
-        return res.status(201).json(user);
-      });
+      try {
+        // Create new user with empty values and normalized email
+        const user = await storage.createUser({
+          name,
+          email: normalizedEmail, // Always store normalized email
+          password: hashedPassword,
+        });
+        
+        // No sample data will be created for new users
+        // This ensures all values start at 0 on the dashboard
+  
+        req.login(user, (err) => {
+          if (err) return next(err);
+          return res.status(201).json(user);
+        });
+      } catch (createError: any) {
+        console.error("REGISTER API: Error creating user:", createError);
+        
+        // Check if this is a duplicate key error (unique constraint violation)
+        if (createError.code === '23505' && createError.constraint.includes('email')) {
+          return res.status(400).json({ 
+            message: "This email is already registered. Choose a different email." 
+          });
+        }
+        
+        // For any other errors, pass to global error handler
+        next(createError);
+      }
     } catch (error) {
+      console.error("REGISTER API: Error in registration process:", error);
       next(error);
     }
   });

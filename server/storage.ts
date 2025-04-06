@@ -33,6 +33,9 @@ export interface IStorage {
   updateIncome(income: { id: number; source: string; amount: string; frequency: string }): Promise<Income>;
   deleteIncome(incomeId: number): Promise<void>;
   
+  // Database access
+  getDb(): any;
+  
   // Session store
   sessionStore: session.Store;
 }
@@ -69,34 +72,37 @@ export class MemStorage implements IStorage {
     
     // Normalize email for consistent comparison
     const normalizedEmail = email.toLowerCase().trim();
-    console.log(`MemStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
+    console.log(`\n>> MemStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
     
     const allUsers = Array.from(this.users.values());
-    console.log(`Found ${allUsers.length} total users in memory storage`);
+    console.log(`\n>> All users in memory (${allUsers.length}):`);
     
     // Loop through each user and log their emails for debugging
     allUsers.forEach(u => {
-      console.log(`User in memory: ID=${u.id}, Email='${u.email}', Normalized='${u.email.toLowerCase().trim()}'`);
+      console.log(`    User ID=${u.id}, Email='${u.email}', Normalized='${u.email.toLowerCase().trim()}'`);
     });
+    
+    console.log(`\n>> Executing case-insensitive email search for: '${normalizedEmail}'`);
     
     // Strict case-insensitive comparison
     const user = allUsers.find(u => {
       const dbEmailNormalized = (u.email || '').toLowerCase().trim();
       const match = dbEmailNormalized === normalizedEmail;
-      console.log(`Comparing: '${dbEmailNormalized}' with '${normalizedEmail}', match: ${match}`);
+      console.log(`    Comparing: '${dbEmailNormalized}' with '${normalizedEmail}', match: ${match}`);
       return match;
     });
     
     if (user) {
-      console.log(`User found by email: ID=${user.id}, Email='${user.email}'`);
+      console.log(`>> MATCH FOUND: User ID=${user.id}, Email='${user.email}'`);
     } else {
-      console.log(`No user found with email '${normalizedEmail}'`);
+      console.log(`>> NO MATCH: No user found with email '${normalizedEmail}'`);
     }
     
     return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    console.log(`\n>> MemStorage.createUser: Creating user with email: '${insertUser.email}'`);
     const id = this.userId++;
     const user: User = { 
       ...insertUser, 
@@ -106,6 +112,7 @@ export class MemStorage implements IStorage {
       last_balance_update: null
     };
     this.users.set(id, user);
+    console.log(`>> User created: ID=${user.id}, Email='${user.email}'`);
     return user;
   }
 
@@ -210,22 +217,35 @@ export class MemStorage implements IStorage {
   async deleteIncome(incomeId: number): Promise<void> {
     this.income.delete(incomeId);
   }
+  
+  // This is just a stub for the MemStorage implementation
+  // since it doesn't use a real database
+  getDb(): any {
+    console.log("MemStorage.getDb called - not supported for in-memory storage");
+    return null;
+  }
 }
 
 // New database implementation
 export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
+  private pool: Pool;
 
   constructor() {
     // Create a pool for session store
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
     
     // Set up PostgreSQL session store
     this.sessionStore = new PostgresSessionStore({
-      pool,
+      pool: this.pool,
       createTableIfMissing: true,
       tableName: 'session',
     });
+  }
+  
+  // Expose the db query method for direct SQL execution
+  getDb() {
+    return this.pool;
   }
 
   // User methods
@@ -248,32 +268,44 @@ export class DatabaseStorage implements IStorage {
       
       // Normalize email for consistent comparison
       const normalizedEmail = email.toLowerCase().trim();
-      console.log(`DatabaseStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
+      console.log(`\n>> DatabaseStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
       
-      // Use a SQL query builder with LOWER function for case-insensitive comparison
+      // First, let's query ALL users to see what's in the database
+      const allUsers = await db.select().from(users);
+      console.log(`\n>> All users in database (${allUsers.length}):`);
+      allUsers.forEach(u => {
+        console.log(`    User ID=${u.id}, Email='${u.email}', Normalized='${u.email.toLowerCase().trim()}'`);
+      });
+      
+      // Use a direct SQL query with LOWER function for case-insensitive comparison
+      console.log(`\n>> Executing case-insensitive email search: LOWER(email) = LOWER('${normalizedEmail}')`);
+      
       const result = await db
         .select()
         .from(users)
         .where(sql`LOWER(${users.email}) = LOWER(${normalizedEmail})`);
-      console.log("Query result:", result);
+      
+      console.log(`\n>> Query returned ${result.length} results`);
       
       if (result.length > 0) {
         const user = result[0] as User;
-        console.log(`User found by email: ID=${user.id}, Email='${user.email}'`);
+        console.log(`>> MATCH FOUND: User ID=${user.id}, Email='${user.email}'`);
         return user;
       }
       
-      console.log(`No user found with email '${normalizedEmail}'`);
+      console.log(`>> NO MATCH: No user found with email '${normalizedEmail}'`);
       return undefined;
     } catch (error) {
-      console.error("getUserByEmail error:", error);
+      console.error(">> ERROR in getUserByEmail:", error);
       console.error(error);
       return undefined;
     }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    console.log(`\n>> DatabaseStorage.createUser: Creating user with email: '${insertUser.email}'`);
     const [user] = await db.insert(users).values(insertUser).returning();
+    console.log(`>> User created: ID=${user.id}, Email='${user.email}'`);
     return user;
   }
 
