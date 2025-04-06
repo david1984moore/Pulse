@@ -44,39 +44,54 @@ export function EkgAnimation({
     [width, height/2]                    // End with flat line
   ].map(point => point.join(',')).join(' ');
   
-  // Create leading point animation effect
-  // Use a combination of dash array and dash offset for the drawing effect
-  // This creates the appearance of a tracing line with a "pen point" leading the way
+  // Create dual-phase animation effect
+  // First keyframes control the leading point (pen)
+  // Second keyframes control the tail completion
   const animationStyles = `
-    @keyframes draw {
+    @keyframes drawLeadingPoint {
       0% {
         stroke-dasharray: 3, ${width * 3};
         stroke-dashoffset: ${width * 3};
       }
       20% {
-        stroke-dasharray: 4, ${width * 3};
+        stroke-dasharray: 3, ${width * 3};
         stroke-dashoffset: ${width * 2.4}; /* Slower at beginning */
       }
       40% {
-        stroke-dasharray: 6, ${width * 3};
+        stroke-dasharray: 3, ${width * 3};
         stroke-dashoffset: ${width * 1.8}; /* Speed up before peak */
       }
       60% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 3, ${width * 3};
         stroke-dashoffset: ${width * 1.2}; /* Faster at peak */
       }
       80% {
-        stroke-dasharray: 10, ${width * 3};
+        stroke-dasharray: 3, ${width * 3};
         stroke-dashoffset: ${width * 0.6}; /* Even faster going down */
       }
+      90% {
+        stroke-dasharray: 3, ${width * 3};
+        stroke-dashoffset: ${width * 0.3}; /* Almost done */
+      }
       100% {
-        stroke-dasharray: 0, ${width * 3};
-        stroke-dashoffset: 0; /* Complete the trace */
+        stroke-dasharray: 3, ${width * 3};
+        stroke-dashoffset: 0; /* Leading point completes */
+      }
+    }
+    
+    @keyframes completeTail {
+      0%, 85% {
+        stroke-dasharray: 3, ${width * 3};
+      }
+      100% {
+        stroke-dasharray: 0, 0; /* Tail catches up and completes */
       }
     }
     
     .animate-draw {
-      animation: draw ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+      animation: 
+        drawLeadingPoint ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
+        completeTail ${duration * 1.15}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards;
     }
   `;
   
