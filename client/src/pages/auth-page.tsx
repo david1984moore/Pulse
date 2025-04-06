@@ -58,7 +58,7 @@ const loginSchema = z.object({
       
       // Only allow emails from our whitelist of valid domains or test domains
       return validEmailDomains.includes(domain) || allowedTestDomains.includes(domain);
-    }, "Please use a valid email from a major provider (gmail.com, yahoo.com, outlook.com, etc.)"),
+    }, "Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   rememberMe: z.boolean().optional(),
 });
@@ -85,13 +85,13 @@ const signupSchema = z.object({
       
       // Only allow emails from our whitelist of valid domains or test domains
       return validEmailDomains.includes(domain) || allowedTestDomains.includes(domain);
-    }, "Please use a valid email from a major provider (gmail.com, yahoo.com, outlook.com, etc.)")
+    }, "Please enter a valid email address")
 ,
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[0-9]/, "Password must include at least one number")
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must include a special character"),
+    .min(8, "At least 8 characters")
+    .regex(/[0-9]/, "Include a number")
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Include a special character"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -212,29 +212,82 @@ export default function AuthPage() {
                   <FormField
                     control={loginForm.control}
                     name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('emailLabel')}</FormLabel>
-                        <FormControl>
-                          <Input placeholder="your@email.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      // Check email based on our validation rules
+                      const emailValid = emailRegex.test(field.value);
+                      const domain = field.value.split('@')[1]?.toLowerCase();
+                      const isValidDomain = domain && (validEmailDomains.includes(domain) || allowedTestDomains.includes(domain));
+                      const isInvalidDomain = domain && invalidDomains.includes(domain);
+                      const hasSuspiciousRepeats = domain && domain.match(/(.)\1{2,}/);
+                      
+                      // Email is valid if it passes regex and domain checks
+                      const isEmailValid = emailValid && isValidDomain && !isInvalidDomain && !hasSuspiciousRepeats;
+                      
+                      return (
+                        <FormItem>
+                          <FormLabel>{t('emailLabel')}</FormLabel>
+                          <div className="relative">
+                            <FormControl>
+                              <Input placeholder="your@email.com" {...field} />
+                            </FormControl>
+                            {isEmailValid && field.value && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                   
                   <FormField
                     control={loginForm.control}
                     name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('passwordLabel')}</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      // Password should be at least 6 chars for login
+                      const isPasswordValid = field.value && field.value.length >= 6;
+                      
+                      return (
+                        <FormItem>
+                          <FormLabel>{t('passwordLabel')}</FormLabel>
+                          <div className="relative">
+                            <FormControl>
+                              <Input type="password" {...field} />
+                            </FormControl>
+                            {isPasswordValid && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                   
                   <div className="flex items-center justify-between">
@@ -287,29 +340,82 @@ export default function AuthPage() {
                   <FormField
                     control={signupForm.control}
                     name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('nameLabel')}</FormLabel>
-                        <FormControl>
-                          <Input placeholder="John Doe" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      // Check if name is valid
+                      const nameValid = field.value.length >= 2;
+                      
+                      return (
+                        <FormItem>
+                          <FormLabel>{t('nameLabel')}</FormLabel>
+                          <div className="relative">
+                            <FormControl>
+                              <Input placeholder="John Doe" {...field} />
+                            </FormControl>
+                            {nameValid && field.value && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                   
                   <FormField
                     control={signupForm.control}
                     name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('emailLabel')}</FormLabel>
-                        <FormControl>
-                          <Input placeholder="your@email.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      // Check email based on our validation rules
+                      const emailValid = emailRegex.test(field.value);
+                      const domain = field.value.split('@')[1]?.toLowerCase();
+                      const isValidDomain = domain && (validEmailDomains.includes(domain) || allowedTestDomains.includes(domain));
+                      const isInvalidDomain = domain && invalidDomains.includes(domain);
+                      const hasSuspiciousRepeats = domain && domain.match(/(.)\1{2,}/);
+                      
+                      // Email is valid if it passes regex and domain checks
+                      const isEmailValid = emailValid && isValidDomain && !isInvalidDomain && !hasSuspiciousRepeats;
+                      
+                      return (
+                        <FormItem>
+                          <FormLabel>{t('emailLabel')}</FormLabel>
+                          <div className="relative">
+                            <FormControl>
+                              <Input placeholder="your@email.com" {...field} />
+                            </FormControl>
+                            {isEmailValid && field.value && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                   
                   <FormField
@@ -321,13 +427,32 @@ export default function AuthPage() {
                       const hasMinLength = password.length >= 8;
                       const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
                       const hasNumber = /[0-9]/.test(password);
+                      const isPasswordValid = hasMinLength && hasSpecialChar && hasNumber;
                       
                       return (
                         <FormItem>
                           <FormLabel>{t('passwordLabel')}</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
+                          <div className="relative">
+                            <FormControl>
+                              <Input type="password" {...field} />
+                            </FormControl>
+                            {isPasswordValid && field.value && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
                           <div className="mt-2 space-y-1 text-xs">
                             <div className="flex items-center space-x-2">
                               <span className={hasMinLength ? "text-green-500" : "text-red-500"}>
