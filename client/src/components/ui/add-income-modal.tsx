@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { incomeFormSchema } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,7 @@ type FormValues = z.infer<typeof incomeFormSchema>;
 
 export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalProps) {
   const { toast } = useToast();
+  const { t, language } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
@@ -63,8 +65,8 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
       queryClient.invalidateQueries({ queryKey: ["/api/income"] });
       
       toast({
-        title: "Income added",
-        description: "Your income has been added successfully",
+        title: language === 'en' ? "Income added" : "Ingreso añadido",
+        description: language === 'en' ? "Your income has been added successfully" : "Tu ingreso ha sido añadido exitosamente",
       });
       
       // Reset form and close modal
@@ -73,8 +75,11 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
     } catch (error) {
       console.error("Add income error:", error);
       toast({
-        title: "Failed to add income",
-        description: error instanceof Error ? error.message : "There was an error adding your income. Please try again.",
+        title: language === 'en' ? "Failed to add income" : "Error al añadir ingreso",
+        description: error instanceof Error ? error.message : 
+          language === 'en' ? 
+          "There was an error adding your income. Please try again." : 
+          "Hubo un error al añadir tu ingreso. Por favor, inténtalo de nuevo.",
         variant: "destructive",
       });
     } finally {
@@ -86,7 +91,7 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Income</DialogTitle>
+          <DialogTitle>{t('addIncomeTitle')}</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
@@ -96,9 +101,9 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
               name="source"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Income Source</FormLabel>
+                  <FormLabel>{t('sourceLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Job Title / Income Source" {...field} />
+                    <Input placeholder={t('sourcePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -110,13 +115,13 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount</FormLabel>
+                  <FormLabel>{t('amountLabel')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         $
                       </span>
-                      <Input className="pl-7" placeholder="0.00" {...field} />
+                      <Input className="pl-7" placeholder={t('amountPlaceholder').replace('e.g. $1000', '0.00')} {...field} />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -129,18 +134,18 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
               name="frequency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Frequency</FormLabel>
+                  <FormLabel>{t('frequencyLabel')}</FormLabel>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a frequency" />
+                        <SelectValue placeholder={language === 'en' ? "Select a frequency" : "Selecciona una frecuencia"} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Weekly">Weekly</SelectItem>
-                      <SelectItem value="Bi-weekly">Bi-weekly</SelectItem>
-                      <SelectItem value="Monthly">Monthly</SelectItem>
-                      <SelectItem value="Custom">Custom</SelectItem>
+                      <SelectItem value="Weekly">{t('weekly')}</SelectItem>
+                      <SelectItem value="Bi-weekly">{t('bi-weekly')}</SelectItem>
+                      <SelectItem value="Monthly">{t('monthly')}</SelectItem>
+                      <SelectItem value="Custom">{language === 'en' ? "Custom" : "Personalizado"}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -150,16 +155,16 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
             
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting} className="bg-green-600 hover:bg-green-700">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    {language === 'en' ? "Saving..." : "Guardando..."}
                   </>
                 ) : (
-                  "Save Income"
+                  language === 'en' ? "Save Income" : "Guardar Ingreso"
                 )}
               </Button>
             </DialogFooter>

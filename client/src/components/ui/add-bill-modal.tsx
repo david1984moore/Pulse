@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { billFormSchema } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,7 @@ type FormValues = z.infer<typeof billFormSchema>;
 
 export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) {
   const { toast } = useToast();
+  const { t, language } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
@@ -63,8 +65,8 @@ export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) 
       queryClient.invalidateQueries({ queryKey: ["/api/bills"] });
       
       toast({
-        title: "Bill added",
-        description: "Your bill has been added successfully",
+        title: language === 'en' ? "Bill added" : "Factura añadida",
+        description: language === 'en' ? "Your bill has been added successfully" : "Tu factura ha sido añadida exitosamente",
       });
       
       // Reset form and close modal
@@ -73,8 +75,11 @@ export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) 
     } catch (error) {
       console.error("Add bill error:", error);
       toast({
-        title: "Failed to add bill",
-        description: error instanceof Error ? error.message : "There was an error adding your bill. Please try again.",
+        title: language === 'en' ? "Failed to add bill" : "Error al añadir factura",
+        description: error instanceof Error ? error.message : 
+          language === 'en' ? 
+          "There was an error adding your bill. Please try again." : 
+          "Hubo un error al añadir tu factura. Por favor, inténtalo de nuevo.",
         variant: "destructive",
       });
     } finally {
@@ -89,7 +94,7 @@ export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Bill</DialogTitle>
+          <DialogTitle>{t('addBillTitle')}</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
@@ -99,9 +104,9 @@ export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) 
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Bill Name</FormLabel>
+                  <FormLabel>{t('billNameLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Phone Bill" {...field} />
+                    <Input placeholder={t('billNamePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -113,13 +118,13 @@ export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) 
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount</FormLabel>
+                  <FormLabel>{t('amountLabel')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         $
                       </span>
-                      <Input className="pl-7" placeholder="0.00" {...field} />
+                      <Input className="pl-7" placeholder={t('amountPlaceholder').replace('e.g. $1000', '0.00')} {...field} />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -132,27 +137,29 @@ export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) 
               name="due_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Due Date</FormLabel>
+                  <FormLabel>{t('dueDateLabel')}</FormLabel>
                   <Select
                     value={field.value.toString()}
                     onValueChange={(value) => field.onChange(parseInt(value))}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a due date" />
+                        <SelectValue placeholder={language === 'en' ? "Select a due date" : "Selecciona una fecha de vencimiento"} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {dueDate.map((day) => (
                         <SelectItem key={day} value={day.toString()}>
                           {day}
-                          {day === 1 || day === 21 || day === 31
-                            ? "st"
-                            : day === 2 || day === 22
-                            ? "nd"
-                            : day === 3 || day === 23
-                            ? "rd"
-                            : "th"} of each month
+                          {language === 'en' ? 
+                            (day === 1 || day === 21 || day === 31
+                              ? "st"
+                              : day === 2 || day === 22
+                              ? "nd"
+                              : day === 3 || day === 23
+                              ? "rd"
+                              : "th") 
+                            : ""} {language === 'en' ? "of each month" : "de cada mes"}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -164,16 +171,16 @@ export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) 
             
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting} className="bg-red-500 hover:bg-red-600">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    {language === 'en' ? "Saving..." : "Guardando..."}
                   </>
                 ) : (
-                  "Save Bill"
+                  language === 'en' ? "Save Bill" : "Guardar Factura"
                 )}
               </Button>
             </DialogFooter>
