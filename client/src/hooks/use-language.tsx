@@ -135,6 +135,12 @@ type TranslationData = {
   phoneService: string;
   water: string;
   internet: string;
+  // Landing page
+  heroTitle: string;
+  heroDescription: string;
+  getStarted: string;
+  signIn: string;
+  goToDashboard: string;
 };
 
 type Translations = {
@@ -164,6 +170,11 @@ const translations: Translations = {
     spendingAssistantTitle: "Spending Assistant",
     spendingAssistantDescription: "Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.",
     copyright: "© 2025 pulse. All rights reserved.",
+    heroTitle: "Take control of your finances",
+    heroDescription: "Track your money, manage bills, and know exactly what you can spend with Pulse - your personal financial assistant.",
+    getStarted: "Get Started",
+    signIn: "Sign In",
+    goToDashboard: "Go to Dashboard",
     
     // Auth page
     rememberMe: "Remember me",
@@ -321,6 +332,11 @@ const translations: Translations = {
     spendingAssistantTitle: "Asistente de Gastos",
     spendingAssistantDescription: "Pregunta a nuestro chatbot si puedes permitirte hacer una compra. Obtén consejos inteligentes basados en tu situación financiera actual.",
     copyright: "© 2025 pulse. Todos los derechos reservados.",
+    heroTitle: "Toma el control de tus finanzas",
+    heroDescription: "Seguimiento de tu dinero, gestión de facturas y conoce exactamente lo que puedes gastar con Pulse - tu asistente financiero personal.",
+    getStarted: "Comenzar",
+    signIn: "Iniciar Sesión",
+    goToDashboard: "Ir al Panel",
     
     // Auth page
     rememberMe: "Recordarme",

@@ -117,26 +117,26 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-blue-700 to-blue-900 opacity-75"></div>
         <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">Take control of your finances</h1>
-          <p className="mt-6 max-w-3xl text-xl text-gray-100">Track your money, manage bills, and know exactly what you can spend with Pulse - your personal financial assistant.</p>
+          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">{t('heroTitle')}</h1>
+          <p className="mt-6 max-w-3xl text-xl text-gray-100">{t('heroDescription')}</p>
           <div className="mt-10">
             {!user ? (
               <>
                 <Link href="/signup">
                   <Button size="lg" className="mr-4 bg-white text-primary-700 hover:bg-gray-50">
-                    Get Started
+                    {t('getStarted')}
                   </Button>
                 </Link>
                 <Link href="/login">
                   <Button size="lg" variant="outline" className="text-white border-white hover:bg-primary-600 hover:text-white font-medium bg-primary-600/20">
-                    Sign In
+                    {t('signIn')}
                   </Button>
                 </Link>
               </>
             ) : (
               <Link href="/dashboard">
                 <Button size="lg" className="bg-white text-primary-700 hover:bg-gray-50">
-                  Go to Dashboard
+                  {t('goToDashboard')}
                 </Button>
               </Link>
             )}
@@ -148,9 +148,9 @@ export default function LandingPage() {
       <div className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-base font-semibold text-primary tracking-wide uppercase">Features</h2>
-            <p className="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight">Keep your finger on the pulse of your money</p>
-            <p className="max-w-xl mt-5 mx-auto text-xl text-gray-500">Simple tools that help you track income, manage bills, and make smarter spending decisions.</p>
+            <h2 className="text-base font-semibold text-primary tracking-wide uppercase">{t('featuresTitle')}</h2>
+            <p className="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight">{t('featuresTagline')}</p>
+            <p className="max-w-xl mt-5 mx-auto text-xl text-gray-500">{t('featuresDescription')}</p>
           </div>
 
           <div className="mt-12">
@@ -163,8 +163,8 @@ export default function LandingPage() {
                         <CircleDollarSign className="h-6 w-6 text-white" />
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Income & Bill Management</h3>
-                    <p className="mt-5 text-base text-gray-500">Easily track your income sources and upcoming bills. Get a clear picture of your financial obligations.</p>
+                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">{t('incomeManagementTitle')}</h3>
+                    <p className="mt-5 text-base text-gray-500">{t('incomeManagementDescription')}</p>
                   </div>
                 </div>
               </div>
@@ -177,8 +177,8 @@ export default function LandingPage() {
                         <Calendar className="h-6 w-6 text-white" />
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Bill Calendar</h3>
-                    <p className="mt-5 text-base text-gray-500">See your bills visually on a calendar. Never miss a payment with clear due date indicators.</p>
+                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">{t('calendarViewTitle')}</h3>
+                    <p className="mt-5 text-base text-gray-500">{t('calendarViewDescription')}</p>
                   </div>
                 </div>
               </div>
@@ -191,8 +191,8 @@ export default function LandingPage() {
                         <MessageSquare className="h-6 w-6 text-white" />
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Spending Assistant</h3>
-                    <p className="mt-5 text-base text-gray-500">Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.</p>
+                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">{t('spendingAssistantTitle')}</h3>
+                    <p className="mt-5 text-base text-gray-500">{t('spendingAssistantDescription')}</p>
                   </div>
                 </div>
               </div>
@@ -204,7 +204,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="bg-gray-800 mt-auto">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-          <p className="text-gray-400 text-sm">© 2025 pulse. All rights reserved.</p>
+          <p className="text-gray-400 text-sm">{t('copyright')}</p>
         </div>
       </footer>
     </div>
