@@ -14,6 +14,7 @@ import { Send, Loader2, DollarSign } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/use-language";
+import { TypeAnimation } from "@/components/ui/type-animation";
 
 interface ChatbotProps {
   bills: Bill[];
@@ -22,6 +23,7 @@ interface ChatbotProps {
 interface Message {
   text: string;
   sender: "user" | "bot";
+  isAnimating?: boolean;
 }
 
 interface SpendingResponse {
@@ -50,16 +52,29 @@ export default function Chatbot({ bills }: ChatbotProps) {
         ? "¡Hola! Soy Alicia. Pregúntame qué puedes gastar."
         : "Hello! I'm Alice. Ask me what you can spend.",
       sender: "bot",
+      isAnimating: true,
     },
   ]);
   const [isPending, setIsPending] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  // Handle animation completion
+  const handleAnimationComplete = (index: number) => {
+    setMessages(prevMessages => {
+      const updatedMessages = [...prevMessages];
+      if (updatedMessages[index]) {
+        updatedMessages[index] = { ...updatedMessages[index], isAnimating: false };
+      }
+      return updatedMessages;
+    });
+  };
   
   // Update initial message when language changes
   useEffect(() => {
     setMessages([{
       text: t('chatbotInitialMessage'),
       sender: "bot",
+      isAnimating: true,
     }]);
   }, [language, t]);
   
@@ -186,8 +201,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
         }
       }
       
-      // Add bot response
-      setMessages((prev) => [...prev, { text: botMessage, sender: "bot" }]);
+      // Add bot response with animation flag
+      setMessages((prev) => [...prev, { text: botMessage, sender: "bot", isAnimating: true }]);
     } catch (error) {
       console.error("Failed to get spending advice:", error);
       setMessages((prev) => [
@@ -195,6 +210,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
         {
           text: t('chatbotErrorMessage'),
           sender: "bot",
+          isAnimating: true
         },
       ]);
     } finally {
@@ -234,7 +250,17 @@ export default function Chatbot({ bills }: ChatbotProps) {
                       : "bg-white text-gray-800 rounded-tl-none border border-gray-200"
                   }`}
                 >
-                  <p className="text-sm">{message.text}</p>
+                  <p className="text-sm">
+                    {message.sender === "bot" && message.isAnimating ? (
+                      <TypeAnimation 
+                        text={message.text} 
+                        speed={10}
+                        onComplete={() => handleAnimationComplete(index)}
+                      />
+                    ) : (
+                      message.text
+                    )}
+                  </p>
                 </div>
               </div>
             </div>
