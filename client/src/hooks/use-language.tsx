@@ -329,7 +329,7 @@ const translations: Translations = {
     incomeManagementDescription: "Seguimiento fácil de tus fuentes de ingresos y facturas próximas. Obtén una imagen clara de tus obligaciones financieras.",
     calendarViewTitle: "Vista de Calendario",
     calendarViewDescription: "Mira todas tus facturas en un calendario mensual para planificar con anticipación y nunca perder un pago.",
-    spendingAssistantTitle: "Alice",
+    spendingAssistantTitle: "Alicia",
     spendingAssistantDescription: "Pregunta a nuestro chatbot si puedes permitirte hacer una compra. Obtén consejos inteligentes basados en tu situación financiera actual.",
     copyright: "© 2025 pulse. Todos los derechos reservados.",
     heroTitle: "Toma el control de tus finanzas",
