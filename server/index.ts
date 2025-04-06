@@ -1,10 +1,12 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser()); // Add cookie parser middleware for CSRF protection
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -39,12 +41,48 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  // Improved error handling middleware
+  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+    // Log the error for debugging
+    console.error(`Error occurred during ${req.method} ${req.path}:`, err);
+    
+    // Determine status code
     const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
+    
+    // Format error message based on environment
+    let message = err.message || "Internal Server Error";
+    let details: any = undefined;
+    
+    // In production, don't expose internal error details
+    if (app.get("env") !== "production") {
+      details = {
+        stack: err.stack,
+        code: err.code,
+        name: err.name
+      };
+    } else {
+      // Sanitize error messages in production to avoid leaking sensitive info
+      if (status === 500) {
+        message = "Internal Server Error";
+      }
+    }
+    
+    // Format the error response
+    const errorResponse: Record<string, any> = { 
+      success: false,
+      message
+    };
+    
+    // Include details only in development
+    if (details) {
+      errorResponse.details = details;
+    }
+    
+    // Send the error response
+    res.status(status).json(errorResponse);
+    
+    // Don't throw the error here as it will crash the app
+    // Instead we've already logged it above
   });
 
   // importantly only setup vite in development and after

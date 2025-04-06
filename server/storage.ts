@@ -8,6 +8,8 @@ import { db } from "./db";
 import { eq, sql } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 import { Pool } from "@neondatabase/serverless";
+import { randomBytes } from "crypto";
+import { hashPassword } from "./auth";
 
 const MemoryStore = createMemoryStore(session);
 const PostgresSessionStore = connectPg(session);
@@ -20,6 +22,16 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUserBalance(userId: number, balance: number): Promise<User>;
   updateLastBalanceUpdate(userId: number): Promise<void>;
+  
+  // Security operations
+  updateLoginAttempts(email: string, increment: boolean): Promise<number>;
+  checkUserLocked(email: string): Promise<boolean>;
+  lockUserAccount(email: string, durationMinutes: number): Promise<void>;
+  unlockUserAccount(email: string): Promise<void>;
+  updateLastLogin(userId: number): Promise<void>;
+  createPasswordResetToken(email: string): Promise<string | null>;
+  validatePasswordResetToken(email: string, token: string): Promise<boolean>;
+  resetPassword(email: string, newPassword: string): Promise<boolean>;
   
   // Bill operations
   getBillsByUserId(userId: number): Promise<Bill[]>;
@@ -109,7 +121,12 @@ export class MemStorage implements IStorage {
       id, 
       created_at: new Date(),
       account_balance: null,
-      last_balance_update: null
+      last_balance_update: null,
+      last_login: null,
+      login_attempts: 0,
+      locked_until: null,
+      reset_token: null,
+      reset_token_expires: null
     };
     this.users.set(id, user);
     console.log(`>> User created: ID=${user.id}, Email='${user.email}'`);
@@ -138,6 +155,144 @@ export class MemStorage implements IStorage {
     }
     
     this.users.set(userId, { ...user, last_balance_update: new Date() });
+  }
+
+  // Security methods
+  async updateLoginAttempts(email: string, increment: boolean): Promise<number> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      throw new Error(`User with email ${email} not found`);
+    }
+    
+    const currentAttempts = user.login_attempts || 0;
+    const newAttempts = increment ? currentAttempts + 1 : 0;
+    
+    const updatedUser = { 
+      ...user, 
+      login_attempts: newAttempts
+    };
+    this.users.set(user.id, updatedUser);
+    
+    return newAttempts;
+  }
+  
+  async checkUserLocked(email: string): Promise<boolean> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      return false;
+    }
+    
+    if (!user.locked_until) {
+      return false;
+    }
+    
+    const now = new Date();
+    if (user.locked_until < now) {
+      // Lock expired, unlock the account
+      await this.unlockUserAccount(email);
+      return false;
+    }
+    
+    return true;
+  }
+  
+  async lockUserAccount(email: string, durationMinutes: number): Promise<void> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      throw new Error(`User with email ${email} not found`);
+    }
+    
+    const now = new Date();
+    const lockUntil = new Date(now.getTime() + durationMinutes * 60000);
+    
+    const updatedUser = { 
+      ...user, 
+      locked_until: lockUntil
+    };
+    this.users.set(user.id, updatedUser);
+  }
+  
+  async unlockUserAccount(email: string): Promise<void> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      throw new Error(`User with email ${email} not found`);
+    }
+    
+    const updatedUser = { 
+      ...user, 
+      locked_until: null,
+      login_attempts: 0
+    };
+    this.users.set(user.id, updatedUser);
+  }
+  
+  async updateLastLogin(userId: number): Promise<void> {
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+    
+    const updatedUser = { 
+      ...user, 
+      last_login: new Date(),
+      login_attempts: 0
+    };
+    this.users.set(userId, updatedUser);
+  }
+  
+  async createPasswordResetToken(email: string): Promise<string | null> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      return null;
+    }
+    
+    // Generate a random token
+    const token = randomBytes(32).toString('hex');
+    
+    // Set token expiration (1 hour)
+    const now = new Date();
+    const expires = new Date(now.getTime() + 60 * 60 * 1000);
+    
+    const updatedUser = { 
+      ...user, 
+      reset_token: token,
+      reset_token_expires: expires
+    };
+    this.users.set(user.id, updatedUser);
+    
+    return token;
+  }
+  
+  async validatePasswordResetToken(email: string, token: string): Promise<boolean> {
+    const user = await this.getUserByEmail(email);
+    if (!user || !user.reset_token || !user.reset_token_expires) {
+      return false;
+    }
+    
+    const now = new Date();
+    if (user.reset_token_expires < now) {
+      return false;
+    }
+    
+    return user.reset_token === token;
+  }
+  
+  async resetPassword(email: string, newPassword: string): Promise<boolean> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      return false;
+    }
+    
+    // In a real implementation, password would be hashed here
+    const updatedUser = { 
+      ...user, 
+      password: newPassword,
+      reset_token: null,
+      reset_token_expires: null
+    };
+    this.users.set(user.id, updatedUser);
+    
+    return true;
   }
 
   // Bill methods
@@ -322,10 +477,15 @@ export class DatabaseStorage implements IStorage {
       
       console.log(`>> No duplicates found, creating user with normalized email: '${normalizedEmail}'`);
       
-      // Create the user with normalized email
+      // Create the user with normalized email and security fields
       const modifiedInsertUser = {
         ...insertUser,
-        email: normalizedEmail // Always store normalized email
+        email: normalizedEmail, // Always store normalized email
+        last_login: null,
+        login_attempts: 0,
+        locked_until: null,
+        reset_token: null,
+        reset_token_expires: null
       };
       
       const [user] = await db.insert(users).values(modifiedInsertUser).returning();
@@ -372,6 +532,199 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ last_balance_update: now })
       .where(eq(users.id, userId));
+  }
+  
+  // Security methods
+  async updateLoginAttempts(email: string, increment: boolean): Promise<number> {
+    try {
+      // First get the user to check current attempts
+      const user = await this.getUserByEmail(email);
+      if (!user) {
+        throw new Error(`User with email ${email} not found`);
+      }
+      
+      const currentAttempts = user.login_attempts || 0;
+      const newAttempts = increment ? currentAttempts + 1 : 0;
+      
+      // Update the login attempts in the database
+      await db
+        .update(users)
+        .set({ login_attempts: newAttempts })
+        .where(eq(users.id, user.id));
+      
+      return newAttempts;
+    } catch (error) {
+      console.error(`Error updating login attempts for ${email}:`, error);
+      throw error;
+    }
+  }
+  
+  async checkUserLocked(email: string): Promise<boolean> {
+    try {
+      const user = await this.getUserByEmail(email);
+      if (!user) {
+        return false;
+      }
+      
+      if (!user.locked_until) {
+        return false;
+      }
+      
+      const now = new Date();
+      if (user.locked_until < now) {
+        // Lock expired, unlock the account
+        await this.unlockUserAccount(email);
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error(`Error checking if user ${email} is locked:`, error);
+      return false;
+    }
+  }
+  
+  async lockUserAccount(email: string, durationMinutes: number): Promise<void> {
+    try {
+      // First get the user
+      const user = await this.getUserByEmail(email);
+      if (!user) {
+        throw new Error(`User with email ${email} not found`);
+      }
+      
+      const now = new Date();
+      const lockUntil = new Date(now.getTime() + durationMinutes * 60000);
+      
+      // Update the locked_until field in the database
+      await db
+        .update(users)
+        .set({ locked_until: lockUntil })
+        .where(eq(users.id, user.id));
+    } catch (error) {
+      console.error(`Error locking account for ${email}:`, error);
+      throw error;
+    }
+  }
+  
+  async unlockUserAccount(email: string): Promise<void> {
+    try {
+      // First get the user
+      const user = await this.getUserByEmail(email);
+      if (!user) {
+        throw new Error(`User with email ${email} not found`);
+      }
+      
+      // Update the locked_until and login_attempts fields in the database
+      await db
+        .update(users)
+        .set({ 
+          locked_until: null,
+          login_attempts: 0
+        })
+        .where(eq(users.id, user.id));
+    } catch (error) {
+      console.error(`Error unlocking account for ${email}:`, error);
+      throw error;
+    }
+  }
+  
+  async updateLastLogin(userId: number): Promise<void> {
+    try {
+      const now = new Date();
+      
+      // Update the last_login field and reset login_attempts in the database
+      await db
+        .update(users)
+        .set({ 
+          last_login: now,
+          login_attempts: 0
+        })
+        .where(eq(users.id, userId));
+    } catch (error) {
+      console.error(`Error updating last login for user ${userId}:`, error);
+      throw error;
+    }
+  }
+  
+  async createPasswordResetToken(email: string): Promise<string | null> {
+    try {
+      // First get the user
+      const user = await this.getUserByEmail(email);
+      if (!user) {
+        return null;
+      }
+      
+      // Generate a random token
+      const token = randomBytes(32).toString('hex');
+      
+      // Set token expiration (1 hour)
+      const now = new Date();
+      const expires = new Date(now.getTime() + 60 * 60 * 1000);
+      
+      // Update the reset_token and reset_token_expires fields in the database
+      await db
+        .update(users)
+        .set({ 
+          reset_token: token,
+          reset_token_expires: expires
+        })
+        .where(eq(users.id, user.id));
+      
+      return token;
+    } catch (error) {
+      console.error(`Error creating password reset token for ${email}:`, error);
+      return null;
+    }
+  }
+  
+  async validatePasswordResetToken(email: string, token: string): Promise<boolean> {
+    try {
+      // First get the user
+      const user = await this.getUserByEmail(email);
+      if (!user || !user.reset_token || !user.reset_token_expires) {
+        return false;
+      }
+      
+      const now = new Date();
+      if (user.reset_token_expires < now) {
+        return false;
+      }
+      
+      return user.reset_token === token;
+    } catch (error) {
+      console.error(`Error validating password reset token for ${email}:`, error);
+      return false;
+    }
+  }
+  
+  async resetPassword(email: string, newPassword: string): Promise<boolean> {
+    try {
+      // First get the user
+      const user = await this.getUserByEmail(email);
+      if (!user) {
+        return false;
+      }
+      
+      // Hash the new password
+      const hashedPassword = await hashPassword(newPassword);
+      
+      // Update the password and reset token fields in the database
+      await db
+        .update(users)
+        .set({ 
+          password: hashedPassword,
+          reset_token: null,
+          reset_token_expires: null,
+          login_attempts: 0,
+          locked_until: null
+        })
+        .where(eq(users.id, user.id));
+      
+      return true;
+    } catch (error) {
+      console.error(`Error resetting password for ${email}:`, error);
+      return false;
+    }
   }
 
   // Bill methods

@@ -23,13 +23,14 @@ declare global {
 
 const scryptAsync = promisify(scrypt);
 
-async function hashPassword(password: string) {
+// Export these crypto functions so they can be used in other modules
+export async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const buf = (await scryptAsync(password, salt, 64)) as Buffer;
   return `${buf.toString("hex")}.${salt}`;
 }
 
-async function comparePasswords(supplied: string, stored: string) {
+export async function comparePasswords(supplied: string, stored: string) {
   const [hashed, salt] = stored.split(".");
   const hashedBuf = Buffer.from(hashed, "hex");
   const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
@@ -37,13 +38,23 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // Use a strong session secret, preferably from environment variables
+  const sessionSecret = process.env.SESSION_SECRET || 
+    // If no environment variable, generate a random one (this will change on restart)
+    // In production, always use environment variables for secrets
+    randomBytes(32).toString('hex');
+
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || "pulse-finance-app-secret",
+    name: 'pulse.sid', // Change session cookie name from default 'connect.sid'
+    secret: sessionSecret,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false, // Don't create session until something is stored
     store: storage.sessionStore,
     cookie: {
+      httpOnly: true, // Prevents client-side JS from reading the cookie
+      secure: process.env.NODE_ENV === 'production', // Requires HTTPS in production
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax' // Helps prevent CSRF attacks
     }
   };
 
@@ -192,34 +203,87 @@ export function setupAuth(app: Express) {
     }
     
     // Normalize email for consistent comparison with stored emails
-    req.body.email = email.toLowerCase().trim();
-    console.log(`Login attempt with normalized email: ${req.body.email}`);
+    const normalizedEmail = email.toLowerCase().trim();
+    req.body.email = normalizedEmail;
+    console.log(`Login attempt with normalized email: ${normalizedEmail}`);
     
-    passport.authenticate("local", (err: any, user: Express.User | false, info: any) => {
-      console.log("Login attempt result:", { err, user: !!user, info });
-      
-      if (err) {
-        console.error("Login error:", err);
-        return next(err);
-      }
-      
-      if (!user) {
-        return res.status(401).json({ 
-          success: false, 
-          message: info?.message || "Invalid email or password" 
+    try {
+      // Check if account is locked
+      const isLocked = await storage.checkUserLocked(normalizedEmail);
+      if (isLocked) {
+        console.log(`Login attempt blocked - account is locked: ${normalizedEmail}`);
+        return res.status(429).json({
+          success: false,
+          message: "Account is temporarily locked due to too many failed login attempts. Please try again later or reset your password."
         });
       }
       
-      req.login(user, (loginErr) => {
-        if (loginErr) {
-          console.error("Session save error:", loginErr);
-          return next(loginErr);
+      // Proceed with authentication
+      passport.authenticate("local", async (err: any, user: Express.User | false, info: any) => {
+        console.log("Login attempt result:", { err, user: !!user, info });
+        
+        if (err) {
+          console.error("Login error:", err);
+          return next(err);
         }
         
-        console.log("Login successful, user:", user.email);
-        return res.status(200).json(user);
-      });
-    })(req, res, next);
+        if (!user) {
+          // Failed login attempt, increment login attempts counter
+          try {
+            const attempts = await storage.updateLoginAttempts(normalizedEmail, true);
+            console.log(`Failed login for ${normalizedEmail}, attempts now: ${attempts}`);
+            
+            // Lock account after 5 failed attempts
+            if (attempts >= 5) {
+              // Lock account for 15 minutes
+              await storage.lockUserAccount(normalizedEmail, 15);
+              console.log(`Account ${normalizedEmail} locked for 15 minutes due to too many failed attempts`);
+              
+              return res.status(429).json({
+                success: false,
+                message: "Account temporarily locked due to too many failed login attempts. Please try again in 15 minutes or reset your password."
+              });
+            }
+            
+            return res.status(401).json({
+              success: false,
+              message: info?.message || "Invalid email or password"
+            });
+          } catch (countError) {
+            console.error("Error tracking login attempts:", countError);
+            // Proceed with regular error message even if tracking failed
+            return res.status(401).json({
+              success: false,
+              message: info?.message || "Invalid email or password"
+            });
+          }
+        }
+        
+        // Successful login
+        req.login(user, async (loginErr) => {
+          if (loginErr) {
+            console.error("Session save error:", loginErr);
+            return next(loginErr);
+          }
+          
+          try {
+            // Reset login attempts and update last login time
+            await storage.updateLoginAttempts(normalizedEmail, false);
+            await storage.updateLastLogin(user.id);
+            
+            console.log("Login successful, user:", user.email);
+            return res.status(200).json(user);
+          } catch (updateError) {
+            console.error("Error updating login timestamps:", updateError);
+            // Return success even if tracking failed
+            return res.status(200).json(user);
+          }
+        });
+      })(req, res, next);
+    } catch (error) {
+      console.error("Login security check error:", error);
+      next(error);
+    }
   });
 
   app.post("/api/logout", (req, res, next) => {
@@ -234,6 +298,107 @@ export function setupAuth(app: Express) {
     res.json(req.user);
   });
 
+  // Password reset request
+  app.post("/api/password-reset/request", async (req, res, next) => {
+    try {
+      const { email } = req.body;
+      
+      // Validate email
+      if (!email || !isValidEmailFormat(email)) {
+        return res.status(400).json({ 
+          message: "Please enter a valid email address format" 
+        });
+      }
+      
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      // Check if user exists
+      const user = await storage.getUserByEmail(normalizedEmail);
+      
+      if (!user) {
+        // Don't reveal that email doesn't exist for security reasons
+        // Instead, return a success message and stop processing
+        return res.status(200).json({
+          success: true,
+          message: "If your email is registered, you will receive a password reset link shortly."
+        });
+      }
+      
+      // Create reset token
+      const token = await storage.createPasswordResetToken(normalizedEmail);
+      
+      if (!token) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to generate reset token. Please try again later."
+        });
+      }
+      
+      // In a real app, we would send an email with a link to reset password
+      // For this implementation, just return the token directly (only for development)
+      console.log(`PASSWORD RESET: Generated token for ${normalizedEmail}: ${token}`);
+      
+      // Unlock the account if it was locked
+      await storage.unlockUserAccount(normalizedEmail);
+      
+      return res.status(200).json({
+        success: true,
+        message: "If your email is registered, you will receive a password reset link shortly.",
+        // Include the reset URL for testing
+        // In a production app, we would never send this in the response
+        debugResetUrl: `/reset-password?email=${encodeURIComponent(normalizedEmail)}&token=${token}`
+      });
+    } catch (error) {
+      console.error("Password reset request error:", error);
+      next(error);
+    }
+  });
+  
+  // Password reset verification & update
+  app.post("/api/password-reset/update", async (req, res, next) => {
+    try {
+      const { email, token, newPassword } = req.body;
+      
+      // Validate input
+      if (!email || !token || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Missing required fields: email, token, or new password"
+        });
+      }
+      
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      // Check if token is valid
+      const isValidToken = await storage.validatePasswordResetToken(normalizedEmail, token);
+      
+      if (!isValidToken) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid or expired password reset token"
+        });
+      }
+      
+      // Update password
+      const passwordUpdated = await storage.resetPassword(normalizedEmail, newPassword);
+      
+      if (!passwordUpdated) {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to update password. Please try again later."
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: "Password successfully reset. You can now log in with your new password."
+      });
+    } catch (error) {
+      console.error("Password reset update error:", error);
+      next(error);
+    }
+  });
+  
   // Email verification simulation
   app.get("/api/verify", async (req, res) => {
     const email = req.query.email as string;

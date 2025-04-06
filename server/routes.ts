@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
@@ -9,8 +9,65 @@ import {
   incomeFormSchema 
 } from "@shared/schema";
 import { z } from "zod";
+import csrf from "csurf";
+import rateLimit from "express-rate-limit";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Configure rate limiting first
+  const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // limit each IP to 10 login attempts per window
+    message: 'Too many login attempts, please try again after 15 minutes',
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  });
+  
+  const passwordResetLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 3, // limit each IP to 3 password reset attempts per hour
+    message: 'Too many password reset attempts, please try again after an hour',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+  
+  // Apply rate limiting to sensitive routes
+  app.use('/api/login', loginLimiter);
+  app.use('/api/password-reset/request', passwordResetLimiter);
+  
+  // Setup CSRF protection with simpler configuration
+  const csrfProtection = csrf({ cookie: true });
+  
+  // Define which routes to exempt from CSRF protection
+  const csrfExemptRoutes = ['/api/login', '/api/register'];
+  
+  // Add route to get CSRF token
+  app.get('/api/csrf-token', csrfProtection, (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+  });
+  
+  // Apply CSRF protection to all non-exempt routes
+  app.use((req, res, next) => {
+    // Skip CSRF for GET requests and exempt routes
+    if (req.method === 'GET' || csrfExemptRoutes.includes(req.path)) {
+      return next();
+    }
+    
+    // Apply CSRF protection for all other routes
+    csrfProtection(req, res, next);
+  });
+  
+  // Custom error handler for CSRF errors - placed after CSRF protection setup
+  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    if (err.code === 'EBADCSRFTOKEN') {
+      console.error('CSRF token validation failed');
+      // Handle CSRF token errors
+      return res.status(403).json({ 
+        message: 'Invalid or expired form submission. Please refresh the page and try again.' 
+      });
+    }
+    next(err);
+  });
+  
   // Setup auth routes
   setupAuth(app);
 

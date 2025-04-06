@@ -11,7 +11,12 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   account_balance: numeric("account_balance", { precision: 10, scale: 2 }),
   last_balance_update: timestamp("last_balance_update"),
-  created_at: timestamp("created_at").defaultNow()
+  created_at: timestamp("created_at").defaultNow(),
+  last_login: timestamp("last_login"),
+  login_attempts: integer("login_attempts").default(0),
+  locked_until: timestamp("locked_until"),
+  reset_token: text("reset_token"),
+  reset_token_expires: timestamp("reset_token_expires")
 });
 
 // Relations for users (added at the end to avoid reference errors)
@@ -22,7 +27,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
-  created_at: true
+  created_at: true,
+  last_login: true,
+  login_attempts: true,
+  locked_until: true,
+  reset_token: true,
+  reset_token_expires: true
 });
 
 // Bill schema

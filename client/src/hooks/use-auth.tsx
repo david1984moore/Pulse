@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { User, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
+import { secureApiRequest, secureApiRequestJson } from "../lib/csrf";
 import { useToast } from "@/hooks/use-toast";
 
 type AuthContextType = {
@@ -45,15 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
       try {
-        const res = await apiRequest("POST", "/api/login", credentials);
-        
-        // Check if the response is not ok (not in the 200-299 range)
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.message || "Invalid email or password");
-        }
-        
-        return await res.json();
+        // Use secure API request that includes CSRF token
+        return await secureApiRequestJson<User>("POST", "/api/login", credentials);
       } catch (error) {
         console.error("Login error:", error);
         throw error;
@@ -75,15 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const registerMutation = useMutation({
     mutationFn: async (userData: RegisterData) => {
       try {
-        const res = await apiRequest("POST", "/api/register", userData);
-        
-        // Check if the response is not ok (not in the 200-299 range)
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.message || "Registration failed");
-        }
-        
-        return await res.json();
+        // Use secure API request that includes CSRF token for registration
+        return await secureApiRequestJson<User>("POST", "/api/register", userData);
       } catch (error) {
         console.error("Registration error:", error);
         throw error;
@@ -107,7 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("POST", "/api/logout");
+      // Use secure API request for logout to include CSRF token
+      await secureApiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
