@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
-import { Loader2, Home } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import LanguageToggle from "@/components/ui/language-toggle";
 
@@ -22,6 +22,10 @@ const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -51,6 +55,7 @@ export default function AuthPage() {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
   
@@ -87,12 +92,10 @@ export default function AuthPage() {
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
-      {/* Home button and language toggle */}
+      {/* Home button with pulse text */}
       <div className="absolute top-4 left-4 flex items-center space-x-2">
         <Link href="/">
-          <Button variant="outline" size="icon" className="rounded-full" aria-label="Go to home page">
-            <Home className="h-5 w-5" />
-          </Button>
+          <span className="text-primary font-bold text-2xl cursor-pointer">pulse</span>
         </Link>
       </div>
       
@@ -237,6 +240,44 @@ export default function AuthPage() {
                         <FormMessage />
                       </FormItem>
                     )}
+                  />
+
+                  <FormField
+                    control={signupForm.control}
+                    name="confirmPassword"
+                    render={({ field }) => {
+                      const passwordMatch = 
+                        signupForm.getValues('password') === field.value && 
+                        field.value !== '';
+                      
+                      return (
+                        <FormItem className="space-y-1">
+                          <FormLabel>{t('confirmPasswordLabel')}</FormLabel>
+                          <div className="relative">
+                            <FormControl>
+                              <Input type="password" {...field} />
+                            </FormControl>
+                            {passwordMatch && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                   
                   <Button 

@@ -30,6 +30,7 @@ type TranslationData = {
   alreadyHaveAccount: string;
   emailLabel: string;
   passwordLabel: string;
+  confirmPasswordLabel: string;
   nameLabel: string;
   accountBalance: string;
   updateBalance: string;
@@ -185,6 +186,7 @@ const translations: Translations = {
     alreadyHaveAccount: "Already have an account?",
     emailLabel: "Email",
     passwordLabel: "Password",
+    confirmPasswordLabel: "Re-enter Password",
     nameLabel: "Name",
     forgotPassword: "Forgot your password?",
     signingIn: "Signing in...",
@@ -348,6 +350,7 @@ const translations: Translations = {
     alreadyHaveAccount: "¿Ya tienes una cuenta?",
     emailLabel: "Correo electrónico",
     passwordLabel: "Contraseña",
+    confirmPasswordLabel: "Vuelve a ingresar la contraseña",
     nameLabel: "Nombre",
     forgotPassword: "¿Olvidaste tu contraseña?",
     signingIn: "Iniciando sesión...",
