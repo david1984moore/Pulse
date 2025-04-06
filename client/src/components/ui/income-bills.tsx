@@ -50,7 +50,7 @@ export default function IncomeBills({
     queryKey: ["/api/calculated-balance"],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
-  // Calculate total monthly income (for record-keeping only)
+  // Calculate total monthly income
   const totalIncome = income.reduce((sum, inc) => {
     let monthlyAmount = 0;
     switch (inc.frequency) {
@@ -71,12 +71,9 @@ export default function IncomeBills({
 
   // Calculate total monthly bills
   const totalBills = bills.reduce((sum, bill) => sum + Number(bill.amount), 0);
-  
-  // Get calculated balance
-  const accountBalance = balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance) : 0;
-  
-  // Calculate remaining amount based on account balance (not income)
-  const availableToSpend = accountBalance - totalBills;
+
+  // Calculate remaining amount
+  const availableToSpend = totalIncome - totalBills;
 
   // Handle closing edit bill modal
   const handleEditBillModalClose = (open: boolean) => {
@@ -156,7 +153,7 @@ export default function IncomeBills({
             <div className="flex justify-between items-center p-2 bg-white rounded border border-gray-100">
               <span className="text-sm font-medium text-gray-600 flex items-center">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Monthly Income: <span className="ml-1 text-xs text-gray-500">(Record only)</span>
+                Monthly Income:
               </span>
               <span className="text-sm font-bold text-green-600">${totalIncome.toFixed(2)}</span>
             </div>
@@ -171,7 +168,6 @@ export default function IncomeBills({
               <span className="text-sm font-bold text-gray-700">Available to spend:</span>
               <span className="text-sm font-bold text-primary">${availableToSpend.toFixed(2)}</span>
             </div>
-            <p className="text-xs text-gray-500 mt-1 italic">Note: Available to spend is calculated from your account balance, not income.</p>
           </div>
         </div>
 
@@ -243,13 +239,10 @@ export default function IncomeBills({
 
         {/* Income List */}
         <div className="mt-4">
-          <div className="flex justify-between items-center mb-2">
-            <div>
-              <h3 className="text-base font-semibold text-gray-700 uppercase tracking-wider">
-                Your Income
-              </h3>
-              <p className="text-xs text-gray-500 mt-1">For record-keeping only. This does not affect your spending recommendations.</p>
-            </div>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-base font-semibold text-gray-700 uppercase tracking-wider">
+              Your Income
+            </h3>
             <Button
               onClick={onAddIncome}
               className="bg-green-600 hover:bg-green-700 h-8 w-8 p-0"
