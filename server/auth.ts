@@ -115,18 +115,23 @@ export function setupAuth(app: Express) {
         });
       }
       
-      // Check if email is already in use
-      const existingUser = await storage.getUserByEmail(email);
+      // Check if email is already in use - normalize to lowercase for comparison
+      const normalizedEmail = email.toLowerCase().trim();
+      console.log(`Checking if email exists: ${normalizedEmail}`);
+      const existingUser = await storage.getUserByEmail(normalizedEmail);
+      
+      console.log(`Existing user found: ${!!existingUser}`, existingUser ? `ID: ${existingUser.id}, Email: ${existingUser.email}` : '');
       
       if (existingUser) {
+        console.log(`Rejecting registration - email already exists: ${normalizedEmail}`);
         return res.status(400).json({ message: "Email already in use" });
       }
 
       const hashedPassword = await hashPassword(password);
-      // Create new user with empty values
+      // Create new user with empty values and normalized email
       const user = await storage.createUser({
         name,
-        email,
+        email: normalizedEmail, // Use the normalized email to ensure consistency
         password: hashedPassword,
       });
       
@@ -152,6 +157,10 @@ export function setupAuth(app: Express) {
         message: "Please enter a valid email address format" 
       });
     }
+    
+    // Normalize email for consistent comparison with stored emails
+    req.body.email = email.toLowerCase().trim();
+    console.log(`Login attempt with normalized email: ${req.body.email}`);
     
     passport.authenticate("local", (err: any, user: Express.User | false, info: any) => {
       console.log("Login attempt result:", { err, user: !!user, info });

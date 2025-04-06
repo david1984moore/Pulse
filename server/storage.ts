@@ -62,9 +62,19 @@ export class MemStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.email.toLowerCase() === email.toLowerCase()
+    // Normalize email for consistent comparison
+    const normalizedEmail = email.toLowerCase().trim();
+    console.log(`MemStorage.getUserByEmail: Looking for normalized email: ${normalizedEmail}`);
+    
+    const allUsers = Array.from(this.users.values());
+    console.log(`Found ${allUsers.length} total users in memory storage`);
+    
+    const user = allUsers.find(
+      (user) => user.email.toLowerCase().trim() === normalizedEmail
     );
+    
+    console.log(`User found by email?: ${!!user}`);
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -212,14 +222,20 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     try {
+      // Normalize email for consistent comparison
+      const normalizedEmail = email.toLowerCase().trim();
+      console.log(`DatabaseStorage.getUserByEmail: Looking for normalized email: ${normalizedEmail}`);
+      
       // Get all users and then filter case-insensitively
       const allUsers = await db.select().from(users);
+      console.log(`Found ${allUsers.length} total users in database`);
       
       // Find user with case-insensitive email match
       const user = allUsers.find(u => 
-        u.email.toLowerCase() === email.toLowerCase()
+        u.email.toLowerCase().trim() === normalizedEmail
       );
       
+      console.log(`User found by email?: ${!!user}`);
       return user;
     } catch (error) {
       console.error("getUserByEmail error:", error);
