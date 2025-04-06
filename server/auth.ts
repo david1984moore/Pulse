@@ -123,33 +123,15 @@ export function setupAuth(app: Express) {
       }
 
       const hashedPassword = await hashPassword(password);
+      // Create new user with empty values
       const user = await storage.createUser({
         name,
         email,
         password: hashedPassword,
       });
-
-      // Create sample data for new user
-      await storage.createIncome({
-        user_id: user.id,
-        source: "Salary",
-        amount: "1000",
-        frequency: "Weekly",
-      });
-
-      await storage.createBill({
-        user_id: user.id,
-        name: "Rent",
-        amount: "500",
-        due_date: 1,
-      });
-
-      await storage.createBill({
-        user_id: user.id,
-        name: "Electric",
-        amount: "250",
-        due_date: 2,
-      });
+      
+      // No sample data will be created for new users
+      // This ensures all values start at 0 on the dashboard
 
       req.login(user, (err) => {
         if (err) return next(err);
