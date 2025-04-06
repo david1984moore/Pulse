@@ -50,23 +50,23 @@ export function EkgAnimation({
   const animationStyles = `
     @keyframes draw {
       0% {
-        stroke-dasharray: 5, ${width * 3};
+        stroke-dasharray: 3, ${width * 3};
         stroke-dashoffset: ${width * 3};
       }
-      15% {
-        stroke-dasharray: 8, ${width * 3};
-        stroke-dashoffset: ${width * 2.5}; /* Slower at beginning */
+      20% {
+        stroke-dasharray: 4, ${width * 3};
+        stroke-dashoffset: ${width * 2.4}; /* Slower at beginning */
       }
       40% {
-        stroke-dasharray: 10, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
         stroke-dashoffset: ${width * 1.8}; /* Speed up before peak */
       }
       60% {
-        stroke-dasharray: 15, ${width * 3};
+        stroke-dasharray: 8, ${width * 3};
         stroke-dashoffset: ${width * 1.2}; /* Faster at peak */
       }
       80% {
-        stroke-dasharray: 20, ${width * 3};
+        stroke-dasharray: 10, ${width * 3};
         stroke-dashoffset: ${width * 0.6}; /* Even faster going down */
       }
       100% {
@@ -76,7 +76,7 @@ export function EkgAnimation({
     }
     
     .animate-draw {
-      animation: draw ${duration}ms cubic-bezier(0.3, 0.1, 0.6, 1) forwards;
+      animation: draw ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
     }
   `;
   
