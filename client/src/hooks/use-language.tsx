@@ -32,6 +32,10 @@ type TranslationData = {
   passwordLabel: string;
   confirmPasswordLabel: string;
   nameLabel: string;
+  passwordMinLength: string;
+  passwordSpecialChar: string;
+  passwordNumber: string;
+  passwordsDontMatch: string;
   accountBalance: string;
   updateBalance: string;
   incomeAndBills: string;
@@ -188,6 +192,10 @@ const translations: Translations = {
     passwordLabel: "Password",
     confirmPasswordLabel: "Re-enter Password",
     nameLabel: "Name",
+    passwordMinLength: "Must be at least 8 characters",
+    passwordSpecialChar: "Must include a special character (e.g., !?@#)",
+    passwordNumber: "Must include a number",
+    passwordsDontMatch: "Passwords don't match",
     forgotPassword: "Forgot your password?",
     signingIn: "Signing in...",
     creatingAccount: "Creating account...",
@@ -352,6 +360,10 @@ const translations: Translations = {
     passwordLabel: "Contraseña",
     confirmPasswordLabel: "Vuelve a ingresar la contraseña",
     nameLabel: "Nombre",
+    passwordMinLength: "Debe tener al menos 8 caracteres",
+    passwordSpecialChar: "Debe incluir un carácter especial (ej., !?@#)",
+    passwordNumber: "Debe incluir un número",
+    passwordsDontMatch: "Las contraseñas no coinciden",
     forgotPassword: "¿Olvidaste tu contraseña?",
     signingIn: "Iniciando sesión...",
     creatingAccount: "Creando cuenta...",

@@ -21,7 +21,11 @@ const loginSchema = z.object({
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[0-9]/, "Password must include at least one number")
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must include a special character"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -231,33 +235,105 @@ export default function AuthPage() {
                   <FormField
                     control={signupForm.control}
                     name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('passwordLabel')}</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      // Check password rules
+                      const password = field.value;
+                      const hasMinLength = password.length >= 8;
+                      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                      const hasNumber = /[0-9]/.test(password);
+                      
+                      return (
+                        <FormItem>
+                          <FormLabel>{t('passwordLabel')}</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <div className="mt-2 space-y-1 text-xs">
+                            <div className="flex items-center space-x-2">
+                              <span className={hasMinLength ? "text-green-500" : "text-red-500"}>
+                                {t('passwordMinLength')}
+                              </span>
+                              {hasMinLength && (
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-4 w-4 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <span className={hasSpecialChar ? "text-green-500" : "text-red-500"}>
+                                {t('passwordSpecialChar')}
+                              </span>
+                              {hasSpecialChar && (
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-4 w-4 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <span className={hasNumber ? "text-green-500" : "text-red-500"}>
+                                {t('passwordNumber')}
+                              </span>
+                              {hasNumber && (
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-4 w-4 text-green-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
 
                   <FormField
                     control={signupForm.control}
                     name="confirmPassword"
                     render={({ field }) => {
-                      const passwordMatch = 
-                        signupForm.getValues('password') === field.value && 
-                        field.value !== '';
+                      const password = signupForm.getValues('password');
+                      const confirmPassword = field.value;
+                      const passwordsMatch = password === confirmPassword && confirmPassword !== '';
+                      const passwordsMismatch = confirmPassword !== '' && password !== confirmPassword;
                       
                       return (
                         <FormItem className="space-y-1">
                           <FormLabel>{t('confirmPasswordLabel')}</FormLabel>
                           <div className="relative">
                             <FormControl>
-                              <Input type="password" {...field} />
+                              <Input 
+                                type="password" 
+                                {...field} 
+                                className={passwordsMismatch ? "border-red-500 pr-10" : "pr-10"}
+                              />
                             </FormControl>
-                            {passwordMatch && (
+                            {passwordsMatch && (
                               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                                 <svg 
                                   xmlns="http://www.w3.org/2000/svg" 
@@ -273,7 +349,26 @@ export default function AuthPage() {
                                 </svg>
                               </div>
                             )}
+                            {passwordsMismatch && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-red-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
                           </div>
+                          {passwordsMismatch && (
+                            <p className="text-sm text-red-500">{t('passwordsDontMatch')}</p>
+                          )}
                           <FormMessage />
                         </FormItem>
                       );
