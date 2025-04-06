@@ -183,7 +183,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
     <Card>
       <CardHeader className="pb-2 border-b border-gray-100">
         <CardTitle>
-          {t('chatbot')}
+          Alice
         </CardTitle>
         <CardDescription className="flex items-center mt-1.5 bg-gray-100 px-3 py-1.5 rounded-md w-fit">
           <DollarSign className="h-4 w-4 mr-1.5 text-primary" />
