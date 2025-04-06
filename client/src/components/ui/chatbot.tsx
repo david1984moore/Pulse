@@ -249,7 +249,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
             {language === 'es' ? 'Alicia' : 'Alice'}
             <EkgAnimation 
               isActive={showEkg} 
-              duration={600} 
+              duration={500} 
               color="#3b82f6" 
               width={60} 
               height={20} 

@@ -44,30 +44,39 @@ export function EkgAnimation({
     [width, height/2]                    // End with flat line
   ].map(point => point.join(',')).join(' ');
   
-  // CSS animation with variable speed (slow start, faster middle, fastest at end)
+  // Create leading point animation effect
+  // Use a combination of dash array and dash offset for the drawing effect
+  // This creates the appearance of a tracing line with a "pen point" leading the way
   const animationStyles = `
     @keyframes draw {
       0% {
-        stroke-dashoffset: ${width * 2};
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: ${width * 3};
       }
-      30% {
-        stroke-dashoffset: ${width * 1.4}; /* Slower at beginning */
+      15% {
+        stroke-dasharray: 8, ${width * 3};
+        stroke-dashoffset: ${width * 2.5}; /* Slower at beginning */
       }
-      50% {
-        stroke-dashoffset: ${width * 0.8}; /* Speed up in middle */
+      40% {
+        stroke-dasharray: 10, ${width * 3};
+        stroke-dashoffset: ${width * 1.8}; /* Speed up before peak */
       }
-      70% {
-        stroke-dashoffset: ${width * 0.4}; /* Even faster */
+      60% {
+        stroke-dasharray: 15, ${width * 3};
+        stroke-dashoffset: ${width * 1.2}; /* Faster at peak */
+      }
+      80% {
+        stroke-dasharray: 20, ${width * 3};
+        stroke-dashoffset: ${width * 0.6}; /* Even faster going down */
       }
       100% {
-        stroke-dashoffset: 0; /* Fastest at end */
+        stroke-dasharray: 0, ${width * 3};
+        stroke-dashoffset: 0; /* Complete the trace */
       }
     }
     
     .animate-draw {
-      stroke-dasharray: ${width * 2};
-      stroke-dashoffset: ${width * 2};
-      animation: draw ${duration}ms ease-in-out forwards;
+      animation: draw ${duration}ms cubic-bezier(0.3, 0.1, 0.6, 1) forwards;
     }
   `;
   
