@@ -256,6 +256,15 @@ export default function Chatbot({ bills }: ChatbotProps) {
                         text={message.text} 
                         speed={10}
                         onComplete={() => handleAnimationComplete(index)}
+                        onCharacterTyped={() => {
+                          // Scroll to bottom on each character typed
+                          if (scrollAreaRef.current) {
+                            const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+                            if (scrollContainer) {
+                              scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                            }
+                          }
+                        }}
                       />
                     ) : (
                       message.text

@@ -4,9 +4,15 @@ interface TypeAnimationProps {
   text: string;
   speed?: number;
   onComplete?: () => void;
+  onCharacterTyped?: () => void;
 }
 
-export function TypeAnimation({ text, speed = 20, onComplete }: TypeAnimationProps) {
+export function TypeAnimation({ 
+  text, 
+  speed = 20, 
+  onComplete, 
+  onCharacterTyped 
+}: TypeAnimationProps) {
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
@@ -23,6 +29,8 @@ export function TypeAnimation({ text, speed = 20, onComplete }: TypeAnimationPro
       const timer = setTimeout(() => {
         setDisplayedText((prev) => prev + text[currentIndex]);
         setCurrentIndex((prev) => prev + 1);
+        // Call the callback after each character is typed
+        onCharacterTyped?.();
       }, speed);
 
       return () => clearTimeout(timer);
@@ -30,7 +38,7 @@ export function TypeAnimation({ text, speed = 20, onComplete }: TypeAnimationPro
       setIsComplete(true);
       onComplete?.();
     }
-  }, [currentIndex, text, speed, isComplete, onComplete]);
+  }, [currentIndex, text, speed, isComplete, onComplete, onCharacterTyped]);
 
   return <>{displayedText}</>;
 }
