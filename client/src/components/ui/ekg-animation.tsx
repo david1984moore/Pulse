@@ -53,25 +53,30 @@ export function EkgAnimation({
         stroke-dasharray: 8, ${width * 3};
         stroke-dashoffset: ${width * 3};
       }
-      20% {
+      25% {
         stroke-dasharray: 8, ${width * 3};
         stroke-dashoffset: ${width * 2.5}; /* Slower at beginning */
       }
-      40% {
+      50% {
         stroke-dasharray: 8, ${width * 3};
-        stroke-dashoffset: ${width * 2.0}; /* Speed up before peak */
+        stroke-dashoffset: ${width * 1.8}; /* Speed up before peak */
       }
-      60% {
+      70% {
         stroke-dasharray: 8, ${width * 3};
-        stroke-dashoffset: ${width * 1.5}; /* Faster at peak */
+        stroke-dashoffset: ${width * 1.0}; /* Faster at peak */
       }
+      /* Slow down towards the end */
       80% {
         stroke-dasharray: 8, ${width * 3};
-        stroke-dashoffset: ${width * 0.7}; /* Even faster going down */
+        stroke-dashoffset: ${width * 0.7}; /* Starting to slow down */
+      }
+      90% {
+        stroke-dasharray: 8, ${width * 3};
+        stroke-dashoffset: ${width * 0.4}; /* Even slower */
       }
       95% {
         stroke-dasharray: 8, ${width * 3};
-        stroke-dashoffset: ${width * 0.2}; /* Almost done */
+        stroke-dashoffset: ${width * 0.2}; /* Very slow at the end */
       }
       100% {
         stroke-dasharray: 8, ${width * 3};
@@ -80,12 +85,12 @@ export function EkgAnimation({
     }
     
     @keyframes completeTail {
-      0%, 40% {
-        /* Keep dash array unchanged for first 40% of animation - tail doesn't start for longer */
+      0%, 80% {
+        /* Keep dash array unchanged until lead point is almost at end (80%) */
         stroke-dasharray: 8, ${width * 3};
       }
-      90% {
-        /* Start the tail much later, but still keep the gap before completion */
+      95% {
+        /* Start the tail very late, when lead is almost done */
         stroke-dasharray: 8, ${width * 3};
       }
       100% {
@@ -93,10 +98,18 @@ export function EkgAnimation({
       }
     }
     
+    /* Animation to keep the trace visible after lead completes */
+    @keyframes keepVisible {
+      0%, 100% {
+        opacity: 1;
+      }
+    }
+    
     .animate-draw {
       animation: 
         drawLeadingPoint ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
-        completeTail ${duration * 1.25}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards;
+        completeTail ${duration * 1.5}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards,
+        keepVisible ${duration * 1.5}ms linear forwards; /* Keep visible for entire tail animation */
     }
   `;
   
