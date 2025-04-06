@@ -270,25 +270,18 @@ export class DatabaseStorage implements IStorage {
       const normalizedEmail = email.toLowerCase().trim();
       console.log(`\n>> DatabaseStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
       
-      // First, let's query ALL users to see what's in the database
-      const allUsers = await db.select().from(users);
-      console.log(`\n>> All users in database (${allUsers.length}):`);
-      allUsers.forEach(u => {
-        console.log(`    User ID=${u.id}, Email='${u.email}', Normalized='${u.email.toLowerCase().trim()}'`);
-      });
+      // Use a raw SQL query for case-insensitive matching
+      console.log(`\n>> Executing case-insensitive email search for: '${normalizedEmail}'`);
       
-      // Use a direct SQL query with LOWER function for case-insensitive comparison
-      console.log(`\n>> Executing case-insensitive email search: LOWER(email) = LOWER('${normalizedEmail}')`);
+      const result = await this.pool.query(
+        'SELECT * FROM users WHERE LOWER(email) = LOWER($1)',
+        [normalizedEmail]
+      );
       
-      const result = await db
-        .select()
-        .from(users)
-        .where(sql`LOWER(${users.email}) = LOWER(${normalizedEmail})`);
+      console.log(`\n>> Query returned ${result.rows.length} results`);
       
-      console.log(`\n>> Query returned ${result.length} results`);
-      
-      if (result.length > 0) {
-        const user = result[0] as User;
+      if (result.rows.length > 0) {
+        const user = result.rows[0] as User;
         console.log(`>> MATCH FOUND: User ID=${user.id}, Email='${user.email}'`);
         return user;
       }
@@ -304,9 +297,44 @@ export class DatabaseStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     console.log(`\n>> DatabaseStorage.createUser: Creating user with email: '${insertUser.email}'`);
-    const [user] = await db.insert(users).values(insertUser).returning();
-    console.log(`>> User created: ID=${user.id}, Email='${user.email}'`);
-    return user;
+    
+    // Normalize email
+    const normalizedEmail = insertUser.email.toLowerCase().trim();
+    
+    // First, check for existing users with the same email (case-insensitive)
+    console.log(`>> Checking for existing users with email: '${normalizedEmail}'`);
+    
+    try {
+      // Use a raw SQL query to handle case-insensitive matching reliably
+      const existingUsers = await this.pool.query(
+        'SELECT * FROM users WHERE LOWER(email) = LOWER($1)',
+        [normalizedEmail]
+      );
+      
+      if (existingUsers.rows.length > 0) {
+        console.log(`>> DUPLICATE EMAIL DETECTED: '${normalizedEmail}' matches existing email`);
+        // Create a custom error object with a code that can be caught in the auth handler
+        const duplicateError: any = new Error("Email already exists");
+        duplicateError.code = '23505'; // Simulate PostgreSQL's unique constraint violation
+        duplicateError.constraint = 'users_email_unique'; // Use the same name as our constraint
+        throw duplicateError;
+      }
+      
+      console.log(`>> No duplicates found, creating user with normalized email: '${normalizedEmail}'`);
+      
+      // Create the user with normalized email
+      const modifiedInsertUser = {
+        ...insertUser,
+        email: normalizedEmail // Always store normalized email
+      };
+      
+      const [user] = await db.insert(users).values(modifiedInsertUser).returning();
+      console.log(`>> User created: ID=${user.id}, Email='${user.email}'`);
+      return user;
+    } catch (error) {
+      console.error(`>> ERROR in createUser:`, error);
+      throw error;
+    }
   }
 
   async updateUserBalance(userId: number, balance: number): Promise<User> {
