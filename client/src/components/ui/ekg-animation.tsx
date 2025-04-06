@@ -51,13 +51,16 @@ export function EkgAnimation({
     [width, height/2]      // End
   ].map(point => point.join(',')).join(' ');
   
-  // CSS animation for drawing the EKG trace
+  // CSS animation for drawing the EKG trace with ease-out timing
   const animationStyles = `
     @keyframes draw {
-      from {
+      0% {
         stroke-dashoffset: ${width * 2};
       }
-      to {
+      70% {
+        stroke-dashoffset: ${width * 0.7};
+      }
+      100% {
         stroke-dashoffset: 0;
       }
     }
@@ -65,7 +68,7 @@ export function EkgAnimation({
     .animate-draw {
       stroke-dasharray: ${width * 2};
       stroke-dashoffset: ${width * 2};
-      animation: draw ${duration}ms linear forwards;
+      animation: draw ${duration}ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
   `;
   
@@ -94,7 +97,7 @@ export function EkgAnimation({
           points={points}
           fill="none"
           stroke={color}
-          strokeWidth="2"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           className="animate-draw"
