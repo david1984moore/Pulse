@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/hooks/use-language";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -7,6 +8,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Bill, Income } from "@shared/schema";
 import { Trash } from "lucide-react"; // Import trash icon
 import { useToast } from "@/hooks/use-toast";
+import LanguageToggle from "@/components/ui/language-toggle";
 
 
 interface AccountBalanceData {
@@ -23,6 +25,7 @@ import VerifyBalanceModal from "@/components/ui/verify-balance-modal";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [addBillOpen, setAddBillOpen] = useState<boolean>(false);
   //const [removeBillOpen, setRemoveBillOpen] = useState<boolean>(false); // Removed
@@ -104,11 +107,12 @@ export default function DashboardPage() {
             <Link href="/">
               <span className="text-primary font-bold text-3xl mr-8 cursor-pointer">pulse</span>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gray-800">{t('dashboard')}</h1>
           </div>
           <div className="flex items-center space-x-4">
+            <LanguageToggle />
             <div className="bg-gray-100 px-3 py-1.5 rounded-full">
-              <span className="text-sm font-medium text-gray-700">Welcome, {user?.name?.split(' ')[0]}</span>
+              <span className="text-sm font-medium text-gray-700">{t('welcome')} {user?.name?.split(' ')[0]}</span>
             </div>
             <Button
               variant="outline"
@@ -120,7 +124,7 @@ export default function DashboardPage() {
               {logoutMutation.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                "Logout"
+                t('logout')
               )}
             </Button>
           </div>

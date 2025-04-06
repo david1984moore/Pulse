@@ -2,10 +2,13 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { CircleDollarSign, Calendar, MessageSquare, Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/hooks/use-language";
+import LanguageToggle from "@/components/ui/language-toggle";
 import { useState } from "react";
 
 export default function LandingPage() {
   const { user, logoutMutation } = useAuth();
+  const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -24,26 +27,28 @@ export default function LandingPage() {
             
             {/* Desktop menu */}
             <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+              <LanguageToggle />
+              
               {user ? (
                 <>
                   <Link href="/dashboard">
-                    <span className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">Dashboard</span>
+                    <span className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">{t('dashboard')}</span>
                   </Link>
                   <Button
                     variant="ghost"
                     onClick={() => logoutMutation.mutate()}
                     className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                   >
-                    Logout
+                    {t('logout')}
                   </Button>
                 </>
               ) : (
                 <>
                   <Link href="/login">
-                    <span className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">Login</span>
+                    <span className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">{t('login')}</span>
                   </Link>
                   <Link href="/signup">
-                    <span className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">Sign Up</span>
+                    <span className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer">{t('signup')}</span>
                   </Link>
                 </>
               )}
@@ -69,30 +74,34 @@ export default function LandingPage() {
           {mobileMenuOpen && (
             <div className="sm:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1">
+                <div className="block px-3 py-2 rounded-md">
+                  <LanguageToggle />
+                </div>
+                
                 {user ? (
                   <>
                     <Link href="/dashboard">
                       <span className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-100 cursor-pointer">
-                        Dashboard
+                        {t('dashboard')}
                       </span>
                     </Link>
                     <button
                       onClick={() => logoutMutation.mutate()}
                       className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-100"
                     >
-                      Logout
+                      {t('logout')}
                     </button>
                   </>
                 ) : (
                   <>
                     <Link href="/login">
                       <span className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-100 cursor-pointer">
-                        Login
+                        {t('login')}
                       </span>
                     </Link>
                     <Link href="/signup">
                       <span className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-100 cursor-pointer">
-                        Sign Up
+                        {t('signup')}
                       </span>
                     </Link>
                   </>
