@@ -44,7 +44,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
-      text: t('chatbotInitialMessage'),
+      text: "Hello! I'm Alice. Ask me if you can afford something based on your current financial situation.",
       sender: "bot",
     },
   ]);

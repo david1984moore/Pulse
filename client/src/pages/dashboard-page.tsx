@@ -180,7 +180,7 @@ export default function DashboardPage() {
             {/* Calendar */}
             <CalendarView bills={bills || []} />
 
-            {/* Chatbot */}
+            {/* Alice */}
             <Chatbot bills={bills || []} />
           </div>
         </div>

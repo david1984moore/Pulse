@@ -167,7 +167,7 @@ const translations: Translations = {
     incomeManagementDescription: "Easily track your income sources and upcoming bills. Get a clear picture of your financial obligations.",
     calendarViewTitle: "Calendar View",
     calendarViewDescription: "See all your bills on a monthly calendar to plan ahead and never miss a payment.",
-    spendingAssistantTitle: "Spending Assistant",
+    spendingAssistantTitle: "Alice",
     spendingAssistantDescription: "Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.",
     copyright: "© 2025 pulse. All rights reserved.",
     heroTitle: "Take control of your finances",
@@ -248,7 +248,7 @@ const translations: Translations = {
     
     // Chatbot
     chatbotPlaceholder: "Ask if you can afford something...",
-    chatbotInitialMessage: "Hello! I'm your spending assistant. Ask me if you can afford something based on your current financial situation.",
+    chatbotInitialMessage: "Hello! I'm Alice. Ask me if you can afford something based on your current financial situation.",
     chatbotErrorMessage: "Sorry, I couldn't process your request. Please try again later.",
     canISpend: "Can I spend",
     balance: "Balance",
@@ -329,7 +329,7 @@ const translations: Translations = {
     incomeManagementDescription: "Seguimiento fácil de tus fuentes de ingresos y facturas próximas. Obtén una imagen clara de tus obligaciones financieras.",
     calendarViewTitle: "Vista de Calendario",
     calendarViewDescription: "Mira todas tus facturas en un calendario mensual para planificar con anticipación y nunca perder un pago.",
-    spendingAssistantTitle: "Asistente de Gastos",
+    spendingAssistantTitle: "Alice",
     spendingAssistantDescription: "Pregunta a nuestro chatbot si puedes permitirte hacer una compra. Obtén consejos inteligentes basados en tu situación financiera actual.",
     copyright: "© 2025 pulse. Todos los derechos reservados.",
     heroTitle: "Toma el control de tus finanzas",
