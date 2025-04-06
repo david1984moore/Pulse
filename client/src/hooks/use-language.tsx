@@ -56,6 +56,12 @@ type TranslationData = {
   billNamePlaceholder: string;
   amountPlaceholder: string;
   dueDateLabel: string;
+  updateBillDetails: string;
+  updateBill: string;
+  updating: string;
+  billUpdatedSuccess: string;
+  billUpdateFailed: string;
+  billUpdateError: string;
   selectIncomeToRemove: string;
   selectBillToRemove: string;
   remove: string;
@@ -198,6 +204,12 @@ const translations: Translations = {
     billNamePlaceholder: "e.g. Rent, Electricity, etc.",
     amountPlaceholder: "e.g. $1000",
     dueDateLabel: "Due Date (day of month)",
+    updateBillDetails: "Update the details of your bill.",
+    updateBill: "Update Bill",
+    updating: "Updating...",
+    billUpdatedSuccess: "Your bill has been updated successfully.",
+    billUpdateFailed: "Failed to update bill",
+    billUpdateError: "There was an error updating your bill. Please try again.",
     
     // Remove Income/Bill Modals
     selectIncomeToRemove: "Select Income to Remove",
@@ -339,6 +351,12 @@ const translations: Translations = {
     billNamePlaceholder: "ej. Alquiler, Electricidad, etc.",
     amountPlaceholder: "ej. $1000",
     dueDateLabel: "Fecha de vencimiento (día del mes)",
+    updateBillDetails: "Actualiza los detalles de tu factura.",
+    updateBill: "Actualizar factura",
+    updating: "Actualizando...",
+    billUpdatedSuccess: "Tu factura ha sido actualizada exitosamente.",
+    billUpdateFailed: "Error al actualizar la factura",
+    billUpdateError: "Hubo un error al actualizar tu factura. Por favor, intenta de nuevo.",
     
     // Remove Income/Bill Modals
     selectIncomeToRemove: "Seleccione el ingreso para eliminar",

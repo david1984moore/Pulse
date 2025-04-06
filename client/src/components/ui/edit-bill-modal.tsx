@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bill, billFormSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +38,7 @@ type FormValues = z.infer<typeof billFormSchema>;
 export default function EditBillModal({ open, onOpenChange, bill }: EditBillModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   
   const form = useForm<FormValues>({
     resolver: zodResolver(billFormSchema),
@@ -85,8 +87,8 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
     },
     onSuccess: () => {
       toast({
-        title: "Bill updated",
-        description: "Your bill has been updated successfully.",
+        title: t('editBillTitle'),
+        description: t('billUpdatedSuccess'),
       });
       
       // Invalidate the bills query
@@ -101,8 +103,8 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
     onError: (error) => {
       console.error("Error updating bill:", error);
       toast({
-        title: "Failed to update bill",
-        description: error instanceof Error ? error.message : "There was an error updating your bill. Please try again.",
+        title: t('billUpdateFailed'),
+        description: error instanceof Error ? error.message : t('billUpdateError'),
         variant: "destructive",
       });
     },
@@ -116,9 +118,9 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Bill</DialogTitle>
+          <DialogTitle>{t('editBillTitle')}</DialogTitle>
           <DialogDescription>
-            Update the details of your bill.
+            {t('updateBillDetails')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -128,9 +130,9 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Bill Name</FormLabel>
+                  <FormLabel>{t('billNameLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Rent" {...field} />
+                    <Input placeholder={t('billNamePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -141,11 +143,11 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount</FormLabel>
+                  <FormLabel>{t('amountLabel')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
-                      placeholder="0.00" 
+                      placeholder={t('amountPlaceholder')} 
                       step="0.01"
                       {...field} 
                     />
@@ -159,7 +161,7 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
               name="due_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Due Date (Day of Month)</FormLabel>
+                  <FormLabel>{t('dueDateLabel')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -189,7 +191,7 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
                 disabled={editBillMutation.isPending}
                 className="bg-red-500 hover:bg-red-600"
               >
-                {editBillMutation.isPending ? "Updating..." : "Update Bill"}
+                {editBillMutation.isPending ? t('updating') : t('updateBill')}
               </Button>
             </DialogFooter>
           </form>
