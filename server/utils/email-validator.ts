@@ -11,19 +11,60 @@ export function isValidEmailFormat(email: string): boolean {
     return false;
   }
 
+  // Extract the domain for further validation
+  const domain = email.split('@')[1].toLowerCase();
+  
+  // Check for common valid email providers
+  const commonValidDomains = [
+    'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com',
+    'icloud.com', 'protonmail.com', 'mail.com', 'zoho.com', 'yandex.com',
+    'gmx.com', 'live.com', 'fastmail.com', 'tutanota.com', 'hey.com',
+    'msn.com', 'me.com'
+  ];
+  
+  // For test environments, we might want to allow certain test domains
+  const allowedTestDomains = [
+    'example.com', 'test.com', 'domain.com', 'company.com', 'user.com'
+  ];
+  
   // Check known invalid/disposable domain patterns
   const knownInvalidDomains = [
     'gmaik.com', 'gmakkk.com', 'yahooo.com', 'hotmial.com', 'outlook.con',
     'tempmail.com', 'mailinator.com', 'guerrillamail.com', 'yopmail.com',
-    'trashmail.com', 'sharklasers.com', '10minutemail.com', 'throwawaymail.com'
+    'trashmail.com', 'sharklasers.com', '10minutemail.com', 'throwawaymail.com',
+    'gmauuu.com', 'gmauu.com', 'gmau.com', 'yaho.com', 'yahhoo.com',
+    'outlok.com', 'hormail.com', 'hotrmail.com'
   ];
 
-  const domain = email.split('@')[1].toLowerCase();
-  if (knownInvalidDomains.includes(domain)) {
+  // If it's a common domain with typos (like gmauuu.com), reject it
+  // Check if domain has repeating characters that aren't in normal domains
+  if (domain.match(/(.)\1{2,}/)) {
+    return false; // Domains with 3+ repeating characters are suspicious
+  }
+  
+  // Check for letter transpositions or additions in common domains
+  const gmailVariants = /^g[a-z]*m[a-z]*a[a-z]*i[a-z]*l\.com$/;
+  const yahooVariants = /^y[a-z]*a[a-z]*h[a-z]*o{1,3}\.com$/;
+  const outlookVariants = /^o[a-z]*u[a-z]*t[a-z]*l[a-z]*o{1,2}[a-z]*k\.com$/;
+  const hotmailVariants = /^h[a-z]*o[a-z]*t[a-z]*m[a-z]*a[a-z]*i[a-z]*l\.com$/;
+  
+  if (
+    // If it looks like a misspelled common domain but isn't in the valid list
+    (
+      (gmailVariants.test(domain) || 
+       yahooVariants.test(domain) || 
+       outlookVariants.test(domain) || 
+       hotmailVariants.test(domain)) && 
+      !commonValidDomains.includes(domain)
+    ) ||
+    // Or it's explicitly in our invalid domains list
+    knownInvalidDomains.includes(domain)
+  ) {
     return false;
   }
-
-  return true;
+  
+  // For now, whitelist approach - only allow common valid domains and test domains
+  return commonValidDomains.includes(domain) || allowedTestDomains.includes(domain);
 }
 
 /**
@@ -57,28 +98,41 @@ export async function isValidEmailDomain(email: string): Promise<boolean> {
  * @returns Whether the email is valid
  */
 export async function validateEmail(email: string): Promise<{ isValid: boolean, reason?: string }> {
-  // Step 1: Check format
+  if (!email) {
+    return { isValid: false, reason: 'Email is required' };
+  }
+  
+  // Extract domain for error message
+  const domain = email.split('@')[1]?.toLowerCase();
+  
+  // Step 1: Check format using our restrictive whitelist approach
   if (!isValidEmailFormat(email)) {
-    return { isValid: false, reason: 'Invalid email format or known fake domain' };
-  }
-
-  // Skip MX record validation for now since it's causing issues
-  // This way we only do basic format validation without domain checking
-  // When we're ready to implement full domain validation, we can re-enable this code
-  
-  /* 
-  // Step 2: Check domain MX records
-  try {
-    const hasMxRecords = await isValidEmailDomain(email);
-    if (!hasMxRecords) {
-      return { isValid: false, reason: 'Domain cannot receive emails (no MX records)' };
+    if (domain && domain.match(/(.)\1{2,}/)) {
+      return { isValid: false, reason: 'Email domain contains suspicious repeating characters' };
     }
-  } catch (error) {
-    console.error('Email validation error:', error);
-    // Fall back to format validation only if domain check fails
+    
+    if (domain && domain.includes('gmauu')) {
+      return { isValid: false, reason: 'Invalid email domain. Did you mean gmail.com?' };
+    }
+    
+    if (domain && domain.includes('yaho')) {
+      return { isValid: false, reason: 'Invalid email domain. Did you mean yahoo.com?' };
+    }
+    
+    if (domain && domain.includes('hotma')) {
+      return { isValid: false, reason: 'Invalid email domain. Did you mean hotmail.com?' };
+    }
+    
+    if (domain && domain.includes('outl')) {
+      return { isValid: false, reason: 'Invalid email domain. Did you mean outlook.com?' };
+    }
+    
+    return { 
+      isValid: false, 
+      reason: 'Please use a valid email from a major provider (gmail.com, yahoo.com, outlook.com, etc.)' 
+    };
   }
-  */
   
-  // Rely only on format validation for now
+  // Success - the email passed our strict format validation
   return { isValid: true };
 }

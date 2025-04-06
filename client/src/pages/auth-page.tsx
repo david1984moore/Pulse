@@ -12,15 +12,29 @@ import { Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import LanguageToggle from "@/components/ui/language-toggle";
 
-// Enhanced and more strict email validation regex pattern
-// This regex validates common email formats and requires properly formed domains
+// Email validation regex - basic format check
 const emailRegex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
 
-// List of known invalid/disposable domains that we want to block
+// List of valid email domains we accept
+const validEmailDomains = [
+  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com',
+  'icloud.com', 'protonmail.com', 'mail.com', 'zoho.com', 'yandex.com',
+  'gmx.com', 'live.com', 'fastmail.com', 'tutanota.com', 'hey.com',
+  'msn.com', 'me.com'
+];
+
+// For test/development environments, we may allow these domains
+const allowedTestDomains = [
+  'example.com', 'test.com', 'domain.com', 'company.com', 'user.com'
+];
+
+// List of known invalid/disposable domains that we want to block explicitly
 const invalidDomains = [
   'gmaik.com', 'gmakkk.com', 'yahooo.com', 'hotmial.com', 'outlook.con',
   'tempmail.com', 'mailinator.com', 'guerrillamail.com', 'yopmail.com',
-  'trashmail.com', 'sharklasers.com', '10minutemail.com', 'throwawaymail.com'
+  'trashmail.com', 'sharklasers.com', '10minutemail.com', 'throwawaymail.com',
+  'gmauuu.com', 'gmauu.com', 'gmau.com', 'yaho.com', 'yahhoo.com',
+  'outlok.com', 'hormail.com', 'hotrmail.com'
 ];
 
 const loginSchema = z.object({
@@ -29,9 +43,22 @@ const loginSchema = z.object({
     .email("Please enter a valid email address")
     .regex(emailRegex, "Please enter a valid email address")
     .refine(email => {
+      // Extract the domain
       const domain = email.split('@')[1]?.toLowerCase();
-      return !invalidDomains.includes(domain);
-    }, "This email domain is not allowed. Please use a valid email address."),
+      
+      // Check if domain is explicitly in our invalid list
+      if (invalidDomains.includes(domain)) {
+        return false;
+      }
+      
+      // Check if domain has suspicious repeating characters (like gmauuu.com)
+      if (domain && domain.match(/(.)\1{2,}/)) {
+        return false;
+      }
+      
+      // Only allow emails from our whitelist of valid domains or test domains
+      return validEmailDomains.includes(domain) || allowedTestDomains.includes(domain);
+    }, "Please use a valid email from a major provider (gmail.com, yahoo.com, outlook.com, etc.)"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   rememberMe: z.boolean().optional(),
 });
@@ -43,9 +70,23 @@ const signupSchema = z.object({
     .email("Please enter a valid email address")
     .regex(emailRegex, "Please enter a valid email address")
     .refine(email => {
+      // Extract the domain
       const domain = email.split('@')[1]?.toLowerCase();
-      return !invalidDomains.includes(domain);
-    }, "This email domain is not allowed. Please use a valid email address."),
+      
+      // Check if domain is explicitly in our invalid list
+      if (invalidDomains.includes(domain)) {
+        return false;
+      }
+      
+      // Check if domain has suspicious repeating characters (like gmauuu.com)
+      if (domain && domain.match(/(.)\1{2,}/)) {
+        return false;
+      }
+      
+      // Only allow emails from our whitelist of valid domains or test domains
+      return validEmailDomains.includes(domain) || allowedTestDomains.includes(domain);
+    }, "Please use a valid email from a major provider (gmail.com, yahoo.com, outlook.com, etc.)")
+,
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
