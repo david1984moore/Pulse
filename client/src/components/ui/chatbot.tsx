@@ -44,7 +44,9 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
-      text: "Hello! I'm Alice. Ask me if you can afford something based on your current financial situation.",
+      text: language === 'es' 
+        ? "¡Hola! Soy Alicia. Pregúntame si puedes permitirte algo basado en tu situación financiera actual."
+        : "Hello! I'm Alice. Ask me if you can afford something based on your current financial situation.",
       sender: "bot",
     },
   ]);
@@ -184,7 +186,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
       <CardHeader className="pb-4 border-b border-gray-100">
         <div className="flex flex-row items-center justify-between">
           <CardTitle>
-            Alice
+            {language === 'es' ? 'Alicia' : 'Alice'}
           </CardTitle>
           <CardDescription className="flex items-center bg-gray-100 px-4 py-2 rounded-md">
             <DollarSign className="h-4 w-4 mr-2 text-primary" />
