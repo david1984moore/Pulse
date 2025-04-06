@@ -108,7 +108,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center space-x-4">
             <div className="bg-gray-100 px-3 py-1.5 rounded-full">
-              <span className="text-sm font-medium text-gray-700">Welcome, {user?.name}</span>
+              <span className="text-sm font-medium text-gray-700">Welcome, {user?.name?.split(' ')[0]}</span>
             </div>
             <Button
               variant="outline"
