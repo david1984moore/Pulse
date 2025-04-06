@@ -62,18 +62,31 @@ export class MemStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
+    if (!email) {
+      console.log("MemStorage.getUserByEmail: Empty email provided");
+      return undefined;
+    }
+    
     // Normalize email for consistent comparison
     const normalizedEmail = email.toLowerCase().trim();
-    console.log(`MemStorage.getUserByEmail: Looking for normalized email: ${normalizedEmail}`);
+    console.log(`MemStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
     
     const allUsers = Array.from(this.users.values());
     console.log(`Found ${allUsers.length} total users in memory storage`);
     
-    const user = allUsers.find(
-      (user) => user.email.toLowerCase().trim() === normalizedEmail
-    );
+    // Loop through each user and log their emails for debugging
+    allUsers.forEach(u => {
+      console.log(`User in memory: ID=${u.id}, Email='${u.email}', Normalized='${u.email.toLowerCase().trim()}'`);
+    });
     
-    console.log(`User found by email?: ${!!user}`);
+    const user = allUsers.find(u => {
+      const dbEmailNormalized = (u.email || '').toLowerCase().trim();
+      const match = dbEmailNormalized === normalizedEmail;
+      console.log(`Comparing: '${dbEmailNormalized}' with '${normalizedEmail}', match: ${match}`);
+      return match;
+    });
+    
+    console.log(`User found by email?: ${!!user}`, user ? `ID: ${user.id}, Email: '${user.email}'` : '');
     return user;
   }
 
@@ -222,20 +235,33 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     try {
+      if (!email) {
+        console.log("getUserByEmail: Empty email provided");
+        return undefined;
+      }
+      
       // Normalize email for consistent comparison
       const normalizedEmail = email.toLowerCase().trim();
-      console.log(`DatabaseStorage.getUserByEmail: Looking for normalized email: ${normalizedEmail}`);
+      console.log(`DatabaseStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
       
       // Get all users and then filter case-insensitively
       const allUsers = await db.select().from(users);
       console.log(`Found ${allUsers.length} total users in database`);
       
-      // Find user with case-insensitive email match
-      const user = allUsers.find(u => 
-        u.email.toLowerCase().trim() === normalizedEmail
-      );
+      // Loop through each user and log their emails for debugging
+      allUsers.forEach(u => {
+        console.log(`User in DB: ID=${u.id}, Email='${u.email}', Normalized='${u.email.toLowerCase().trim()}'`);
+      });
       
-      console.log(`User found by email?: ${!!user}`);
+      // Find user with case-insensitive email match
+      const user = allUsers.find(u => {
+        const dbEmailNormalized = (u.email || '').toLowerCase().trim();
+        const match = dbEmailNormalized === normalizedEmail;
+        console.log(`Comparing: '${dbEmailNormalized}' with '${normalizedEmail}', match: ${match}`);
+        return match;
+      });
+      
+      console.log(`User found by email?: ${!!user}`, user ? `ID: ${user.id}, Email: '${user.email}'` : '');
       return user;
     } catch (error) {
       console.error("getUserByEmail error:", error);

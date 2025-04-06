@@ -224,14 +224,23 @@ export default function AuthPage() {
                       // Email is valid if it passes regex and domain checks
                       const isEmailValid = emailValid && isValidDomain && !isInvalidDomain && !hasSuspiciousRepeats;
                       
+                      // Get login error if it exists
+                      const hasLoginError = loginMutation.isError;
+                      const errorMessage = loginMutation.error?.message || '';
+                      const isInvalidCredentials = errorMessage.includes('Invalid email or password');
+                      
                       return (
                         <FormItem>
                           <FormLabel>{t('emailLabel')}</FormLabel>
                           <div className="relative">
                             <FormControl>
-                              <Input placeholder="your@email.com" {...field} />
+                              <Input 
+                                placeholder="your@email.com" 
+                                {...field} 
+                                className={isInvalidCredentials ? "border-red-500 pr-10" : "pr-10"}
+                              />
                             </FormControl>
-                            {isEmailValid && field.value && (
+                            {isEmailValid && field.value && !isInvalidCredentials && (
                               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                                 <svg 
                                   xmlns="http://www.w3.org/2000/svg" 
@@ -247,8 +256,30 @@ export default function AuthPage() {
                                 </svg>
                               </div>
                             )}
+                            {isInvalidCredentials && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-red-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
                           </div>
-                          <FormMessage />
+                          {isInvalidCredentials ? (
+                            <p className="text-sm font-medium text-red-500 mt-1">
+                              {errorMessage}
+                            </p>
+                          ) : (
+                            <FormMessage />
+                          )}
                         </FormItem>
                       );
                     }}
@@ -261,14 +292,23 @@ export default function AuthPage() {
                       // Password should be at least 6 chars for login
                       const isPasswordValid = field.value && field.value.length >= 6;
                       
+                      // Get login error if it exists
+                      const hasLoginError = loginMutation.isError;
+                      const errorMessage = loginMutation.error?.message || '';
+                      const isInvalidCredentials = errorMessage.includes('Invalid email or password');
+                      
                       return (
                         <FormItem>
                           <FormLabel>{t('passwordLabel')}</FormLabel>
                           <div className="relative">
                             <FormControl>
-                              <Input type="password" {...field} />
+                              <Input 
+                                type="password" 
+                                {...field} 
+                                className={isInvalidCredentials ? "border-red-500 pr-10" : "pr-10"}
+                              />
                             </FormControl>
-                            {isPasswordValid && (
+                            {isPasswordValid && field.value && !isInvalidCredentials && (
                               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                                 <svg 
                                   xmlns="http://www.w3.org/2000/svg" 
@@ -279,6 +319,22 @@ export default function AuthPage() {
                                   <path 
                                     fillRule="evenodd" 
                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
+                            {isInvalidCredentials && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-red-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
                                     clipRule="evenodd" 
                                   />
                                 </svg>
@@ -389,14 +445,23 @@ export default function AuthPage() {
                       // Email is valid if it passes regex and domain checks
                       const isEmailValid = emailValid && isValidDomain && !isInvalidDomain && !hasSuspiciousRepeats;
                       
+                      // Get registration error if it exists
+                      const hasRegistrationError = registerMutation.isError;
+                      const errorMessage = registerMutation.error?.message || '';
+                      const isEmailTakenError = errorMessage.includes('email address has been taken');
+                      
                       return (
                         <FormItem>
                           <FormLabel>{t('emailLabel')}</FormLabel>
                           <div className="relative">
                             <FormControl>
-                              <Input placeholder="your@email.com" {...field} />
+                              <Input 
+                                placeholder="your@email.com" 
+                                {...field} 
+                                className={isEmailTakenError ? "border-red-500 pr-10" : "pr-10"}
+                              />
                             </FormControl>
-                            {isEmailValid && field.value && (
+                            {isEmailValid && field.value && !isEmailTakenError && (
                               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                                 <svg 
                                   xmlns="http://www.w3.org/2000/svg" 
@@ -412,8 +477,30 @@ export default function AuthPage() {
                                 </svg>
                               </div>
                             )}
+                            {isEmailTakenError && (
+                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <svg 
+                                  xmlns="http://www.w3.org/2000/svg" 
+                                  className="h-5 w-5 text-red-500" 
+                                  viewBox="0 0 20 20" 
+                                  fill="currentColor"
+                                >
+                                  <path 
+                                    fillRule="evenodd" 
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
+                                    clipRule="evenodd" 
+                                  />
+                                </svg>
+                              </div>
+                            )}
                           </div>
-                          <FormMessage />
+                          {isEmailTakenError ? (
+                            <p className="text-sm font-medium text-red-500 mt-1">
+                              {errorMessage}
+                            </p>
+                          ) : (
+                            <FormMessage />
+                          )}
                         </FormItem>
                       );
                     }}

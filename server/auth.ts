@@ -117,14 +117,18 @@ export function setupAuth(app: Express) {
       
       // Check if email is already in use - normalize to lowercase for comparison
       const normalizedEmail = email.toLowerCase().trim();
-      console.log(`Checking if email exists: ${normalizedEmail}`);
+      console.log(`REGISTER API: Checking if email exists: '${normalizedEmail}'`);
+      
+      // Force a thorough check for existing email
       const existingUser = await storage.getUserByEmail(normalizedEmail);
       
-      console.log(`Existing user found: ${!!existingUser}`, existingUser ? `ID: ${existingUser.id}, Email: ${existingUser.email}` : '');
+      console.log(`REGISTER API: Existing user found: ${!!existingUser}`, existingUser ? `ID: ${existingUser.id}, Email: '${existingUser.email}'` : '');
       
       if (existingUser) {
-        console.log(`Rejecting registration - email already exists: ${normalizedEmail}`);
-        return res.status(400).json({ message: "Email already in use" });
+        console.log(`REGISTER API: Rejecting registration - email already exists: '${normalizedEmail}'`);
+        return res.status(400).json({ 
+          message: "An account with this email address has been taken. Please choose another email address." 
+        });
       }
 
       const hashedPassword = await hashPassword(password);
