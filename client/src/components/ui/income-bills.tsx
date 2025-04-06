@@ -196,13 +196,6 @@ export default function IncomeBills({
                     <p className="text-sm font-medium text-gray-800">{bill.name}</p>
                     <p className="text-xs text-gray-500">
                       {t('dueOnThe')} {bill.due_date}
-                      {["1", "21", "31"].includes(bill.due_date.toString())
-                        ? "st"
-                        : ["2", "22"].includes(bill.due_date.toString())
-                        ? "nd"
-                        : ["3", "23"].includes(bill.due_date.toString())
-                        ? "rd"
-                        : "th"}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

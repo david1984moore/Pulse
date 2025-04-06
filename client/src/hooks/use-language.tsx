@@ -93,6 +93,25 @@ type TranslationData = {
   paymentCalendar: string;
   calendarLegend: string;
   billsDue: string;
+  sun: string;
+  mon: string;
+  tue: string;
+  wed: string;
+  thu: string;
+  fri: string;
+  sat: string;
+  january: string;
+  february: string;
+  march: string;
+  april: string;
+  may: string;
+  june: string;
+  july: string;
+  august: string;
+  september: string;
+  october: string;
+  november: string;
+  december: string;
 };
 
 type Translations = {
@@ -209,7 +228,26 @@ const translations: Translations = {
     mo: "mo",
     paymentCalendar: "Payment Calendar",
     calendarLegend: "Calendar Legend",
-    billsDue: "Bills Due"
+    billsDue: "Bills Due",
+    sun: "Sun",
+    mon: "Mon",
+    tue: "Tue",
+    wed: "Wed",
+    thu: "Thu",
+    fri: "Fri",
+    sat: "Sat",
+    january: "January",
+    february: "February",
+    march: "March",
+    april: "April",
+    may: "May",
+    june: "June",
+    july: "July",
+    august: "August",
+    september: "September",
+    october: "October",
+    november: "November",
+    december: "December"
   },
   es: {
     // Common
@@ -319,7 +357,26 @@ const translations: Translations = {
     mo: "mes",
     paymentCalendar: "Calendario de Pagos",
     calendarLegend: "Leyenda del Calendario",
-    billsDue: "Facturas por Pagar"
+    billsDue: "Facturas por Pagar",
+    sun: "Dom",
+    mon: "Lun",
+    tue: "Mar",
+    wed: "Mié",
+    thu: "Jue",
+    fri: "Vie",
+    sat: "Sáb",
+    january: "Enero",
+    february: "Febrero",
+    march: "Marzo",
+    april: "Abril",
+    may: "Mayo",
+    june: "Junio",
+    july: "Julio",
+    august: "Agosto",
+    september: "Septiembre",
+    october: "Octubre",
+    november: "Noviembre",
+    december: "Diciembre"
   }
 };
 

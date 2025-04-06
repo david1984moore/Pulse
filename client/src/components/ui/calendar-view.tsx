@@ -22,7 +22,7 @@ interface CalendarViewProps {
 export default function CalendarView({ bills }: CalendarViewProps) {
   const { t } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const daysOfWeek = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(day => t(day));
   
   // Get all days in the current month
   const monthStart = startOfMonth(currentDate);
@@ -82,7 +82,7 @@ export default function CalendarView({ bills }: CalendarViewProps) {
         <div className="bg-white rounded-lg">
           <div className="mb-4">
             <h3 className="text-lg font-bold text-gray-800">
-              {format(currentDate, "MMMM yyyy")}
+              {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
             </h3>
           </div>
           

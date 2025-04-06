@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
@@ -35,7 +35,7 @@ interface BalanceData {
 }
 
 export default function Chatbot({ bills }: ChatbotProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   // Fetch current account balance
   const { data: balanceData } = useQuery<BalanceData>({
     queryKey: ["/api/calculated-balance"],
@@ -49,6 +49,14 @@ export default function Chatbot({ bills }: ChatbotProps) {
     },
   ]);
   const [isPending, setIsPending] = useState(false);
+  
+  // Update initial message when language changes
+  useEffect(() => {
+    setMessages([{
+      text: t('chatbotInitialMessage'),
+      sender: "bot",
+    }]);
+  }, [language, t]);
 
   const handleSubmit = async () => {
     if (!selectedAmount) return;
