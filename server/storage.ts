@@ -5,7 +5,7 @@ import {
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import connectPg from "connect-pg-simple";
 import { Pool } from "@neondatabase/serverless";
 
@@ -63,7 +63,7 @@ export class MemStorage implements IStorage {
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(
-      (user) => user.email === email
+      (user) => user.email.toLowerCase() === email.toLowerCase()
     );
   }
 
@@ -212,7 +212,14 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     try {
-      const [user] = await db.select().from(users).where(eq(users.email, email));
+      // Get all users and then filter case-insensitively
+      const allUsers = await db.select().from(users);
+      
+      // Find user with case-insensitive email match
+      const user = allUsers.find(u => 
+        u.email.toLowerCase() === email.toLowerCase()
+      );
+      
       return user;
     } catch (error) {
       console.error("getUserByEmail error:", error);
