@@ -80,7 +80,12 @@ export function EkgAnimation({
     }
     
     @keyframes completeTail {
-      0%, 85% {
+      0%, 20% {
+        /* Keep dash array unchanged for first 20% of animation - tail doesn't start yet */
+        stroke-dasharray: 6, ${width * 3};
+      }
+      85% {
+        /* Start the tail later, but still keep the gap before completion */
         stroke-dasharray: 6, ${width * 3};
       }
       100% {
@@ -91,7 +96,7 @@ export function EkgAnimation({
     .animate-draw {
       animation: 
         drawLeadingPoint ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
-        completeTail ${duration * 1.15}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards;
+        completeTail ${duration * 1.2}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards;
     }
   `;
   
