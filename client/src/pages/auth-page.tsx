@@ -133,17 +133,27 @@ export default function AuthPage() {
   
   function onLoginSubmit(data: LoginFormValues) {
     console.log("Login form submitted:", data);
+    
+    // Normalize email before sending to ensure consistent format
+    const normalizedEmail = data.email.toLowerCase().trim();
+    console.log("Normalized email for login:", normalizedEmail);
+    
     loginMutation.mutate({
-      email: data.email,
+      email: normalizedEmail,
       password: data.password,
     });
   }
   
   function onSignupSubmit(data: SignupFormValues) {
     console.log("Signup form submitted:", data);
+    
+    // Normalize email before sending to ensure consistent format
+    const normalizedEmail = data.email.toLowerCase().trim();
+    console.log("Normalized email for submission:", normalizedEmail);
+    
     registerMutation.mutate({
       name: data.name,
-      email: data.email,
+      email: normalizedEmail,
       password: data.password,
     });
   }

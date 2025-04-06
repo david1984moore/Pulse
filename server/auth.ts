@@ -60,8 +60,11 @@ export function setupAuth(app: Express) {
       },
       async (email, password, done) => {
         try {
-          console.log(`Login attempt for email: ${email}`);
-          const user = await storage.getUserByEmail(email);
+          // Normalize email before lookup
+          const normalizedEmail = email.toLowerCase().trim();
+          console.log(`Login attempt for email: ${email}, normalized to: ${normalizedEmail}`);
+          
+          const user = await storage.getUserByEmail(normalizedEmail);
           console.log(`User found: ${!!user}`);
           
           if (!user) {
