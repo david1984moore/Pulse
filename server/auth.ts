@@ -99,10 +99,10 @@ export function setupAuth(app: Express) {
     try {
       const { name, email, password } = req.body;
       
-      // Validate email format server-side
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      // Validate email format server-side with stricter rules
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|edu|gov|mil|biz|info|io|co|uk|ca|au|de|jp|fr|it|ru|ch|nl|se|no|es|pt)$/i;
       if (!email || !emailRegex.test(email)) {
-        return res.status(400).json({ message: "Please enter a valid email address" });
+        return res.status(400).json({ message: "Please enter a valid email address with a recognized domain" });
       }
       
       const existingUser = await storage.getUserByEmail(email);
@@ -152,10 +152,10 @@ export function setupAuth(app: Express) {
   app.post("/api/login", (req, res, next) => {
     const { email } = req.body;
     
-    // Validate email format server-side
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // Validate email format server-side with stricter rules
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|edu|gov|mil|biz|info|io|co|uk|ca|au|de|jp|fr|it|ru|ch|nl|se|no|es|pt)$/i;
     if (!email || !emailRegex.test(email)) {
-      return res.status(400).json({ message: "Please enter a valid email address" });
+      return res.status(400).json({ message: "Please enter a valid email address with a recognized domain" });
     }
     
     passport.authenticate("local", (err: any, user: Express.User | false, info: any) => {
@@ -200,9 +200,14 @@ export function setupAuth(app: Express) {
   // Email verification simulation
   app.get("/api/verify", (req, res) => {
     const email = req.query.email as string;
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+    
+    // Validate email format with the same strict rules
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|edu|gov|mil|biz|info|io|co|uk|ca|au|de|jp|fr|it|ru|ch|nl|se|no|es|pt)$/i;
+    
+    if (!email || !emailRegex.test(email)) {
+      return res.status(400).json({ message: "Please enter a valid email address with a recognized domain" });
     }
+    
     // In a real app, we would verify the token, but for the simulation we'll just redirect
     res.redirect("/dashboard");
   });

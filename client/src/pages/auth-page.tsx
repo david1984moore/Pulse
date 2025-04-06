@@ -12,8 +12,9 @@ import { Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import LanguageToggle from "@/components/ui/language-toggle";
 
-// Enhanced email validation regex pattern
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+// Enhanced and more strict email validation regex pattern
+// This regex validates common email formats and validates against known TLDs
+const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|edu|gov|mil|biz|info|io|co|uk|ca|au|de|jp|fr|it|ru|ch|nl|se|no|es|pt)$/i;
 
 const loginSchema = z.object({
   email: z.string()
