@@ -112,6 +112,11 @@ type TranslationData = {
   october: string;
   november: string;
   december: string;
+  electric: string;
+  rent: string;
+  phoneService: string;
+  water: string;
+  internet: string;
 };
 
 type Translations = {
@@ -247,7 +252,14 @@ const translations: Translations = {
     september: "September",
     october: "October",
     november: "November",
-    december: "December"
+    december: "December",
+    
+    // Bill names
+    electric: "Electric",
+    rent: "Rent",
+    phoneService: "Phone Service",
+    water: "Water",
+    internet: "Internet"
   },
   es: {
     // Common
@@ -376,7 +388,14 @@ const translations: Translations = {
     september: "Septiembre",
     october: "Octubre",
     november: "Noviembre",
-    december: "Diciembre"
+    december: "Diciembre",
+    
+    // Bill names
+    electric: "Electricidad",
+    rent: "Alquiler",
+    phoneService: "Servicio Telefónico",
+    water: "Agua",
+    internet: "Internet"
   }
 };
 

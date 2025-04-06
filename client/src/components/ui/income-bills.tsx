@@ -40,7 +40,28 @@ export default function IncomeBills({
   onDeleteIncome,
   onUpdateBalance,
 }: IncomeBillsProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  // Helper function to translate common bill names
+  const translateBillName = (name: string): string => {
+    // Map common bill names to their translation keys
+    const billNameMap: Record<string, string> = {
+      'Electric': 'electric',
+      'Rent': 'rent',
+      'Phone Service': 'phoneService',
+      'Water': 'water',
+      'Internet': 'internet'
+    };
+    
+    // Check if the bill name is in our map
+    const translationKey = billNameMap[name];
+    if (translationKey && language === 'es') {
+      return t(translationKey);
+    }
+    
+    // Return the original name if no translation is available
+    return name;
+  };
   // State for edit modals
   const [isEditBillModalOpen, setIsEditBillModalOpen] = useState(false);
   const [isEditIncomeModalOpen, setIsEditIncomeModalOpen] = useState(false);
@@ -137,7 +158,7 @@ export default function IncomeBills({
               <ul className="mt-1 space-y-1">
                 {balanceData.deductedBills.map((bill) => (
                   <li key={bill.id} className="flex justify-between">
-                    <span className="font-medium">{bill.name}</span>
+                    <span className="font-medium">{translateBillName(bill.name)}</span>
                     <span className="text-red-500 font-semibold">-${bill.amount}</span>
                   </li>
                 ))}
@@ -193,7 +214,7 @@ export default function IncomeBills({
               {bills.map((bill) => (
                 <li key={bill.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200">
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{bill.name}</p>
+                    <p className="text-sm font-medium text-gray-800">{translateBillName(bill.name)}</p>
                     <p className="text-xs text-gray-500">
                       {t('dueOnThe')} {bill.due_date}
                     </p>
