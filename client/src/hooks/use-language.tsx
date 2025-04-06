@@ -78,6 +78,7 @@ type TranslationData = {
   chatbotInitialMessage: string;
   chatbotErrorMessage: string;
   canISpend: string;
+  customSpend: string;
   balance: string;
   thinking: string;
   ask: string;
@@ -247,10 +248,11 @@ const translations: Translations = {
     cancel: "Cancel",
     
     // Chatbot
-    chatbotPlaceholder: "Ask if you can afford something...",
+    chatbotPlaceholder: "Can I spend...",
     chatbotInitialMessage: "Hello! I'm Alice. Ask me what you can spend.",
     chatbotErrorMessage: "Sorry, I couldn't process your request. Please try again later.",
     canISpend: "Can I spend",
+    customSpend: "Enter custom amount...",
     balance: "Balance",
     thinking: "Thinking...",
     ask: "Ask",
@@ -409,10 +411,11 @@ const translations: Translations = {
     cancel: "Cancelar",
     
     // Chatbot
-    chatbotPlaceholder: "Pregunta si puedes permitirte algo...",
+    chatbotPlaceholder: "¿Puedo gastar...",
     chatbotInitialMessage: "¡Hola! Soy Alicia. Pregúntame qué puedes gastar.",
     chatbotErrorMessage: "Lo siento, no pude procesar tu solicitud. Por favor, inténtalo de nuevo más tarde.",
     canISpend: "¿Puedo gastar",
+    customSpend: "Ingresa cantidad personalizada...",
     balance: "Saldo",
     thinking: "Pensando...",
     ask: "Preguntar",

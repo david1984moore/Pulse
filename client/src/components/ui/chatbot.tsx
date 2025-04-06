@@ -42,6 +42,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const [isCustomAmount, setIsCustomAmount] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       text: language === 'es' 
@@ -59,18 +61,27 @@ export default function Chatbot({ bills }: ChatbotProps) {
       sender: "bot",
     }]);
   }, [language, t]);
+  
+  // Switch to custom amount input when "custom" is selected
+  useEffect(() => {
+    if (selectedAmount === "custom") {
+      setIsCustomAmount(true);
+      setSelectedAmount(null);
+    }
+  }, [selectedAmount]);
 
   const handleSubmit = async () => {
-    if (!selectedAmount) return;
+    const amountToUse = isCustomAmount ? customAmount : (selectedAmount || "");
+    if (!amountToUse) return;
     
     // Add user message
-    const userMessage = `${t('canISpend')} $${selectedAmount}?`;
+    const userMessage = `${t('canISpend')} $${amountToUse}?`;
     setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
     
     // Send request to API
     setIsPending(true);
     try {
-      const response = await apiRequest("POST", "/api/spending-advisor", { amount: selectedAmount });
+      const response = await apiRequest("POST", "/api/spending-advisor", { amount: amountToUse });
       const data: SpendingResponse = await response.json();
       
       // Translate the response if in Spanish mode
@@ -82,7 +93,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
         
         if (originalMessage.startsWith("Yes, you can spend") && originalMessage.includes("next bill")) {
           // Pattern: Yes, you can spend $X. Your balance will be $Y. Next bill Name ($Z) due in N days, leaving $W.
-          const amount = selectedAmount;
+          const amount = amountToUse;
           
           // Extract newBalance
           const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
@@ -115,7 +126,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
             
         } else if (originalMessage.startsWith("Yes, you can spend") && !originalMessage.includes("next bill")) {
           // Pattern: Yes, you can spend $X. Your balance will be $Y.
-          const amount = selectedAmount;
+          const amount = amountToUse;
           
           // Extract newBalance
           const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
@@ -128,7 +139,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
             
         } else if (originalMessage.includes("but be careful")) {
           // Pattern: You can spend $X, but be careful. Balance will be $Y, and you have $Z in upcoming bills which would leave you with $W.
-          const amount = selectedAmount;
+          const amount = amountToUse;
           
           // Extract newBalance
           const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
@@ -151,7 +162,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
             
         } else if (originalMessage.startsWith("Sorry, you cannot spend")) {
           // Pattern: Sorry, you cannot spend $X as it would exceed your current account balance of $Y.
-          const amount = selectedAmount;
+          const amount = amountToUse;
           
           // Extract balance
           const balanceMatch = originalMessage.match(/account balance of \$([0-9.]+)/);
@@ -178,6 +189,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
     } finally {
       setIsPending(false);
       setSelectedAmount(null);
+      setIsCustomAmount(false);
+      setCustomAmount("");
     }
   };
 
@@ -218,21 +231,47 @@ export default function Chatbot({ bills }: ChatbotProps) {
         </ScrollArea>
 
         <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
-          <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-            <SelectTrigger className="flex-1 border-gray-200">
-              <SelectValue placeholder={t('chatbotPlaceholder')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">{t('canISpend')}...</SelectItem>
-              <SelectItem value="50">{t('canISpend')}...</SelectItem>
-              <SelectItem value="100">{t('canISpend')}...</SelectItem>
-              <SelectItem value="200">{t('canISpend')}...</SelectItem>
-              <SelectItem value="500">{t('canISpend')}...</SelectItem>
-            </SelectContent>
-          </Select>
+          {isCustomAmount ? (
+            <div className="flex w-full sm:flex-1">
+              <div className="relative flex-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                <input
+                  type="number"
+                  value={customAmount}
+                  onChange={(e) => setCustomAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="ml-2"
+                onClick={() => {
+                  setIsCustomAmount(false);
+                  setCustomAmount("");
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          ) : (
+            <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
+              <SelectTrigger className="flex-1 border-gray-200">
+                <SelectValue placeholder={t('chatbotPlaceholder')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
+                <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
+                <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
+                <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
+                <SelectItem value="custom">{t('customSpend')}</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
           <Button
             onClick={handleSubmit}
-            disabled={!selectedAmount || isPending}
+            disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
             className="w-full sm:w-auto"
           >
             {isPending ? (
