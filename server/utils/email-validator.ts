@@ -62,17 +62,23 @@ export async function validateEmail(email: string): Promise<{ isValid: boolean, 
     return { isValid: false, reason: 'Invalid email format or known fake domain' };
   }
 
+  // Skip MX record validation for now since it's causing issues
+  // This way we only do basic format validation without domain checking
+  // When we're ready to implement full domain validation, we can re-enable this code
+  
+  /* 
   // Step 2: Check domain MX records
   try {
     const hasMxRecords = await isValidEmailDomain(email);
     if (!hasMxRecords) {
       return { isValid: false, reason: 'Domain cannot receive emails (no MX records)' };
     }
-    
-    return { isValid: true };
   } catch (error) {
     console.error('Email validation error:', error);
     // Fall back to format validation only if domain check fails
-    return { isValid: true };
   }
+  */
+  
+  // Rely only on format validation for now
+  return { isValid: true };
 }
