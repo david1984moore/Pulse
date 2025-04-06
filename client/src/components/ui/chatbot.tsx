@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
@@ -53,6 +53,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
     },
   ]);
   const [isPending, setIsPending] = useState(false);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   
   // Update initial message when language changes
   useEffect(() => {
@@ -69,6 +70,16 @@ export default function Chatbot({ bills }: ChatbotProps) {
       setSelectedAmount(null);
     }
   }, [selectedAmount]);
+  
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }
+    }
+  }, [messages]);
 
   const handleSubmit = async () => {
     const amountToUse = isCustomAmount ? customAmount : (selectedAmount || "");
@@ -208,7 +219,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
         </div>
       </CardHeader>
       <CardContent className="pt-4">
-        <ScrollArea className="bg-gray-50 rounded-lg p-4 mb-5 h-64 border border-gray-200">
+        <ScrollArea ref={scrollAreaRef} className="bg-gray-50 rounded-lg p-4 mb-5 h-64 border border-gray-200">
           {messages.map((message, index) => (
             <div key={index} className="mb-3">
               <div
