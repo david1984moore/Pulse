@@ -181,14 +181,16 @@ export default function Chatbot({ bills }: ChatbotProps) {
 
   return (
     <Card>
-      <CardHeader className="pb-2 border-b border-gray-100">
-        <CardTitle>
-          Alice
-        </CardTitle>
-        <CardDescription className="flex items-center mt-1.5 bg-gray-100 px-3 py-1.5 rounded-md w-fit">
-          <DollarSign className="h-4 w-4 mr-1.5 text-primary" />
-          <span className="font-medium text-gray-700">{t('balance')}: ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
-        </CardDescription>
+      <CardHeader className="pb-4 border-b border-gray-100">
+        <div className="flex flex-row items-center justify-between">
+          <CardTitle>
+            Alice
+          </CardTitle>
+          <CardDescription className="flex items-center bg-gray-100 px-4 py-2 rounded-md">
+            <DollarSign className="h-4 w-4 mr-2 text-primary" />
+            <span className="font-medium text-gray-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent className="pt-4">
         <ScrollArea className="bg-gray-50 rounded-lg p-4 mb-5 h-64 border border-gray-200">
