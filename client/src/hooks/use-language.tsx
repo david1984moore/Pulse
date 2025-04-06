@@ -62,6 +62,14 @@ type TranslationData = {
   billUpdatedSuccess: string;
   billUpdateFailed: string;
   billUpdateError: string;
+  updateIncomeDetails: string;
+  updateIncome: string;
+  incomeUpdatedSuccess: string;
+  incomeUpdatedDescription: string;
+  incomeUpdateFailed: string;
+  incomeUpdateError: string;
+  selectFrequency: string;
+  custom: string;
   selectIncomeToRemove: string;
   selectBillToRemove: string;
   remove: string;
@@ -211,6 +219,16 @@ const translations: Translations = {
     billUpdateFailed: "Failed to update bill",
     billUpdateError: "There was an error updating your bill. Please try again.",
     
+    // Edit Income Modal
+    updateIncomeDetails: "Update the details of your income source.",
+    updateIncome: "Update Income",
+    incomeUpdatedSuccess: "Income updated",
+    incomeUpdatedDescription: "Your income has been updated successfully.",
+    incomeUpdateFailed: "Failed to update income",
+    incomeUpdateError: "There was an error updating your income. Please try again.",
+    selectFrequency: "Select frequency",
+    custom: "Custom",
+    
     // Remove Income/Bill Modals
     selectIncomeToRemove: "Select Income to Remove",
     selectBillToRemove: "Select Bill to Remove",
@@ -357,6 +375,16 @@ const translations: Translations = {
     billUpdatedSuccess: "Tu factura ha sido actualizada exitosamente.",
     billUpdateFailed: "Error al actualizar la factura",
     billUpdateError: "Hubo un error al actualizar tu factura. Por favor, intenta de nuevo.",
+    
+    // Edit Income Modal
+    updateIncomeDetails: "Actualiza los detalles de tu fuente de ingresos.",
+    updateIncome: "Actualizar ingreso",
+    incomeUpdatedSuccess: "Ingreso actualizado",
+    incomeUpdatedDescription: "Tu ingreso ha sido actualizado exitosamente.",
+    incomeUpdateFailed: "Error al actualizar el ingreso",
+    incomeUpdateError: "Hubo un error al actualizar tu ingreso. Por favor, intenta de nuevo.",
+    selectFrequency: "Selecciona la frecuencia",
+    custom: "Personalizado",
     
     // Remove Income/Bill Modals
     selectIncomeToRemove: "Seleccione el ingreso para eliminar",

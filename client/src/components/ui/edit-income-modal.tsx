@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Income, incomeFormSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +45,7 @@ type FormValues = z.infer<typeof incomeFormSchema>;
 export default function EditIncomeModal({ open, onOpenChange, income }: EditIncomeModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   
   const form = useForm<FormValues>({
     resolver: zodResolver(incomeFormSchema),
@@ -92,8 +94,8 @@ export default function EditIncomeModal({ open, onOpenChange, income }: EditInco
     },
     onSuccess: () => {
       toast({
-        title: "Income updated",
-        description: "Your income has been updated successfully.",
+        title: t('incomeUpdatedSuccess'),
+        description: t('incomeUpdatedDescription'),
       });
       
       // Invalidate the income query
@@ -108,8 +110,8 @@ export default function EditIncomeModal({ open, onOpenChange, income }: EditInco
     onError: (error) => {
       console.error("Error updating income:", error);
       toast({
-        title: "Failed to update income",
-        description: error instanceof Error ? error.message : "There was an error updating your income. Please try again.",
+        title: t('incomeUpdateFailed'),
+        description: error instanceof Error ? error.message : t('incomeUpdateError'),
         variant: "destructive",
       });
     },
@@ -123,9 +125,9 @@ export default function EditIncomeModal({ open, onOpenChange, income }: EditInco
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Income</DialogTitle>
+          <DialogTitle>{t('editIncomeTitle')}</DialogTitle>
           <DialogDescription>
-            Update the details of your income source.
+            {t('updateIncomeDetails')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -135,9 +137,9 @@ export default function EditIncomeModal({ open, onOpenChange, income }: EditInco
               name="source"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Income Source</FormLabel>
+                  <FormLabel>{t('sourceLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Salary" {...field} />
+                    <Input placeholder={t('sourcePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,11 +150,11 @@ export default function EditIncomeModal({ open, onOpenChange, income }: EditInco
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount</FormLabel>
+                  <FormLabel>{t('amountLabel')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
-                      placeholder="0.00" 
+                      placeholder={t('amountPlaceholder')} 
                       step="0.01"
                       {...field} 
                     />
@@ -166,21 +168,21 @@ export default function EditIncomeModal({ open, onOpenChange, income }: EditInco
               name="frequency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Frequency</FormLabel>
+                  <FormLabel>{t('frequencyLabel')}</FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select frequency" />
+                        <SelectValue placeholder={t('selectFrequency')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Weekly">Weekly</SelectItem>
-                      <SelectItem value="Bi-weekly">Bi-Weekly</SelectItem>
-                      <SelectItem value="Monthly">Monthly</SelectItem>
-                      <SelectItem value="Custom">Custom</SelectItem>
+                      <SelectItem value="Weekly">{t('weekly')}</SelectItem>
+                      <SelectItem value="Bi-weekly">{t('frequencyOptions.biweekly')}</SelectItem>
+                      <SelectItem value="Monthly">{t('frequencyOptions.monthly')}</SelectItem>
+                      <SelectItem value="Custom">{t('custom')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -192,7 +194,7 @@ export default function EditIncomeModal({ open, onOpenChange, income }: EditInco
                 type="submit" 
                 disabled={editIncomeMutation.isPending}
               >
-                {editIncomeMutation.isPending ? "Updating..." : "Update Income"}
+                {editIncomeMutation.isPending ? t('updating') : t('updateIncome')}
               </Button>
             </DialogFooter>
           </form>
