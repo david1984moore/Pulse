@@ -30,35 +30,44 @@ export function EkgAnimation({
   
   if (!showAnimation) return null;
   
-  // Simplified EKG signal points
+  // More realistic EKG signal points (QRS complex)
   const points = [
-    [0, height/2],              // Start with flat line
-    [width*0.25, height/2],     // Flat line continues
-    [width*0.35, height/2],     // Just before the spike
-    [width*0.4, height/2 - height*0.5], // Single spike (not as tall)
-    [width*0.45, height/2],     // Back to baseline
-    [width*0.75, height/2],     // Flat line continues
-    [width, height/2]           // End with flat line
+    [0, height/2],                      // Start with flat line (isoelectric)
+    [width*0.3, height/2],              // Flat line continues
+    [width*0.35, height/2 - height*0.1], // Q wave (small dip)
+    [width*0.4, height/2 - height*0.6],  // R wave (tall spike)
+    [width*0.45, height/2 + height*0.2], // S wave (downward deflection)
+    [width*0.5, height/2],               // Back to baseline
+    [width*0.55, height/2 - height*0.1], // T wave (small bump)
+    [width*0.6, height/2],               // Back to baseline
+    [width*0.85, height/2],              // Flat line continues
+    [width, height/2]                    // End with flat line
   ].map(point => point.join(',')).join(' ');
   
-  // CSS animation for drawing the EKG trace with ease-out timing
+  // CSS animation with variable speed (slow start, faster middle, fastest at end)
   const animationStyles = `
     @keyframes draw {
       0% {
         stroke-dashoffset: ${width * 2};
       }
+      30% {
+        stroke-dashoffset: ${width * 1.4}; /* Slower at beginning */
+      }
+      50% {
+        stroke-dashoffset: ${width * 0.8}; /* Speed up in middle */
+      }
       70% {
-        stroke-dashoffset: ${width * 0.7};
+        stroke-dashoffset: ${width * 0.4}; /* Even faster */
       }
       100% {
-        stroke-dashoffset: 0;
+        stroke-dashoffset: 0; /* Fastest at end */
       }
     }
     
     .animate-draw {
       stroke-dasharray: ${width * 2};
       stroke-dashoffset: ${width * 2};
-      animation: draw ${duration}ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation: draw ${duration}ms ease-in-out forwards;
     }
   `;
   
