@@ -512,7 +512,7 @@ export default function AuthPage() {
                               )}
                             </div>
                           </div>
-                          <FormMessage />
+                          {/* Hide the FormMessage for password field since we already display custom requirements */}
                         </FormItem>
                       );
                     }}
