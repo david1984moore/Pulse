@@ -223,11 +223,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
               <SelectValue placeholder={t('chatbotPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
-              <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
-              <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
-              <SelectItem value="200">{t('canISpend')} $200?</SelectItem>
-              <SelectItem value="500">{t('canISpend')} $500?</SelectItem>
+              <SelectItem value="10">{t('canISpend')}...</SelectItem>
+              <SelectItem value="50">{t('canISpend')}...</SelectItem>
+              <SelectItem value="100">{t('canISpend')}...</SelectItem>
+              <SelectItem value="200">{t('canISpend')}...</SelectItem>
+              <SelectItem value="500">{t('canISpend')}...</SelectItem>
             </SelectContent>
           </Select>
           <Button
