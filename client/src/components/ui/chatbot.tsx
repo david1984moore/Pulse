@@ -15,6 +15,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/use-language";
 import { TypeAnimation } from "@/components/ui/type-animation";
+import { EkgAnimation } from "@/components/ui/ekg-animation";
 
 interface ChatbotProps {
   bills: Bill[];
@@ -221,12 +222,33 @@ export default function Chatbot({ bills }: ChatbotProps) {
     }
   };
 
+  // State to track when to show the EKG animation
+  const [showEkg, setShowEkg] = useState(false);
+  
+  // Modified handleSubmit to trigger EKG animation
+  const handleSubmitWithEkg = async () => {
+    // Show EKG animation
+    setShowEkg(true);
+    
+    // Process the submit
+    await handleSubmit();
+    
+    // EKG animation will auto-hide due to its internal timer
+  };
+  
   return (
     <Card>
       <CardHeader className="pb-4 border-b border-gray-100">
         <div className="flex flex-row items-center justify-between">
-          <CardTitle>
+          <CardTitle className="flex items-center">
             {language === 'es' ? 'Alicia' : 'Alice'}
+            <EkgAnimation 
+              isActive={showEkg} 
+              duration={1000} 
+              color="#3b82f6" 
+              width={60} 
+              height={20} 
+            />
           </CardTitle>
           <CardDescription className="flex items-center bg-gray-100 px-4 py-2 rounded-md">
             <DollarSign className="h-4 w-4 mr-2 text-primary" />
@@ -316,7 +338,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
             </Select>
           )}
           <Button
-            onClick={handleSubmit}
+            onClick={handleSubmitWithEkg}
             disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
             className="w-full sm:w-auto"
           >
