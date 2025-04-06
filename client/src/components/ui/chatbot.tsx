@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Send, Loader2, DollarSign } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLanguage } from "@/hooks/use-language";
 
 interface ChatbotProps {
   bills: Bill[];
@@ -34,6 +35,7 @@ interface BalanceData {
 }
 
 export default function Chatbot({ bills }: ChatbotProps) {
+  const { t } = useLanguage();
   // Fetch current account balance
   const { data: balanceData } = useQuery<BalanceData>({
     queryKey: ["/api/calculated-balance"],
@@ -42,7 +44,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
-      text: "Hi there! I'm your spending assistant. I can help you decide whether you can afford to spend money based on your current account balance and upcoming bills.",
+      text: t('chatbotInitialMessage'),
       sender: "bot",
     },
   ]);
@@ -52,7 +54,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
     if (!selectedAmount) return;
     
     // Add user message
-    const userMessage = `Can I spend $${selectedAmount}?`;
+    const userMessage = `${t('canISpend')} $${selectedAmount}?`;
     setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
     
     // Send request to API
@@ -68,7 +70,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
       setMessages((prev) => [
         ...prev,
         {
-          text: "Sorry, I couldn't process your request. Please try again later.",
+          text: t('chatbotErrorMessage'),
           sender: "bot",
         },
       ]);
@@ -82,11 +84,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
     <Card>
       <CardHeader className="pb-2 border-b border-gray-100">
         <CardTitle>
-          Spending Assistant
+          {t('chatbot')}
         </CardTitle>
         <CardDescription className="flex items-center mt-1.5 bg-gray-100 px-3 py-1.5 rounded-md w-fit">
           <DollarSign className="h-4 w-4 mr-1.5 text-primary" />
-          <span className="font-medium text-gray-700">Balance: ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+          <span className="font-medium text-gray-700">{t('balance')}: ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-4">
@@ -115,14 +117,14 @@ export default function Chatbot({ bills }: ChatbotProps) {
         <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
           <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
             <SelectTrigger className="flex-1 border-gray-200">
-              <SelectValue placeholder="Can I spend..." />
+              <SelectValue placeholder={t('chatbotPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="10">Can I spend $10?</SelectItem>
-              <SelectItem value="50">Can I spend $50?</SelectItem>
-              <SelectItem value="100">Can I spend $100?</SelectItem>
-              <SelectItem value="200">Can I spend $200?</SelectItem>
-              <SelectItem value="500">Can I spend $500?</SelectItem>
+              <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
+              <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
+              <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
+              <SelectItem value="200">{t('canISpend')} $200?</SelectItem>
+              <SelectItem value="500">{t('canISpend')} $500?</SelectItem>
             </SelectContent>
           </Select>
           <Button
@@ -133,12 +135,12 @@ export default function Chatbot({ bills }: ChatbotProps) {
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Thinking...
+                {t('thinking')}
               </>
             ) : (
               <>
                 <Send className="mr-2 h-4 w-4" />
-                Ask
+                {t('ask')}
               </>
             )}
           </Button>

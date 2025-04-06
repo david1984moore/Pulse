@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Minus, Trash2, Pencil } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useLanguage } from "@/hooks/use-language";
 import EditBillModal from "@/components/ui/edit-bill-modal";
 import EditIncomeModal from "@/components/ui/edit-income-modal";
 
@@ -39,6 +40,7 @@ export default function IncomeBills({
   onDeleteIncome,
   onUpdateBalance,
 }: IncomeBillsProps) {
+  const { t } = useLanguage();
   // State for edit modals
   const [isEditBillModalOpen, setIsEditBillModalOpen] = useState(false);
   const [isEditIncomeModalOpen, setIsEditIncomeModalOpen] = useState(false);
@@ -113,7 +115,7 @@ export default function IncomeBills({
         <div className="bg-primary/5 p-5 rounded-lg border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center">
             <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
-              Account Balance
+              {t('accountBalance')}
             </h3>
             <Button 
               variant="outline" 
@@ -121,7 +123,7 @@ export default function IncomeBills({
               onClick={onUpdateBalance}
               className="h-7 text-xs hover:bg-gray-100"
             >
-              Update
+              {t('updateBalance')}
             </Button>
           </div>
           <div className="mt-3">
@@ -131,7 +133,7 @@ export default function IncomeBills({
           </div>
           {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
             <div className="mt-3 text-xs text-gray-600 bg-white p-2 rounded border border-gray-100">
-              <p className="font-medium">Recent deductions:</p>
+              <p className="font-medium">{t('recentDeductions')}:</p>
               <ul className="mt-1 space-y-1">
                 {balanceData.deductedBills.map((bill) => (
                   <li key={bill.id} className="flex justify-between">
@@ -147,25 +149,25 @@ export default function IncomeBills({
         {/* Financial Summary */}
         <div className="bg-gray-50 p-5 rounded-lg border border-gray-200">
           <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
-            Financial Summary
+            {t('financialSummary')}
           </h3>
           <div className="space-y-2">
             <div className="flex justify-between items-center p-2 bg-white rounded border border-gray-100">
               <span className="text-sm font-medium text-gray-600 flex items-center">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Monthly Income:
+                {t('monthlyIncome')}:
               </span>
               <span className="text-sm font-bold text-green-600">${totalIncome.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center p-2 bg-white rounded border border-gray-100">
               <span className="text-sm font-medium text-gray-600 flex items-center">
                 <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-                Monthly Bills:
+                {t('monthlyBills')}:
               </span>
               <span className="text-sm font-bold text-red-500">${totalBills.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center p-2 mt-1 bg-primary/5 rounded border border-gray-200">
-              <span className="text-sm font-bold text-gray-700">Available to spend:</span>
+              <span className="text-sm font-bold text-gray-700">{t('availableToSpend')}:</span>
               <span className="text-sm font-bold text-primary">${availableToSpend.toFixed(2)}</span>
             </div>
           </div>
@@ -175,7 +177,7 @@ export default function IncomeBills({
         <div className="mt-4">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-base font-semibold text-gray-700 uppercase tracking-wider">
-              Your Bills
+              {t('yourBills')}
             </h3>
             <Button
               onClick={onAddBill}
@@ -183,7 +185,7 @@ export default function IncomeBills({
               size="icon"
             >
               <Plus className="h-4 w-4" />
-              <span className="sr-only">Add Bill</span>
+              <span className="sr-only">{t('addBill')}</span>
             </Button>
           </div>
           {bills.length > 0 ? (
@@ -193,7 +195,7 @@ export default function IncomeBills({
                   <div>
                     <p className="text-sm font-medium text-gray-800">{bill.name}</p>
                     <p className="text-xs text-gray-500">
-                      Due on the {bill.due_date}
+                      {t('dueOnThe')} {bill.due_date}
                       {["1", "21", "31"].includes(bill.due_date.toString())
                         ? "st"
                         : ["2", "22"].includes(bill.due_date.toString())
@@ -233,7 +235,7 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-500 py-4 bg-gray-50 rounded-lg text-center">No bills added yet.</div>
+            <div className="text-sm text-gray-500 py-4 bg-gray-50 rounded-lg text-center">{t('noBillsAddedYet')}</div>
           )}
         </div>
 
@@ -241,7 +243,7 @@ export default function IncomeBills({
         <div className="mt-4">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-base font-semibold text-gray-700 uppercase tracking-wider">
-              Your Income
+              {t('yourIncome')}
             </h3>
             <Button
               onClick={onAddIncome}
@@ -249,7 +251,7 @@ export default function IncomeBills({
               size="icon"
             >
               <Plus className="h-4 w-4" />
-              <span className="sr-only">Add Income</span>
+              <span className="sr-only">{t('addIncome')}</span>
             </Button>
           </div>
           {income.length > 0 ? (
@@ -257,11 +259,11 @@ export default function IncomeBills({
               {income.map((inc) => (
                 <li key={inc.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200">
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{inc.source || 'Job'}</p>
+                    <p className="text-sm font-medium text-gray-800">{inc.source || t('job')}</p>
                     <p className="text-xs text-gray-500">
-                      {inc.frequency}
-                      {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/mo)`}
-                      {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/mo)`}
+                      {t(inc.frequency.toLowerCase())}
+                      {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/${t('mo')})`}
+                      {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/${t('mo')})`}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -292,7 +294,7 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-500 py-4 bg-gray-50 rounded-lg text-center">No income added yet.</div>
+            <div className="text-sm text-gray-500 py-4 bg-gray-50 rounded-lg text-center">{t('noIncomeAddedYet')}</div>
           )}
         </div>
       </CardContent>

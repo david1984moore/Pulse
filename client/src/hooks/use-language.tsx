@@ -62,6 +62,11 @@ type TranslationData = {
   cancel: string;
   chatbotPlaceholder: string;
   chatbotInitialMessage: string;
+  chatbotErrorMessage: string;
+  canISpend: string;
+  balance: string;
+  thinking: string;
+  ask: string;
   send: string;
   language: string;
   english: string;
@@ -71,6 +76,23 @@ type TranslationData = {
   forgotPassword: string;
   signingIn: string;
   creatingAccount: string;
+  financialSummary: string;
+  monthlyIncome: string;
+  monthlyBills: string;
+  availableToSpend: string;
+  yourBills: string;
+  yourIncome: string;
+  noBillsAddedYet: string;
+  noIncomeAddedYet: string;
+  dueOnThe: string;
+  recentDeductions: string;
+  job: string;
+  weekly: string;
+  'bi-weekly': string;
+  mo: string;
+  paymentCalendar: string;
+  calendarLegend: string;
+  billsDue: string;
 };
 
 type Translations = {
@@ -116,7 +138,7 @@ const translations: Translations = {
     
     // Dashboard page
     accountBalance: "Account Balance",
-    updateBalance: "Update Balance",
+    updateBalance: "Update",
     incomeAndBills: "Income & Bills",
     calendar: "Calendar",
     chatbot: "Spending Assistant",
@@ -158,12 +180,36 @@ const translations: Translations = {
     // Chatbot
     chatbotPlaceholder: "Ask if you can afford something...",
     chatbotInitialMessage: "Hello! I'm your spending assistant. Ask me if you can afford something based on your current financial situation.",
+    chatbotErrorMessage: "Sorry, I couldn't process your request. Please try again later.",
+    canISpend: "Can I spend",
+    balance: "Balance",
+    thinking: "Thinking...",
+    ask: "Ask",
     send: "Send",
 
     // Language toggle
     language: "Language",
     english: "English",
-    spanish: "Spanish"
+    spanish: "Spanish",
+    
+    // Additional translations
+    financialSummary: "Financial Summary",
+    monthlyIncome: "Monthly Income",
+    monthlyBills: "Monthly Bills",
+    availableToSpend: "Available to spend",
+    yourBills: "Your Bills",
+    yourIncome: "Your Income",
+    noBillsAddedYet: "No bills added yet.",
+    noIncomeAddedYet: "No income added yet.",
+    dueOnThe: "Due on the",
+    recentDeductions: "Recent deductions",
+    job: "Job",
+    weekly: "Weekly",
+    'bi-weekly': "Bi-weekly",
+    mo: "mo",
+    paymentCalendar: "Payment Calendar",
+    calendarLegend: "Calendar Legend",
+    billsDue: "Bills Due"
   },
   es: {
     // Common
@@ -202,7 +248,7 @@ const translations: Translations = {
     
     // Dashboard page
     accountBalance: "Saldo de la cuenta",
-    updateBalance: "Actualizar saldo",
+    updateBalance: "Actualizar",
     incomeAndBills: "Ingresos y Facturas",
     calendar: "Calendario",
     chatbot: "Asistente de Gastos",
@@ -244,12 +290,36 @@ const translations: Translations = {
     // Chatbot
     chatbotPlaceholder: "Pregunta si puedes permitirte algo...",
     chatbotInitialMessage: "¡Hola! Soy tu asistente de gastos. Pregúntame si puedes permitirte algo basado en tu situación financiera actual.",
+    chatbotErrorMessage: "Lo siento, no pude procesar tu solicitud. Por favor, inténtalo de nuevo más tarde.",
+    canISpend: "¿Puedo gastar",
+    balance: "Saldo",
+    thinking: "Pensando...",
+    ask: "Preguntar",
     send: "Enviar",
 
     // Language toggle
     language: "Idioma",
     english: "Inglés",
-    spanish: "Español"
+    spanish: "Español",
+    
+    // Additional translations
+    financialSummary: "Resumen Financiero",
+    monthlyIncome: "Ingresos Mensuales",
+    monthlyBills: "Facturas Mensuales",
+    availableToSpend: "Disponible para gastar",
+    yourBills: "Tus Facturas",
+    yourIncome: "Tus Ingresos",
+    noBillsAddedYet: "No hay facturas añadidas todavía.",
+    noIncomeAddedYet: "No hay ingresos añadidos todavía.",
+    dueOnThe: "Vence el",
+    recentDeductions: "Deducciones recientes",
+    job: "Trabajo",
+    weekly: "Semanal",
+    'bi-weekly': "Quincenal",
+    mo: "mes",
+    paymentCalendar: "Calendario de Pagos",
+    calendarLegend: "Leyenda del Calendario",
+    billsDue: "Facturas por Pagar"
   }
 };
 

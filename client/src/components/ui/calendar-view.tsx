@@ -3,6 +3,7 @@ import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/hooks/use-language";
 import { 
   format, 
   startOfMonth, 
@@ -19,6 +20,7 @@ interface CalendarViewProps {
 }
 
 export default function CalendarView({ bills }: CalendarViewProps) {
+  const { t } = useLanguage();
   const [currentDate, setCurrentDate] = useState(new Date());
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   
@@ -54,7 +56,7 @@ export default function CalendarView({ bills }: CalendarViewProps) {
       <CardHeader className="pb-3 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <CardTitle>
-            Payment Calendar
+            {t('paymentCalendar')}
           </CardTitle>
           <div className="flex space-x-2">
             <Button 
@@ -140,11 +142,11 @@ export default function CalendarView({ bills }: CalendarViewProps) {
           
           {/* Legend */}
           <div className="mt-5 pt-3 bg-gray-50 rounded p-3 border border-gray-200">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Calendar Legend</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">{t('calendarLegend')}</h4>
             <div className="flex items-center">
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-red-400 border border-red-500 rounded-full mr-2"></div>
-                <span className="text-xs font-medium text-gray-600">Bills Due</span>
+                <span className="text-xs font-medium text-gray-600">{t('billsDue')}</span>
               </div>
             </div>
           </div>
