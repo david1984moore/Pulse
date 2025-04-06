@@ -204,7 +204,7 @@ export default function IncomeBills({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className={`px-2.5 py-1 rounded-md ${bill.name === "Rent" ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-600"}`}>
+                    <div className="px-2.5 py-1 rounded-md bg-red-50 text-red-500">
                       <p className="text-sm font-semibold">
                         ${Number(bill.amount).toFixed(2)}
                       </p>

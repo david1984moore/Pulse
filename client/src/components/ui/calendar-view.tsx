@@ -127,13 +127,7 @@ export default function CalendarView({ bills }: CalendarViewProps) {
                       {dayBills.map((bill) => (
                         <div 
                           key={bill.id}
-                          className={`
-                            w-3 h-3 rounded-full border
-                            ${bill.name === "Rent" 
-                              ? "bg-red-400 border-red-500" 
-                              : "bg-amber-400 border-amber-500"
-                            }
-                          `}
+                          className="w-3 h-3 rounded-full border bg-red-400 border-red-500"
                           title={`${bill.name}: $${Number(bill.amount).toFixed(2)}`}
                         />
                       ))}
@@ -146,15 +140,11 @@ export default function CalendarView({ bills }: CalendarViewProps) {
           
           {/* Legend */}
           <div className="mt-5 pt-3 bg-gray-50 rounded p-3 border border-gray-200">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Bill Types</h4>
-            <div className="flex items-center space-x-6">
+            <h4 className="text-sm font-medium text-gray-700 mb-2">Calendar Legend</h4>
+            <div className="flex items-center">
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-red-400 border border-red-500 rounded-full mr-2"></div>
-                <span className="text-xs font-medium text-gray-600">Rent</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-amber-400 border border-amber-500 rounded-full mr-2"></div>
-                <span className="text-xs font-medium text-gray-600">Other Bills</span>
+                <span className="text-xs font-medium text-gray-600">Bills Due</span>
               </div>
             </div>
           </div>
