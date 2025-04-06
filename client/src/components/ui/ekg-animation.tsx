@@ -44,44 +44,44 @@ export function EkgAnimation({
     [width, height/2]                    // End with flat line
   ].map(point => point.join(',')).join(' ');
   
-  // Create dual-phase animation effect
+  // Create dual-phase animation effect with more visible trace
   // First keyframes control the leading point (pen)
   // Second keyframes control the tail completion
   const animationStyles = `
     @keyframes drawLeadingPoint {
       0% {
-        stroke-dasharray: 3, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
         stroke-dashoffset: ${width * 3};
       }
       20% {
-        stroke-dasharray: 3, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
         stroke-dashoffset: ${width * 2.4}; /* Slower at beginning */
       }
       40% {
-        stroke-dasharray: 3, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
         stroke-dashoffset: ${width * 1.8}; /* Speed up before peak */
       }
       60% {
-        stroke-dasharray: 3, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
         stroke-dashoffset: ${width * 1.2}; /* Faster at peak */
       }
       80% {
-        stroke-dasharray: 3, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
         stroke-dashoffset: ${width * 0.6}; /* Even faster going down */
       }
       90% {
-        stroke-dasharray: 3, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
         stroke-dashoffset: ${width * 0.3}; /* Almost done */
       }
       100% {
-        stroke-dasharray: 3, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
         stroke-dashoffset: 0; /* Leading point completes */
       }
     }
     
     @keyframes completeTail {
       0%, 85% {
-        stroke-dasharray: 3, ${width * 3};
+        stroke-dasharray: 6, ${width * 3};
       }
       100% {
         stroke-dasharray: 0, 0; /* Tail catches up and completes */
@@ -120,7 +120,7 @@ export function EkgAnimation({
           points={points}
           fill="none"
           stroke={color}
-          strokeWidth="1.5"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
           className="animate-draw"
