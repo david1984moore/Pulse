@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -429,6 +430,27 @@ export default function AuthPage() {
                       const hasNumber = /[0-9]/.test(password);
                       const isPasswordValid = hasMinLength && hasSpecialChar && hasNumber;
                       
+                      // State for tracking the delay in hiding criteria
+                      const [hideCriteria, setHideCriteria] = useState(false);
+                      
+                      // Effect to delay hiding criteria when all requirements are met
+                      useEffect(() => {
+                        let timer: NodeJS.Timeout;
+                        
+                        if (isPasswordValid && field.value) {
+                          // Set a delay of 1 second before hiding criteria
+                          timer = setTimeout(() => {
+                            setHideCriteria(true);
+                          }, 1000);
+                        } else {
+                          setHideCriteria(false);
+                        }
+                        
+                        return () => {
+                          if (timer) clearTimeout(timer);
+                        };
+                      }, [isPasswordValid, field.value]);
+                      
                       return (
                         <FormItem>
                           <FormLabel>{t('passwordLabel')}</FormLabel>
@@ -453,8 +475,8 @@ export default function AuthPage() {
                               </div>
                             )}
                           </div>
-                          {/* Show password criteria if the field is not empty or if it's not valid yet */}
-                          {field.value && !isPasswordValid && (
+                          {/* Always show criteria initially, but hide after validation and delay */}
+                          {!hideCriteria && (
                             <div className="mt-2 space-y-1 text-xs">
                               <div className="flex items-center">
                                 <span className={hasMinLength ? "text-green-500" : "text-red-500"}>
