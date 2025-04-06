@@ -565,7 +565,7 @@ export default function AuthPage() {
                   
                   <Button 
                     type="submit" 
-                    className="w-full" 
+                    className="w-full mt-6" 
                     disabled={registerMutation.isPending || !passwordRequirementsMet()}
                   >
                     {registerMutation.isPending ? (
