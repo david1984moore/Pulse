@@ -474,10 +474,10 @@ export default function AuthPage() {
                               )}
                             </div>
                             <div className="flex items-center space-x-2">
-                              <span className={hasSpecialChar ? "text-green-500" : "text-red-500"}>
-                                {t('passwordSpecialChar')}
+                              <span className={hasNumber ? "text-green-500" : "text-red-500"}>
+                                {t('passwordNumber')}
                               </span>
-                              {hasSpecialChar && (
+                              {hasNumber && (
                                 <svg 
                                   xmlns="http://www.w3.org/2000/svg" 
                                   className="h-4 w-4 text-green-500" 
@@ -493,10 +493,10 @@ export default function AuthPage() {
                               )}
                             </div>
                             <div className="flex items-center space-x-2">
-                              <span className={hasNumber ? "text-green-500" : "text-red-500"}>
-                                {t('passwordNumber')}
+                              <span className={hasSpecialChar ? "text-green-500" : "text-red-500"}>
+                                {t('passwordSpecialChar')}
                               </span>
-                              {hasNumber && (
+                              {hasSpecialChar && (
                                 <svg 
                                   xmlns="http://www.w3.org/2000/svg" 
                                   className="h-4 w-4 text-green-500" 
