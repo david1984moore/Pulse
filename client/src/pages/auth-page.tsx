@@ -448,7 +448,8 @@ export default function AuthPage() {
                       // Get registration error if it exists
                       const hasRegistrationError = registerMutation.isError;
                       const errorMessage = registerMutation.error?.message || '';
-                      const isEmailTakenError = errorMessage.includes('email address has been taken');
+                      const isEmailTakenError = errorMessage.includes('already registered') || 
+                                              errorMessage.includes('email address has been taken');
                       
                       return (
                         <FormItem>

@@ -127,7 +127,7 @@ export function setupAuth(app: Express) {
       if (existingUser) {
         console.log(`REGISTER API: Rejecting registration - email already exists: '${normalizedEmail}'`);
         return res.status(400).json({ 
-          message: "An account with this email address has been taken. Please choose another email address." 
+          message: "This email is already registered. Choose a different email." 
         });
       }
 
