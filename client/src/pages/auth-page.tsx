@@ -12,15 +12,24 @@ import { Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import LanguageToggle from "@/components/ui/language-toggle";
 
+// Enhanced email validation regex pattern
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address")
+    .regex(emailRegex, "Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   rememberMe: z.boolean().optional(),
 });
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address")
+    .regex(emailRegex, "Please enter a valid email address"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")

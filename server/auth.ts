@@ -98,6 +98,13 @@ export function setupAuth(app: Express) {
   app.post("/api/register", async (req, res, next) => {
     try {
       const { name, email, password } = req.body;
+      
+      // Validate email format server-side
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!email || !emailRegex.test(email)) {
+        return res.status(400).json({ message: "Please enter a valid email address" });
+      }
+      
       const existingUser = await storage.getUserByEmail(email);
       
       if (existingUser) {
@@ -114,6 +121,7 @@ export function setupAuth(app: Express) {
       // Create sample data for new user
       await storage.createIncome({
         user_id: user.id,
+        source: "Salary",
         amount: "1000",
         frequency: "Weekly",
       });
@@ -142,6 +150,14 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
+    const { email } = req.body;
+    
+    // Validate email format server-side
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email || !emailRegex.test(email)) {
+      return res.status(400).json({ message: "Please enter a valid email address" });
+    }
+    
     passport.authenticate("local", (err: any, user: Express.User | false, info: any) => {
       console.log("Login attempt result:", { err, user: !!user, info });
       
