@@ -212,7 +212,13 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByEmail(email: string): Promise<User | undefined> {
     try {
-      const [user] = await db.select().from(users).where(eq(users.email, email));
+      // Convert email to lowercase for case-insensitive comparison
+      const lowerCaseEmail = email.toLowerCase();
+      
+      // Get all users and filter by email case-insensitively
+      const allUsers = await db.select().from(users);
+      const user = allUsers.find(u => u.email.toLowerCase() === lowerCaseEmail);
+      
       return user;
     } catch (error) {
       console.error("getUserByEmail error:", error);

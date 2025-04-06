@@ -59,8 +59,10 @@ export function setupAuth(app: Express) {
       },
       async (email, password, done) => {
         try {
-          console.log(`Login attempt for email: ${email}`);
-          const user = await storage.getUserByEmail(email);
+          // Convert email to lowercase for case-insensitive lookup
+          const normalizedEmail = email.toLowerCase();
+          console.log(`Login attempt for email: ${normalizedEmail}`);
+          const user = await storage.getUserByEmail(normalizedEmail);
           console.log(`User found: ${!!user}`);
           
           if (!user) {
@@ -98,7 +100,9 @@ export function setupAuth(app: Express) {
   app.post("/api/register", async (req, res, next) => {
     try {
       const { name, email, password } = req.body;
-      const existingUser = await storage.getUserByEmail(email);
+      // Convert email to lowercase for storage and consistency
+      const normalizedEmail = email.toLowerCase();
+      const existingUser = await storage.getUserByEmail(normalizedEmail);
       
       if (existingUser) {
         return res.status(400).json({ message: "Email already in use" });
@@ -107,13 +111,14 @@ export function setupAuth(app: Express) {
       const hashedPassword = await hashPassword(password);
       const user = await storage.createUser({
         name,
-        email,
+        email: normalizedEmail, // Store email in lowercase
         password: hashedPassword,
       });
 
       // Create sample data for new user
       await storage.createIncome({
         user_id: user.id,
+        source: "Salary",
         amount: "1000",
         frequency: "Weekly",
       });
