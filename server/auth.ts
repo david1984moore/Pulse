@@ -6,6 +6,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User } from "@shared/schema";
+import { isValidEmailFormat, validateEmail } from "./utils/email-validator";
 
 // Fix for Express User interface
 declare global {
@@ -99,12 +100,22 @@ export function setupAuth(app: Express) {
     try {
       const { name, email, password } = req.body;
       
-      // Validate email format server-side with stricter rules
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|edu|gov|mil|biz|info|io|co|uk|ca|au|de|jp|fr|it|ru|ch|nl|se|no|es|pt)$/i;
-      if (!email || !emailRegex.test(email)) {
-        return res.status(400).json({ message: "Please enter a valid email address with a recognized domain" });
+      // Step 1: Basic format validation (quick check)
+      if (!email || !isValidEmailFormat(email)) {
+        return res.status(400).json({ 
+          message: "Please enter a valid email address format. Make sure you're using a real email provider." 
+        });
       }
       
+      // Step 2: Full validation with domain checking
+      const validation = await validateEmail(email);
+      if (!validation.isValid) {
+        return res.status(400).json({ 
+          message: `Invalid email: ${validation.reason || 'Please use a valid email address'}`
+        });
+      }
+      
+      // Check if email is already in use
       const existingUser = await storage.getUserByEmail(email);
       
       if (existingUser) {
@@ -149,13 +160,15 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", (req, res, next) => {
+  app.post("/api/login", async (req, res, next) => {
     const { email } = req.body;
     
-    // Validate email format server-side with stricter rules
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|edu|gov|mil|biz|info|io|co|uk|ca|au|de|jp|fr|it|ru|ch|nl|se|no|es|pt)$/i;
-    if (!email || !emailRegex.test(email)) {
-      return res.status(400).json({ message: "Please enter a valid email address with a recognized domain" });
+    // Basic email validation - for login, we're less strict as the account would have
+    // already been validated during registration
+    if (!email || !isValidEmailFormat(email)) {
+      return res.status(400).json({ 
+        message: "Please enter a valid email address format" 
+      });
     }
     
     passport.authenticate("local", (err: any, user: Express.User | false, info: any) => {
@@ -198,14 +211,22 @@ export function setupAuth(app: Express) {
   });
 
   // Email verification simulation
-  app.get("/api/verify", (req, res) => {
+  app.get("/api/verify", async (req, res) => {
     const email = req.query.email as string;
     
-    // Validate email format with the same strict rules
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|edu|gov|mil|biz|info|io|co|uk|ca|au|de|jp|fr|it|ru|ch|nl|se|no|es|pt)$/i;
+    // Complete email validation with both format and domain check
+    if (!email || !isValidEmailFormat(email)) {
+      return res.status(400).json({ 
+        message: "Please enter a valid email address format" 
+      });
+    }
     
-    if (!email || !emailRegex.test(email)) {
-      return res.status(400).json({ message: "Please enter a valid email address with a recognized domain" });
+    // Perform full validation
+    const validation = await validateEmail(email);
+    if (!validation.isValid) {
+      return res.status(400).json({ 
+        message: `Invalid email: ${validation.reason || 'Please use a valid email address'}`
+      });
     }
     
     // In a real app, we would verify the token, but for the simulation we'll just redirect

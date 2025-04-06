@@ -13,14 +13,25 @@ import { Checkbox } from "@/components/ui/checkbox";
 import LanguageToggle from "@/components/ui/language-toggle";
 
 // Enhanced and more strict email validation regex pattern
-// This regex validates common email formats and validates against known TLDs
-const emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|edu|gov|mil|biz|info|io|co|uk|ca|au|de|jp|fr|it|ru|ch|nl|se|no|es|pt)$/i;
+// This regex validates common email formats and requires properly formed domains
+const emailRegex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+
+// List of known invalid/disposable domains that we want to block
+const invalidDomains = [
+  'gmaik.com', 'gmakkk.com', 'yahooo.com', 'hotmial.com', 'outlook.con',
+  'tempmail.com', 'mailinator.com', 'guerrillamail.com', 'yopmail.com',
+  'trashmail.com', 'sharklasers.com', '10minutemail.com', 'throwawaymail.com'
+];
 
 const loginSchema = z.object({
   email: z.string()
     .min(1, "Email is required")
     .email("Please enter a valid email address")
-    .regex(emailRegex, "Please enter a valid email address"),
+    .regex(emailRegex, "Please enter a valid email address")
+    .refine(email => {
+      const domain = email.split('@')[1]?.toLowerCase();
+      return !invalidDomains.includes(domain);
+    }, "This email domain is not allowed. Please use a valid email address."),
   password: z.string().min(6, "Password must be at least 6 characters"),
   rememberMe: z.boolean().optional(),
 });
@@ -30,7 +41,11 @@ const signupSchema = z.object({
   email: z.string()
     .min(1, "Email is required")
     .email("Please enter a valid email address")
-    .regex(emailRegex, "Please enter a valid email address"),
+    .regex(emailRegex, "Please enter a valid email address")
+    .refine(email => {
+      const domain = email.split('@')[1]?.toLowerCase();
+      return !invalidDomains.includes(domain);
+    }, "This email domain is not allowed. Please use a valid email address."),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
