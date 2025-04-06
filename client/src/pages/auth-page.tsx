@@ -319,9 +319,12 @@ export default function AuthPage() {
                     </div>
                   </div>
                   
+                  {/* Spacer div to create more vertical space */}
+                  <div className="h-12"></div>
+                  
                   <Button 
                     type="submit" 
-                    className="w-full mt-8" 
+                    className="w-full" 
                     disabled={loginMutation.isPending}
                   >
                     {loginMutation.isPending ? (
@@ -563,9 +566,12 @@ export default function AuthPage() {
                     }}
                   />
                   
+                  {/* Spacer div to create more vertical space */}
+                  <div className="h-16"></div>
+                  
                   <Button 
                     type="submit" 
-                    className="w-full mt-12" 
+                    className="w-full" 
                     disabled={registerMutation.isPending || !passwordRequirementsMet()}
                   >
                     {registerMutation.isPending ? (
