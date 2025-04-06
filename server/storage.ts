@@ -244,22 +244,16 @@ export class DatabaseStorage implements IStorage {
       const normalizedEmail = email.toLowerCase().trim();
       console.log(`DatabaseStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
       
-      // Get all users and then filter case-insensitively
-      const allUsers = await db.select().from(users);
-      console.log(`Found ${allUsers.length} total users in database`);
+      // Use SQL LOWER function for case-insensitive comparison
+      const users_with_matching_email = await db
+        .select()
+        .from(users)
+        .where(sql`LOWER(${users.email}) = LOWER(${normalizedEmail})`);
       
-      // Loop through each user and log their emails for debugging
-      allUsers.forEach(u => {
-        console.log(`User in DB: ID=${u.id}, Email='${u.email}', Normalized='${u.email.toLowerCase().trim()}'`);
-      });
+      console.log(`Found ${users_with_matching_email.length} users with email '${normalizedEmail}'`);
       
-      // Find user with case-insensitive email match
-      const user = allUsers.find(u => {
-        const dbEmailNormalized = (u.email || '').toLowerCase().trim();
-        const match = dbEmailNormalized === normalizedEmail;
-        console.log(`Comparing: '${dbEmailNormalized}' with '${normalizedEmail}', match: ${match}`);
-        return match;
-      });
+      // Get the first user if any match (should be only one due to unique constraint)
+      const user = users_with_matching_email[0];
       
       console.log(`User found by email?: ${!!user}`, user ? `ID: ${user.id}, Email: '${user.email}'` : '');
       return user;
