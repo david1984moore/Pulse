@@ -79,6 +79,7 @@ export class MemStorage implements IStorage {
       console.log(`User in memory: ID=${u.id}, Email='${u.email}', Normalized='${u.email.toLowerCase().trim()}'`);
     });
     
+    // Strict case-insensitive comparison
     const user = allUsers.find(u => {
       const dbEmailNormalized = (u.email || '').toLowerCase().trim();
       const match = dbEmailNormalized === normalizedEmail;
@@ -86,7 +87,12 @@ export class MemStorage implements IStorage {
       return match;
     });
     
-    console.log(`User found by email?: ${!!user}`, user ? `ID: ${user.id}, Email: '${user.email}'` : '');
+    if (user) {
+      console.log(`User found by email: ID=${user.id}, Email='${user.email}'`);
+    } else {
+      console.log(`No user found with email '${normalizedEmail}'`);
+    }
+    
     return user;
   }
 
@@ -244,21 +250,24 @@ export class DatabaseStorage implements IStorage {
       const normalizedEmail = email.toLowerCase().trim();
       console.log(`DatabaseStorage.getUserByEmail: Looking for normalized email: '${normalizedEmail}'`);
       
-      // Use SQL LOWER function for case-insensitive comparison
-      const users_with_matching_email = await db
+      // Use a SQL query builder with LOWER function for case-insensitive comparison
+      const result = await db
         .select()
         .from(users)
         .where(sql`LOWER(${users.email}) = LOWER(${normalizedEmail})`);
+      console.log("Query result:", result);
       
-      console.log(`Found ${users_with_matching_email.length} users with email '${normalizedEmail}'`);
+      if (result.length > 0) {
+        const user = result[0] as User;
+        console.log(`User found by email: ID=${user.id}, Email='${user.email}'`);
+        return user;
+      }
       
-      // Get the first user if any match (should be only one due to unique constraint)
-      const user = users_with_matching_email[0];
-      
-      console.log(`User found by email?: ${!!user}`, user ? `ID: ${user.id}, Email: '${user.email}'` : '');
-      return user;
+      console.log(`No user found with email '${normalizedEmail}'`);
+      return undefined;
     } catch (error) {
       console.error("getUserByEmail error:", error);
+      console.error(error);
       return undefined;
     }
   }

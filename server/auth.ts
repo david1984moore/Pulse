@@ -119,15 +119,23 @@ export function setupAuth(app: Express) {
       const normalizedEmail = email.toLowerCase().trim();
       console.log(`REGISTER API: Checking if email exists: '${normalizedEmail}'`);
       
-      // Force a thorough check for existing email
-      const existingUser = await storage.getUserByEmail(normalizedEmail);
-      
-      console.log(`REGISTER API: Existing user found: ${!!existingUser}`, existingUser ? `ID: ${existingUser.id}, Email: '${existingUser.email}'` : '');
-      
-      if (existingUser) {
-        console.log(`REGISTER API: Rejecting registration - email already exists: '${normalizedEmail}'`);
-        return res.status(400).json({ 
-          message: "This email is already registered. Choose a different email." 
+      try {
+        // Force a thorough check for existing email
+        console.log(`REGISTER API: About to call storage.getUserByEmail with '${normalizedEmail}'`);
+        const existingUser = await storage.getUserByEmail(normalizedEmail);
+        
+        console.log(`REGISTER API: Existing user found: ${!!existingUser}`, existingUser ? `ID: ${existingUser.id}, Email: '${existingUser.email}'` : '');
+        
+        if (existingUser) {
+          console.log(`REGISTER API: Rejecting registration - email exists: '${normalizedEmail}'`);
+          return res.status(400).json({ 
+            message: "This email is already registered. Choose a different email." 
+          });
+        }
+      } catch (error) {
+        console.error("Error checking for existing email:", error);
+        return res.status(500).json({ 
+          message: "An error occurred while checking email availability." 
         });
       }
 
