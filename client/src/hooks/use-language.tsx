@@ -248,7 +248,7 @@ const translations: Translations = {
     
     // Chatbot
     chatbotPlaceholder: "Ask if you can afford something...",
-    chatbotInitialMessage: "Hello! I'm Alice. Ask me if you can afford something based on your current financial situation.",
+    chatbotInitialMessage: "Hello! I'm Alice. Ask me what you can spend.",
     chatbotErrorMessage: "Sorry, I couldn't process your request. Please try again later.",
     canISpend: "Can I spend",
     balance: "Balance",
@@ -410,7 +410,7 @@ const translations: Translations = {
     
     // Chatbot
     chatbotPlaceholder: "Pregunta si puedes permitirte algo...",
-    chatbotInitialMessage: "¡Hola! Soy Alicia. Pregúntame si puedes permitirte algo basado en tu situación financiera actual.",
+    chatbotInitialMessage: "¡Hola! Soy Alicia. Pregúntame qué puedes gastar.",
     chatbotErrorMessage: "Lo siento, no pude procesar tu solicitud. Por favor, inténtalo de nuevo más tarde.",
     canISpend: "¿Puedo gastar",
     balance: "Saldo",

@@ -45,8 +45,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       text: language === 'es' 
-        ? "¡Hola! Soy Alicia. Pregúntame si puedes permitirte algo basado en tu situación financiera actual."
-        : "Hello! I'm Alice. Ask me if you can afford something based on your current financial situation.",
+        ? "¡Hola! Soy Alicia. Pregúntame qué puedes gastar."
+        : "Hello! I'm Alice. Ask me what you can spend.",
       sender: "bot",
     },
   ]);
