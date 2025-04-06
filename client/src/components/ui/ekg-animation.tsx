@@ -10,7 +10,7 @@ interface EkgAnimationProps {
 
 export function EkgAnimation({ 
   isActive,
-  duration = 1000,
+  duration = 2000, // 2 seconds for a more visible effect
   color = '#3b82f6', // Default blue color
   width = 100,
   height = 25
@@ -20,9 +20,10 @@ export function EkgAnimation({
   useEffect(() => {
     if (isActive) {
       setShowAnimation(true);
+      // Use duration * 1.5 to match the tail animation duration
       const timer = setTimeout(() => {
         setShowAnimation(false);
-      }, duration);
+      }, duration * 1.5);
       
       return () => clearTimeout(timer);
     }
@@ -50,36 +51,36 @@ export function EkgAnimation({
   const animationStyles = `
     @keyframes drawLeadingPoint {
       0% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Larger leading dot (10px) */
         stroke-dashoffset: ${width * 3};
       }
       25% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
         stroke-dashoffset: ${width * 2.5}; /* Slower at beginning */
       }
       50% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
         stroke-dashoffset: ${width * 1.8}; /* Speed up before peak */
       }
       70% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
         stroke-dashoffset: ${width * 1.0}; /* Faster at peak */
       }
       /* Slow down towards the end */
       80% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
         stroke-dashoffset: ${width * 0.7}; /* Starting to slow down */
       }
       90% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
         stroke-dashoffset: ${width * 0.4}; /* Even slower */
       }
       95% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
         stroke-dashoffset: ${width * 0.2}; /* Very slow at the end */
       }
       100% {
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
         stroke-dashoffset: 0; /* Leading point completes */
       }
     }
@@ -87,29 +88,34 @@ export function EkgAnimation({
     @keyframes completeTail {
       0%, 80% {
         /* Keep dash array unchanged until lead point is almost at end (80%) */
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Match the 10px dot size */
       }
       95% {
         /* Start the tail very late, when lead is almost done */
-        stroke-dasharray: 8, ${width * 3};
+        stroke-dasharray: 10, ${width * 3}; /* Match the 10px dot size */
       }
       100% {
         stroke-dasharray: 0, 0; /* Tail catches up and completes */
       }
     }
     
-    /* Animation to keep the trace visible after lead completes */
-    @keyframes keepVisible {
+    /* Two-phase animation to keep the entire trace visible - entire path + final trace */
+    @keyframes maintainPathVisibility {
       0%, 100% {
+        visibility: visible;
         opacity: 1;
+        stroke-opacity: 1;
+        fill-opacity: 1;
       }
     }
     
     .animate-draw {
+      stroke-linecap: round;
+      stroke-linejoin: round;
       animation: 
         drawLeadingPoint ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
         completeTail ${duration * 1.5}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards,
-        keepVisible ${duration * 1.5}ms linear forwards; /* Keep visible for entire tail animation */
+        maintainPathVisibility ${duration * 1.5}ms linear forwards; /* Keep visible until tail finishes */
     }
   `;
   
