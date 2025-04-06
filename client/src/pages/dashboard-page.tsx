@@ -31,7 +31,7 @@ export default function DashboardPage() {
   //const [removeBillOpen, setRemoveBillOpen] = useState<boolean>(false); // Removed
   const [addIncomeOpen, setAddIncomeOpen] = useState<boolean>(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState<boolean>(false);
-  
+
   // Add logout mutation
   const logoutMutation = useMutation({
     mutationFn: async () => {
