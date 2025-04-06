@@ -38,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const csrfProtection = csrf({ cookie: true });
   
   // Define which routes to exempt from CSRF protection
-  const csrfExemptRoutes = ['/api/login', '/api/register'];
+  const csrfExemptRoutes = ['/api/login', '/api/register', '/api/logout'];
   
   // Add route to get CSRF token
   app.get('/api/csrf-token', csrfProtection, (req, res) => {

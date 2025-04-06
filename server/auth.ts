@@ -111,33 +111,23 @@ export function setupAuth(app: Express) {
         console.warn(`User with ID ${id} not found during deserialization, using minimal object`);
         // Return a minimal user object with just the ID to prevent crashes
         // We have to cast this to User because Passport expects that type
-        return done(null, { id } as any as User);
+        return done(null, { id } as any as Express.User);
       }
       
-      // Filter out potentially undefined fields that might cause 
-      // deserialization errors and replace with default values
+      // Create a safe user object with only the essential fields for Express.User
+      // This prevents deserialization errors from undefined fields
       const safeUser = {
         id: user.id,
         name: user.name || '',
         email: user.email || '',
-        // Include password hash for authentication but NOT for client
-        password: user.password || '', 
-        account_balance: user.account_balance || '0.00',
-        last_balance_update: user.last_balance_update || null,
-        created_at: user.created_at || new Date(),
-        // Default to safe values for security fields
-        login_attempts: user.login_attempts || 0,
-        locked_until: user.locked_until || null,
-        reset_token: user.reset_token || null,
-        reset_token_expires: user.reset_token_expires || null,
-      } as User;
+        password: user.password || ''
+      } as Express.User;
       
       return done(null, safeUser);
     } catch (error) {
       console.error("Error during user deserialization:", error);
       // Log the error but return a minimal user object to prevent crashes
-      // We have to cast this to User because Passport expects that type
-      return done(null, { id } as any as User);
+      return done(null, { id } as any as Express.User);
     }
   });
 
