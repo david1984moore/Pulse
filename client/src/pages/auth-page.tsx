@@ -574,7 +574,7 @@ export default function AuthPage() {
                           {passwordsMismatch && (
                             <p className="text-sm text-red-500">{t('passwordsDontMatch')}</p>
                           )}
-                          <FormMessage />
+                          {/* Hide FormMessage to prevent duplicate error messages */}
                         </FormItem>
                       );
                     }}
