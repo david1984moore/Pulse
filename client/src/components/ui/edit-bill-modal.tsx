@@ -187,6 +187,7 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
               <Button 
                 type="submit" 
                 disabled={editBillMutation.isPending}
+                className="bg-red-500 hover:bg-red-600"
               >
                 {editBillMutation.isPending ? "Updating..." : "Update Bill"}
               </Button>
