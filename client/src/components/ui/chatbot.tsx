@@ -71,8 +71,99 @@ export default function Chatbot({ bills }: ChatbotProps) {
       const response = await apiRequest("POST", "/api/spending-advisor", { amount: selectedAmount });
       const data: SpendingResponse = await response.json();
       
+      // Translate the response if in Spanish mode
+      let botMessage = data.message;
+      
+      if (language === 'es') {
+        // Translate the response based on its patterns
+        const originalMessage = data.message;
+        
+        if (originalMessage.startsWith("Yes, you can spend") && originalMessage.includes("next bill")) {
+          // Pattern: Yes, you can spend $X. Your balance will be $Y. Next bill Name ($Z) due in N days, leaving $W.
+          const amount = selectedAmount;
+          
+          // Extract newBalance
+          const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
+          const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
+          
+          // Extract bill name
+          const billNameMatch = originalMessage.match(/next bill ([A-Za-z\s]+) \(\$/);
+          const billName = billNameMatch ? billNameMatch[1] : "?";
+          
+          // Extract bill amount
+          const billAmountMatch = originalMessage.match(/\(\\?\$([0-9.]+)\) is due/);
+          const billAmount = billAmountMatch ? billAmountMatch[1] : "0.00";
+          
+          // Extract days until bill
+          const daysMatch = originalMessage.match(/due in ([0-9]+) days/);
+          const days = daysMatch ? daysMatch[1] : "0";
+          
+          // Extract remaining balance
+          const remainingBalanceMatch = originalMessage.match(/leave you with \$([0-9.]+)/);
+          const remainingBalance = remainingBalanceMatch ? remainingBalanceMatch[1] : "0.00";
+          
+          // Use the translated template with values
+          botMessage = t('yesSafeToSpend')
+            .replace('%amount%', amount)
+            .replace('%newBalance%', newBalance)
+            .replace('%billName%', billName)
+            .replace('%billAmount%', billAmount)
+            .replace('%days%', days)
+            .replace('%remainingBalance%', remainingBalance);
+            
+        } else if (originalMessage.startsWith("Yes, you can spend") && !originalMessage.includes("next bill")) {
+          // Pattern: Yes, you can spend $X. Your balance will be $Y.
+          const amount = selectedAmount;
+          
+          // Extract newBalance
+          const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
+          const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
+          
+          // Use the translated template with values
+          botMessage = t('yesSafeToSpendNoBills')
+            .replace('%amount%', amount)
+            .replace('%newBalance%', newBalance);
+            
+        } else if (originalMessage.includes("but be careful")) {
+          // Pattern: You can spend $X, but be careful. Balance will be $Y, and you have $Z in upcoming bills which would leave you with $W.
+          const amount = selectedAmount;
+          
+          // Extract newBalance
+          const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
+          const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
+          
+          // Extract upcoming bills total
+          const upcomingBillsMatch = originalMessage.match(/you have \$([0-9.]+) in upcoming bills/);
+          const upcomingBills = upcomingBillsMatch ? upcomingBillsMatch[1] : "0.00";
+          
+          // Extract remaining balance
+          const remainingBalanceMatch = originalMessage.match(/leave you with \$([0-9.]+)/);
+          const remainingBalance = remainingBalanceMatch ? remainingBalanceMatch[1] : "0.00";
+          
+          // Use the translated template with values
+          botMessage = t('yesButBeCareful')
+            .replace('%amount%', amount)
+            .replace('%newBalance%', newBalance)
+            .replace('%upcomingBills%', upcomingBills)
+            .replace('%remainingBalance%', remainingBalance);
+            
+        } else if (originalMessage.startsWith("Sorry, you cannot spend")) {
+          // Pattern: Sorry, you cannot spend $X as it would exceed your current account balance of $Y.
+          const amount = selectedAmount;
+          
+          // Extract balance
+          const balanceMatch = originalMessage.match(/account balance of \$([0-9.]+)/);
+          const balance = balanceMatch ? balanceMatch[1] : "0.00";
+          
+          // Use the translated template with values
+          botMessage = t('sorryCannotSpend')
+            .replace('%amount%', amount)
+            .replace('%balance%', balance);
+        }
+      }
+      
       // Add bot response
-      setMessages((prev) => [...prev, { text: data.message, sender: "bot" }]);
+      setMessages((prev) => [...prev, { text: botMessage, sender: "bot" }]);
     } catch (error) {
       console.error("Failed to get spending advice:", error);
       setMessages((prev) => [

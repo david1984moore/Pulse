@@ -68,6 +68,10 @@ type TranslationData = {
   thinking: string;
   ask: string;
   send: string;
+  yesSafeToSpend: string;
+  yesSafeToSpendNoBills: string;
+  yesButBeCareful: string;
+  sorryCannotSpend: string;
   language: string;
   english: string;
   spanish: string;
@@ -210,6 +214,11 @@ const translations: Translations = {
     thinking: "Thinking...",
     ask: "Ask",
     send: "Send",
+    // Chatbot response translations (keep English as-is since they match server responses)
+    yesSafeToSpend: "Yes, you can spend $%amount%. Your balance after this purchase will be $%newBalance%. Your next bill %billName% ($%billAmount%) is due in %days% days, which will leave you with $%remainingBalance%.",
+    yesSafeToSpendNoBills: "Yes, you can spend $%amount%. Your balance after this purchase will be $%newBalance%.",
+    yesButBeCareful: "You can spend $%amount%, but be careful. Your balance after this purchase will be $%newBalance%, and you have $%upcomingBills% in upcoming bills which would leave you with $%remainingBalance%.",
+    sorryCannotSpend: "Sorry, you cannot spend $%amount% as it would exceed your current account balance of $%balance%.",
 
     // Language toggle
     language: "Language",
@@ -346,6 +355,11 @@ const translations: Translations = {
     thinking: "Pensando...",
     ask: "Preguntar",
     send: "Enviar",
+    // Chatbot response translations
+    yesSafeToSpend: "Sí, puedes gastar $%amount%. Tu saldo después de esta compra será de $%newBalance%. Tu próxima factura %billName% ($%billAmount%) vence en %days% días, lo que te dejará con $%remainingBalance%.",
+    yesSafeToSpendNoBills: "Sí, puedes gastar $%amount%. Tu saldo después de esta compra será de $%newBalance%.",
+    yesButBeCareful: "Puedes gastar $%amount%, pero ten cuidado. Tu saldo después de esta compra será de $%newBalance%, y tienes $%upcomingBills% en facturas próximas, lo que te dejaría con $%remainingBalance%.",
+    sorryCannotSpend: "Lo siento, no puedes gastar $%amount% ya que excedería tu saldo actual de $%balance%.",
 
     // Language toggle
     language: "Idioma",
