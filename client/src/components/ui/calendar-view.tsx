@@ -126,27 +126,27 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         bill={selectedBill} 
       />
 
-      <Card className="border border-gray-200 shadow-md">
+      <Card className="shadow-sm bg-white/80">
         <CardContent>
-          <div className="bg-gray-100 rounded-lg"> {/* Lightened background */}
-            <div className="flex items-center justify-between px-2 py-4 mb-2">
+          <div className="bg-gradient-to-b from-white to-gray-50 rounded-lg">
+            <div className="flex items-center justify-between px-3 py-4 mb-2">
               <h3 className="text-xl font-bold text-gray-800 capitalize">
                 {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
               </h3>
               <div className="flex space-x-2">
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="icon" 
                   onClick={previousMonth}
-                  className="rounded-md h-8 w-8 p-0 border border-gray-300 shadow-sm"
+                  className="rounded-full h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-colors"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="icon" 
                   onClick={nextMonth}
-                  className="rounded-md h-8 w-8 p-0 border border-gray-300 shadow-sm"
+                  className="rounded-full h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-colors"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -154,7 +154,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             </div>
 
             {/* Day headers in a more cohesive row */}
-            <div className="flex w-full bg-gray-200 rounded-md border border-gray-200 mb-2"> {/* Lightened background */}
+            <div className="flex w-full bg-primary/5 rounded-lg mb-2">
               {daysOfWeek.map((day) => (
                 <div key={day} className="flex-1 text-xs uppercase font-bold text-gray-700 text-center py-2">
                   {day}
@@ -162,10 +162,10 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
               ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-2 bg-gray-100 p-1 rounded-b-md"> {/* Lightened background */}
+            <div className="grid grid-cols-7 gap-2 p-1 rounded-lg">
               {/* Empty placeholders */}
               {placeholders.map((placeholder, index) => (
-                <div key={`empty-${index}`} className="h-12 bg-gray-100 rounded-md border border-gray-200"></div>
+                <div key={`empty-${index}`} className="h-12 rounded-lg"></div>
               ))}
 
               {/* Day cells */}
@@ -179,17 +179,17 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                   <div 
                     key={day.toString()}
                     className={`
-                      relative h-12 rounded-md border border-gray-200 cursor-pointer transition-colors
+                      relative h-12 rounded-lg cursor-pointer transition-colors
                       ${isToday 
-                        ? "bg-primary/10 text-primary-600 border-primary/20" 
+                        ? "bg-primary/10 text-primary" 
                         : hasBills
-                          ? "bg-red-50 border-gray-200 hover:bg-red-100"
-                          : "bg-gray-50 hover:bg-gray-100" /* Lightened background */
+                          ? "bg-red-50 hover:bg-red-100"
+                          : "bg-white/70 hover:bg-gray-50"
                       }
                     `}
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
                   >
-                    <span className={`text-sm absolute top-1.5 left-1.5 ${isToday ? "font-bold text-primary-700" : ""} ${hasBills ? "font-semibold text-gray-800" : "font-medium text-gray-700"}`}>
+                    <span className={`text-sm absolute top-1.5 left-1.5 ${isToday ? "font-bold text-primary" : ""} ${hasBills ? "font-semibold text-gray-800" : "font-medium text-gray-700"}`}>
                       {dayOfMonth}
                     </span>
 
@@ -213,7 +213,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                                 'bg-red-500'} 
                               hover:opacity-90 transition-colors
                             `}
-                            data-tooltip-id={`bill-tooltip-${bill.id}`}
+
                           >
                             {dayBills.length > 3 && bill === dayBills[2] ? (
                               <span className="text-[9px] font-bold text-white">+{dayBills.length - 2}</span>
@@ -228,7 +228,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                     {/* Tooltips for bills */}
                     {dayBills.map((bill) => (
                       <TooltipProvider key={`tooltip-${bill.id}`}>
-                        <Tooltip id={`bill-tooltip-${bill.id}`} delayDuration={100}>
+                        <Tooltip delayDuration={100}>
                           <TooltipContent side="top" className="bg-slate-900 text-white border-0 shadow-lg p-3 rounded-lg max-w-[200px]">
                             <div className="flex flex-col gap-2">
                               <div className="flex items-center gap-2">

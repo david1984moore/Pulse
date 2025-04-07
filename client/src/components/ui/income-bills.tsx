@@ -161,10 +161,10 @@ export default function IncomeBills({
         income={selectedIncome}
       />
       
-      <Card className="h-full border border-gray-200 shadow-md">
+      <Card className="h-full shadow-sm bg-white/80">
         <CardContent className="space-y-6 pt-6">
         {/* Account Balance - Primary Feature */}
-        <div className="bg-primary/10 p-5 rounded-lg border border-primary/20 shadow">
+        <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-5 rounded-lg">
           <div className="flex justify-between items-center">
             <h3 className="text-sm font-semibold text-gray-700 uppercase">
               {t('accountBalance')}
@@ -173,7 +173,7 @@ export default function IncomeBills({
               variant="outline" 
               size="sm" 
               onClick={onUpdateBalance}
-              className="h-7 text-xs border border-gray-300"
+              className="h-7 text-xs hover:bg-primary/10 hover:text-primary transition-colors"
             >
               {t('updateBalance')}
             </Button>
@@ -184,7 +184,7 @@ export default function IncomeBills({
             </p>
           </div>
           {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
-            <div className="mt-3 text-xs text-gray-700 bg-white p-3 rounded border border-gray-200 shadow">
+            <div className="mt-3 text-xs text-gray-700 bg-white/70 p-3 rounded-lg">
               <p className="font-semibold">{t('recentDeductions')}:</p>
               <ul className="mt-1 space-y-1">
                 {balanceData.deductedBills.map((bill) => (
@@ -202,26 +202,26 @@ export default function IncomeBills({
         </div>
         
         {/* Financial Summary */}
-        <div className="bg-gray-100 p-5 rounded-lg border border-gray-200 shadow">
+        <div className="bg-gray-50 p-5 rounded-lg">
           <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">
             {t('financialSummary')}
           </h3>
           <div className="space-y-2">
-            <div className="flex justify-between items-center p-3 bg-white rounded border border-gray-200 shadow-sm">
+            <div className="flex justify-between items-center p-3 bg-white/80 rounded-lg">
               <span className="text-sm font-semibold text-gray-700 flex items-center">
                 <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                 {t('monthlyIncome')}
               </span>
               <span className="text-sm font-bold text-green-600">${totalIncome.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-white rounded border border-gray-200 shadow-sm">
+            <div className="flex justify-between items-center p-3 bg-white/80 rounded-lg">
               <span className="text-sm font-semibold text-gray-700 flex items-center">
                 <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
                 {t('monthlyBills')}
               </span>
               <span className="text-sm font-bold text-red-500">${totalBills.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center p-3 mt-1 bg-primary/10 rounded border border-primary/20 shadow-sm">
+            <div className="flex justify-between items-center p-3 mt-1 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg">
               <span className="text-sm font-semibold text-gray-800">{t('remaining')}</span>
               <span className="text-sm font-bold text-primary">${availableToSpend.toFixed(2)}</span>
             </div>
@@ -236,7 +236,7 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-red-500 hover:bg-red-600 h-8 w-8 p-0 shadow"
+              className="bg-red-500 hover:bg-red-600 h-8 w-8 p-0 rounded-full"
               size="icon"
             >
               <Plus className="h-4 w-4" />
@@ -248,7 +248,7 @@ export default function IncomeBills({
               {bills.map((bill) => (
                 <li 
                   key={bill.id} 
-                  className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="p-3 flex justify-between items-center bg-white/80 rounded-lg hover:bg-primary/5 cursor-pointer transition-colors"
                   onClick={() => {
                     setSelectedBill(bill);
                     setIsEditBillModalOpen(true);
@@ -264,15 +264,15 @@ export default function IncomeBills({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="px-3 py-1.5 rounded-md bg-red-100 text-red-600 border border-red-200">
+                    <div className="px-3 py-1.5 rounded-md bg-red-100 text-red-600">
                       <p className="text-sm font-bold">
                         ${Number(bill.amount).toFixed(2)}
                       </p>
                     </div>
                     <Button
                       size="icon"
-                      variant="outline"
-                      className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors"
+                      variant="ghost"
+                      className="h-8 w-8 text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-full"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick
                         onDeleteBill(bill.id);
@@ -285,7 +285,7 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-600 p-4 bg-gray-100 rounded-lg border border-gray-200 text-center shadow">{t('noBillsAddedYet')}</div>
+            <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg text-center">{t('noBillsAddedYet')}</div>
           )}
         </div>
 
@@ -297,7 +297,7 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddIncome}
-              className="bg-green-500 hover:bg-green-600 h-8 w-8 p-0 shadow"
+              className="bg-green-500 hover:bg-green-600 h-8 w-8 p-0 rounded-full"
               size="icon"
             >
               <Plus className="h-4 w-4" />
@@ -309,7 +309,7 @@ export default function IncomeBills({
               {income.map((inc) => (
                 <li 
                   key={inc.id} 
-                  className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="p-3 flex justify-between items-center bg-white/80 rounded-lg hover:bg-primary/5 cursor-pointer transition-colors"
                   onClick={() => {
                     setSelectedIncome(inc);
                     setIsEditIncomeModalOpen(true);
@@ -327,13 +327,13 @@ export default function IncomeBills({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="px-3 py-1.5 rounded-md bg-green-100 text-green-600 border border-green-200">
+                    <div className="px-3 py-1.5 rounded-md bg-green-100 text-green-600">
                       <p className="text-sm font-bold">${Number(inc.amount).toFixed(2)}</p>
                     </div>
                     <Button
                       size="icon"
-                      variant="outline"
-                      className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors"
+                      variant="ghost"
+                      className="h-8 w-8 text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-full"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick
                         onDeleteIncome(inc.id);
@@ -346,7 +346,7 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-600 p-4 bg-gray-100 rounded-lg border border-gray-200 text-center shadow">{t('noIncomeAddedYet')}</div>
+            <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg text-center">{t('noIncomeAddedYet')}</div>
           )}
         </div>
       </CardContent>
