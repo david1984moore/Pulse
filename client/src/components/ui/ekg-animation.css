@@ -1,48 +1,57 @@
 
-/* Dot-to-line animation - creates a smooth, snake-like EKG drawing effect */
+/* Dot-to-line animation - creates a smooth, snake-like EKG drawing effect with vertical movement */
 @keyframes dot-to-line {
   0% {
     stroke-dashoffset: 1000;
     stroke-dasharray: 0 1000;
     opacity: 0.8;
+    transform: translateY(0);
   }
   2% {
     opacity: 1;
-    stroke-dasharray: 5 995; 
+    stroke-dasharray: 5 995;
+    transform: translateY(0);
   }
   10% {
     stroke-dashoffset: 950;
     stroke-dasharray: 50 950;
+    transform: translateY(1px);
   }
   25% {
     stroke-dashoffset: 800;
     stroke-dasharray: 200 800;
+    transform: translateY(-1px);
   }
   40% {
     stroke-dashoffset: 650;
     stroke-dasharray: 350 650;
+    transform: translateY(0.5px);
   }
   60% {
     stroke-dashoffset: 450;
     stroke-dasharray: 550 450;
+    transform: translateY(-0.5px);
   }
   75% {
     stroke-dashoffset: 250;
     stroke-dasharray: 750 250;
+    transform: translateY(0.7px);
   }
   90% {
     stroke-dashoffset: 100;
     stroke-dasharray: 900 100;
     opacity: 1;
+    transform: translateY(-0.7px);
   }
   100% {
     stroke-dashoffset: 0;
     stroke-dasharray: 1000 0;
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Follow-through pulse effect - creates a smooth, snake-like trail effect */
+/* Follow-through pulse effect - creates a smooth, snake-like trail effect with vertical movement */
 @keyframes follow-through {
   0%, 10% {
     stroke-dashoffset: 1000;
@@ -52,37 +61,37 @@
     stroke-dashoffset: 950;
     stroke-width: 3px;
     opacity: 0.95;
-    transform: translateX(0);
+    transform: translateY(0);
   }
   30% {
     stroke-dashoffset: 800;
     stroke-width: 3.5px;
     opacity: 0.9;
-    transform: translateX(2px);
+    transform: translateY(-2px);
   }
   50% {
     stroke-dashoffset: 600;
     stroke-width: 4px;
     opacity: 0.85;
-    transform: translateX(4px);
+    transform: translateY(2px);
   }
   70% {
     stroke-dashoffset: 400;
     stroke-width: 3.5px;
     opacity: 0.8;
-    transform: translateX(6px);
+    transform: translateY(-1px);
   }
   85% {
     stroke-dashoffset: 200;
     stroke-width: 3px;
     opacity: 0.6;
-    transform: translateX(8px);
+    transform: translateY(1px);
   }
   100% {
     stroke-dashoffset: 0;
     stroke-width: 2px;
     opacity: 0.2;
-    transform: translateX(10px);
+    transform: translateY(0);
   }
 }
 
@@ -92,7 +101,8 @@
   stroke-dashoffset: 1000;
   animation: dot-to-line 8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.7));
-  will-change: stroke-dashoffset, stroke-dasharray, opacity;
+  will-change: stroke-dashoffset, stroke-dasharray, opacity, transform;
+  transform-origin: center;
 }
 
 /* Follow-through animation - starts slightly delayed */
