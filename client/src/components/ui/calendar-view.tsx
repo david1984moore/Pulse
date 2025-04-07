@@ -184,7 +184,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                         ? "bg-primary/10 text-primary-600 border-primary/20" 
                         : hasBills
                           ? "bg-red-50 border-gray-200 hover:bg-red-100"
-                          : "bg-gray-50 hover:bg-gray-100" {/* Lightened background */}
+                          : "bg-gray-50 hover:bg-gray-100" /* Lightened background */
                       }
                     `}
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
