@@ -40,14 +40,24 @@ interface BalanceData {
 
 export default function Chatbot({ bills }: ChatbotProps) {
   const { t, language } = useLanguage();
-  // Fetch current account balance
   const { data: balanceData } = useQuery<BalanceData>({
     queryKey: ["/api/calculated-balance"],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+  
+  // UI State
   const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isCustomAmount, setIsCustomAmount] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState(false);
+  
+  // EKG animation trigger
+  const [runEkgAnimation, setRunEkgAnimation] = useState(false);
+  
+  // Button click protection
+  const clickBlockRef = useRef(false);
+  
+  // Chat messages
   const [messages, setMessages] = useState<Message[]>([
     {
       text: language === 'es' 
@@ -57,12 +67,12 @@ export default function Chatbot({ bills }: ChatbotProps) {
       isAnimating: true,
     },
   ]);
-  const [isPending, setIsPending] = useState(false);
+  
+  // Scroll area for messages
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
-  // Handle animation completion
+  // Handle text animation completion
   const handleAnimationComplete = (index: number) => {
-    // Update message to stop animating
     setMessages(prevMessages => {
       const updatedMessages = [...prevMessages];
       if (updatedMessages[index]) {
@@ -70,12 +80,9 @@ export default function Chatbot({ bills }: ChatbotProps) {
       }
       return updatedMessages;
     });
-    
-    // Reset the EKG trigger when text animation finishes
-    setTriggerEkg(false);
   };
   
-  // Update initial message when language changes
+  // Reset initial message when language changes
   useEffect(() => {
     setMessages([{
       text: t('chatbotInitialMessage'),
@@ -84,7 +91,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
     }]);
   }, [language, t]);
   
-  // Switch to custom amount input when "custom" is selected
+  // Toggle custom amount mode
   useEffect(() => {
     if (selectedAmount === "custom") {
       setIsCustomAmount(true);
@@ -92,7 +99,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
     }
   }, [selectedAmount]);
   
-  // Auto-scroll to bottom when messages change
+  // Auto-scroll to latest message
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -101,8 +108,6 @@ export default function Chatbot({ bills }: ChatbotProps) {
       }
     }
   }, [messages]);
-  
-  // No cleanup needed - handled by EkgAnimation component's internal logic
 
   const handleSubmit = async () => {
     const amountToUse = isCustomAmount ? customAmount : (selectedAmount || "");
@@ -230,24 +235,25 @@ export default function Chatbot({ bills }: ChatbotProps) {
     }
   };
 
-  // Simple state to track when to show EKG animation
-  // This is just a trigger - all animation handling is in the EkgAnimation component
-  const [triggerEkg, setTriggerEkg] = useState(false);
-  
-  // Handler for submitting with EKG animation
+  // Handler for the "Ask" button click with EKG animation
   const handleSubmitWithEkg = () => {
-    // Prevent handling if already sending request
-    if (isPending) return;
+    // Prevent multiple rapid clicks
+    if (isPending || clickBlockRef.current) return;
     
-    // First, trigger the EKG animation with a true->false->true cycle
-    // This forces the animation to restart even if already displaying
-    setTriggerEkg(false);
-    // Force browser to process the false state
+    // Set click block flag to prevent multiple activations
+    clickBlockRef.current = true;
+    
+    // Trigger the EKG animation first
+    setRunEkgAnimation(true);
+    
+    // Submit the request
+    handleSubmit();
+    
+    // Reset click block after animation completes
     setTimeout(() => {
-      setTriggerEkg(true);
-      // Process the actual request
-      handleSubmit();
-    }, 0);
+      clickBlockRef.current = false;
+      setRunEkgAnimation(false);
+    }, 2500); // Slightly longer than animation duration
   };
   
   return (
@@ -257,7 +263,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
           <CardTitle className="flex items-center">
             {language === 'es' ? 'Alicia' : 'Alice'}
             <EkgAnimation 
-              isActive={triggerEkg} 
+              trigger={runEkgAnimation} 
               duration={2000} 
               color="#3b82f6" 
               width={80} 
