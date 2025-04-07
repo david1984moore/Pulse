@@ -42,7 +42,7 @@ export function EkgAnimation({
       // Wait for the animation and follow-through to completely finish
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 3800); // 2.0s for drawing + 1.8s for follow-through
+      }, 4300); // 2.2s for drawing + 2.0s for follow-through + 0.1s buffer
       
       return () => clearTimeout(timer);
     } else {
@@ -53,18 +53,19 @@ export function EkgAnimation({
   // Don't render anything if not animating
   if (!runAnimation || !isVisible) return null;
   
-  // Classic EKG trace with PQRST waveform pattern
+  // Classic EKG trace with more pronounced PQRST waveform pattern
   const ekgPathData = `
     M 0,${height/2}
     L ${width*0.2},${height/2}
     L ${width*0.25},${height/2-height*0.05}
     L ${width*0.3},${height/2}
     L ${width*0.35},${height/2-height*0.1}
-    L ${width*0.4},${height/2+height*0.4}
-    L ${width*0.45},${height/2-height*0.7}
-    L ${width*0.5},${height/2+height*0.2}
-    L ${width*0.55},${height/2}
-    L ${width*0.65},${height/2+height*0.05}
+    L ${width*0.38},${height/2}
+    L ${width*0.4},${height/2+height*0.1}
+    L ${width*0.42},${height/2-height*0.7}
+    L ${width*0.45},${height/2+height*0.4}
+    L ${width*0.5},${height/2}
+    L ${width*0.6},${height/2+height*0.1}
     L ${width*0.7},${height/2}
     L ${width*0.85},${height/2}
     L ${width},${height/2}
