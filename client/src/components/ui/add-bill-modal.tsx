@@ -28,11 +28,12 @@ import { Loader2 } from "lucide-react";
 interface AddBillModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultDueDate?: number;
 }
 
 type FormValues = z.infer<typeof billFormSchema>;
 
-export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) {
+export default function AddBillModal({ open, onOpenChange, defaultDueDate }: AddBillModalProps) {
   const { toast } = useToast();
   const { t, language } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,7 +43,7 @@ export default function AddBillModal({ open, onOpenChange }: AddBillModalProps) 
     defaultValues: {
       name: "",
       amount: "",
-      due_date: 1,
+      due_date: defaultDueDate || 1,
     },
   });
 
