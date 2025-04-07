@@ -17,6 +17,17 @@ import {
   subMonths
 } from "date-fns";
 
+// Helper function to get the ordinal suffix for a date number
+function getOrdinalSuffix(day: number): string {
+  if (day > 3 && day < 21) return 'th';
+  switch (day % 10) {
+    case 1: return "st";
+    case 2: return "nd";
+    case 3: return "rd";
+    default: return "th";
+  }
+}
+
 interface CalendarViewProps {
   bills: Bill[];
   onAddBill?: () => void;
@@ -42,7 +53,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
   
   // Create array of placeholder elements for days before the month starts
   const placeholders = Array.from({ length: startDayOfWeek }, (_, i) => (
-    <div key={`empty-${i}`} className="h-10 border border-gray-100 bg-gray-50"></div>
+    <div key={`empty-${i}`} className="h-12 bg-gray-50 rounded-md border border-gray-100"></div>
   ));
   
   // Function to check if a day has a bill due
@@ -173,7 +184,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
                   >
                     <span className={`text-sm absolute top-1.5 left-1.5 ${isToday ? "font-bold text-primary-700" : ""} ${hasBills ? "font-semibold text-gray-800" : "font-medium text-gray-700"}`}>
-                      {dayOfMonth}
+                      {dayOfMonth}<sup className="text-[8px]">{getOrdinalSuffix(dayOfMonth)}</sup>
                     </span>
                     
                     {/* Bill indicators */}
@@ -183,7 +194,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                           <div 
                             key={bill.id}
                             className="flex items-center justify-center w-4 h-4 rounded-full bg-red-500 shadow-sm hover:bg-red-600 transition-colors"
-                            title={`${bill.name}: $${Number(bill.amount).toFixed(2)}`}
+                            title={`${bill.name}: $${Number(bill.amount).toFixed(2)} - Due on the ${bill.due_date}${getOrdinalSuffix(bill.due_date)}`}
                           >
                             {dayBills.length > 3 && bill === dayBills[2] ? (
                               <span className="text-[8px] font-bold text-white">+{dayBills.length - 2}</span>

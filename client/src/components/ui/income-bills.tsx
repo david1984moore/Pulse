@@ -1,12 +1,43 @@
 import { Bill, Income } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, Trash2, Pencil } from "lucide-react";
+import { 
+  Plus, Minus, Trash2, Pencil, DollarSign, Home, Zap,
+  Wifi, Phone, Droplet, ShoppingCart, Car, CreditCard, Landmark
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import EditBillModal from "@/components/ui/edit-bill-modal";
 import EditIncomeModal from "@/components/ui/edit-income-modal";
+
+// Helper function to get the ordinal suffix for a date number
+function getOrdinalSuffix(day: number): string {
+  if (day > 3 && day < 21) return 'th';
+  switch (day % 10) {
+    case 1: return "st";
+    case 2: return "nd";
+    case 3: return "rd";
+    default: return "th";
+  }
+}
+
+// Helper function to get the appropriate icon for a bill type
+function getBillIcon(billName: string) {
+  const iconMap: Record<string, JSX.Element> = {
+    'Rent': <Home className="h-4 w-4 mr-2 text-gray-600" />,
+    'Electric': <Zap className="h-4 w-4 mr-2 text-yellow-500" />,
+    'Water': <Droplet className="h-4 w-4 mr-2 text-blue-500" />,
+    'Internet': <Wifi className="h-4 w-4 mr-2 text-blue-400" />,
+    'Phone Service': <Phone className="h-4 w-4 mr-2 text-slate-500" />,
+    'Car Payment': <Car className="h-4 w-4 mr-2 text-gray-600" />,
+    'Credit Card': <CreditCard className="h-4 w-4 mr-2 text-purple-500" />,
+    'Insurance': <Landmark className="h-4 w-4 mr-2 text-indigo-500" />,
+    'Groceries': <ShoppingCart className="h-4 w-4 mr-2 text-green-500" />
+  };
+  
+  return iconMap[billName] || <CreditCard className="h-4 w-4 mr-2 text-gray-500" />;
+}
 
 interface BillDeduction {
   id: number;
@@ -157,8 +188,11 @@ export default function IncomeBills({
               <p className="font-semibold">{t('recentDeductions')}:</p>
               <ul className="mt-1 space-y-1">
                 {balanceData.deductedBills.map((bill) => (
-                  <li key={bill.id} className="flex justify-between">
-                    <span className="font-semibold">{translateBillName(bill.name)}</span>
+                  <li key={bill.id} className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      {getBillIcon(bill.name)}
+                      <span className="font-semibold">{translateBillName(bill.name)}</span>
+                    </div>
                     <span className="text-red-500 font-semibold">-${bill.amount}</span>
                   </li>
                 ))}
@@ -213,11 +247,14 @@ export default function IncomeBills({
             <ul className="space-y-2">
               {bills.map((bill) => (
                 <li key={bill.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800">{translateBillName(bill.name)}</p>
-                    <p className="text-xs font-medium text-gray-500">
-                      {t('dueOnThe')} {bill.due_date}
-                    </p>
+                  <div className="flex items-center">
+                    {getBillIcon(bill.name)}
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{translateBillName(bill.name)}</p>
+                      <p className="text-xs font-medium text-gray-500">
+                        {t('dueOnThe')} {bill.due_date}<sup>{getOrdinalSuffix(bill.due_date)}</sup>
+                      </p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="px-3 py-1.5 rounded-md bg-red-100 text-red-600 border border-red-200">
@@ -272,13 +309,16 @@ export default function IncomeBills({
             <ul className="space-y-2">
               {income.map((inc) => (
                 <li key={inc.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800">{inc.source || t('job')}</p>
-                    <p className="text-xs font-medium text-gray-500">
-                      {t(inc.frequency.toLowerCase())}
-                      {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/${t('mo')})`}
-                      {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/${t('mo')})`}
-                    </p>
+                  <div className="flex items-center">
+                    <DollarSign className="h-4 w-4 mr-2 text-green-600" />
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{inc.source || t('job')}</p>
+                      <p className="text-xs font-medium text-gray-500">
+                        {t(inc.frequency.toLowerCase())}
+                        {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/${t('mo')})`}
+                        {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/${t('mo')})`}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="px-3 py-1.5 rounded-md bg-green-100 text-green-600 border border-green-200">
