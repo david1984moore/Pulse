@@ -126,7 +126,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         bill={selectedBill} 
       />
 
-      <Card className="bg-card/70 shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
+      <Card className="bg-white shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
         <CardContent>
           <div className="bg-gradient-to-b from-background/40 to-background/20 rounded-lg backdrop-blur-sm">
             <div className="flex items-center justify-between px-3 py-4 mb-2">

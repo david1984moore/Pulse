@@ -261,7 +261,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
   
   return (
-    <Card className="bg-card/70 shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
+    <Card className="bg-white shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
       <CardHeader className="pb-4 border-b border-border/30">
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">

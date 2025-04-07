@@ -161,12 +161,12 @@ export default function IncomeBills({
         income={selectedIncome}
       />
       
-      <Card className="h-full bg-card/70 shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
+      <Card className="h-full bg-white shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
         <CardContent className="space-y-6 pt-6">
         {/* Account Balance - Primary Feature */}
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-5 rounded-lg backdrop-blur-sm">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-wider">
               {t('accountBalance')}
             </h3>
             <Button 

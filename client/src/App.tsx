@@ -25,11 +25,6 @@ function Router() {
 }
 
 function App() {
-  // Force dark mode across the application
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
-  
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
