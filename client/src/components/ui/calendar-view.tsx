@@ -184,7 +184,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
                   >
                     <span className={`text-sm absolute top-1.5 left-1.5 ${isToday ? "font-bold text-primary-700" : ""} ${hasBills ? "font-semibold text-gray-800" : "font-medium text-gray-700"}`}>
-                      {dayOfMonth}<sup className="text-[8px]">{getOrdinalSuffix(dayOfMonth)}</sup>
+                      {dayOfMonth}
                     </span>
                     
                     {/* Bill indicators */}
