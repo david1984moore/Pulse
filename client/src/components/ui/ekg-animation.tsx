@@ -101,7 +101,7 @@ export function EkgAnimation({
       
       // Animate drawing the line
       const startTime = performance.now();
-      const duration = 1500; // ms to complete animation
+      const duration = 800; // ms to complete animation (much faster)
       
       const animate = (currentTime: number) => {
         const elapsed = currentTime - startTime;
@@ -122,9 +122,11 @@ export function EkgAnimation({
           
           // Hold final state briefly, then clean up
           setTimeout(() => {
+            // Clear the container to completely remove the SVG
+            container.innerHTML = '';
             animating.current = false;
             if (onComplete) onComplete();
-          }, 300);
+          }, 200); // Shorter hold time
         }
       };
       
