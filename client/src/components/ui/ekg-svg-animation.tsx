@@ -75,7 +75,7 @@ export default function EkgSvgAnimation({
           style={{
             strokeDasharray: 1000,
             strokeDashoffset: 1000,
-            animation: 'ekg-dash 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+            animation: 'ekg-dash 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
             filter: 'blur(8px)'
           }}
         />
@@ -105,7 +105,7 @@ export default function EkgSvgAnimation({
           style={{
             strokeDasharray: 1000,
             strokeDashoffset: 1000,
-            animation: 'ekg-dash 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards'
+            animation: 'ekg-dash 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards'
           }}
         />
         
@@ -115,17 +115,17 @@ export default function EkgSvgAnimation({
           fill="white"
           style={{
             filter: 'drop-shadow(0 0 8px white)',
-            animation: 'ekg-dot 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards'
+            animation: 'ekg-dot 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards'
           }}
         >
           {/* Motion path animation for the dot */}
           <animateMotion
-            dur="2.2s"
+            dur="3.5s"
             repeatCount="1"
-            keyTimes="0; 0.3; 0.5; 0.7; 1"
-            keyPoints="0; 0.2; 0.4; 0.7; 1"
+            keyTimes="0; 0.2; 0.4; 0.6; 0.8; 1"
+            keyPoints="0; 0.15; 0.35; 0.6; 0.85; 1"
             calcMode="spline"
-            keySplines="0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1"
+            keySplines="0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1"
             path={`M 0,${height/2} 
                   L 100,${height/2} 
                   L 120,${height/2 - 5} 

@@ -29,17 +29,20 @@
   0% {
     stroke-dashoffset: 1000;
   }
-  30% {
-    stroke-dashoffset: 850; /* Starts slow */
+  20% {
+    stroke-dashoffset: 900; /* Starts very slow */
   }
-  50% {
-    stroke-dashoffset: 600; /* Accelerating */
+  40% {
+    stroke-dashoffset: 750; /* Gradually accelerating */
   }
-  70% {
-    stroke-dashoffset: 300; /* Moving faster */
+  60% {
+    stroke-dashoffset: 500; /* Moderate speed */
+  }
+  80% {
+    stroke-dashoffset: 200; /* Moving faster */
   }
   100% {
-    stroke-dashoffset: 0; /* Ends quickly */
+    stroke-dashoffset: 0; /* Completes cycle */
   }
 }
 
@@ -48,13 +51,21 @@
     opacity: 0;
   }
   5% {
-    opacity: 0.8;
+    opacity: 0.7;
   }
-  30% {
+  20% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 5px white);
+  }
+  40% {
     opacity: 1;
     filter: drop-shadow(0 0 8px white);
   }
-  70% {
+  60% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px white);
+  }
+  80% {
     opacity: 1;
     filter: drop-shadow(0 0 12px white);
   }
