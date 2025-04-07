@@ -1,7 +1,7 @@
 
 /**
- * Super Simple EKG Animation
- * A single clean line that appears out of thin air and has a follow-through effect
+ * EKG Animation with Dot-to-Line Effect
+ * Animation starts as a dot and extends into a line with follow-through effect
  */
 import { useState, useEffect } from 'react';
 import './ekg-animation.css';
@@ -81,7 +81,7 @@ export function EkgAnimation({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="ekg-primary"
+          className="ekg-dot-to-line"
         />
         
         {/* Follow-through effect trace - same path but different animation */}
@@ -92,7 +92,7 @@ export function EkgAnimation({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="ekg-follow"
+          className="ekg-follow-through"
         />
       </svg>
     </div>
