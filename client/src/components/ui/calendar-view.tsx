@@ -45,7 +45,7 @@ function getBillIcon(billName: string) {
     'Insurance': <Landmark className="h-3.5 w-3.5 text-white" />,
     'Groceries': <ShoppingCart className="h-3.5 w-3.5 text-white" />
   };
-  
+
   return iconMap[billName] || <CreditCard className="h-3.5 w-3.5 text-white" />;
 }
 
@@ -59,38 +59,38 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
   const { setSelectedDueDate } = useBillFormState();
   const [currentDate, setCurrentDate] = useState(new Date());
   const daysOfWeek = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(day => t(day));
-  
+
   // State for edit bill modal
   const [isEditBillModalOpen, setIsEditBillModalOpen] = useState(false);
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
-  
+
   // Get all days in the current month
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-  
+
   // Calculate the starting day of the week (0-6)
   const startDayOfWeek = monthStart.getDay();
-  
+
   // Create array of placeholder elements for days before the month starts
   const placeholders = Array.from({ length: startDayOfWeek }, (_, i) => (
     <div key={`empty-${i}`} className="h-12 bg-white rounded-md border border-gray-200"></div>
   ));
-  
+
   // Function to check if a day has a bill due
   const getBillForDay = (day: number) => {
     return bills.filter(bill => bill.due_date === day);
   };
-  
+
   // Handle month navigation
   const previousMonth = () => {
     setCurrentDate(subMonths(currentDate, 1));
   };
-  
+
   const nextMonth = () => {
     setCurrentDate(addMonths(currentDate, 1));
   };
-  
+
   // Handle closing edit bill modal
   const handleEditBillModalClose = (open: boolean) => {
     setIsEditBillModalOpen(open);
@@ -98,10 +98,10 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
       setSelectedBill(null);
     }
   };
-  
+
   // We don't need to handle closing the add bill modal locally
   // as it's now done in the parent component
-  
+
   // Handle clicking on a day
   const handleDayClick = (day: number, dayBills: Bill[]) => {
     if (dayBills.length > 0) {
@@ -116,7 +116,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
       console.log("Opening add bill modal with due date:", day);
     }
   };
-  
+
   return (
     <>
       {/* Edit Bill Modal */}
@@ -125,12 +125,12 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         onOpenChange={handleEditBillModalClose} 
         bill={selectedBill} 
       />
-      
+
       <Card className="border border-gray-200 shadow-md">
         <CardHeader className="pb-3 border-b border-gray-200 bg-gray-100">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-bold text-gray-800">
-              {t('paymentCalendar')}
+              {t('calendar')}
             </CardTitle>
             <div className="flex space-x-2">
               <Button 
@@ -160,7 +160,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
               </h3>
               <div className="h-0.5 w-32 bg-primary/30 rounded-full"></div>
             </div>
-            
+
             {/* Day headers in a more cohesive row */}
             <div className="flex w-full bg-gray-100 rounded-md border border-gray-200 mb-2">
               {daysOfWeek.map((day) => (
@@ -169,20 +169,20 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                 </div>
               ))}
             </div>
-            
+
             <div className="grid grid-cols-7 gap-2">
               {/* Empty placeholders */}
               {placeholders.map((placeholder, index) => (
                 <div key={`empty-${index}`} className="h-12 bg-white rounded-md border border-gray-200"></div>
               ))}
-              
+
               {/* Day cells */}
               {days.map((day) => {
                 const dayOfMonth = day.getDate();
                 const isToday = isSameDay(day, new Date());
                 const dayBills = getBillForDay(dayOfMonth);
                 const hasBills = dayBills.length > 0;
-                
+
                 return (
                   <div 
                     key={day.toString()}
@@ -200,7 +200,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                     <span className={`text-sm absolute top-1.5 left-1.5 ${isToday ? "font-bold text-primary-700" : ""} ${hasBills ? "font-semibold text-gray-800" : "font-medium text-gray-700"}`}>
                       {dayOfMonth}
                     </span>
-                    
+
                     {/* Bill indicators */}
                     {hasBills && (
                       <div className="absolute bottom-1.5 right-1.5 flex flex-wrap justify-center gap-1.5">
@@ -232,7 +232,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                         ))}
                       </div>
                     )}
-                    
+
                     {/* Tooltips for bills */}
                     {dayBills.map((bill) => (
                       <TooltipProvider key={`tooltip-${bill.id}`}>

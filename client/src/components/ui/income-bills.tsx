@@ -222,7 +222,7 @@ export default function IncomeBills({
               <span className="text-sm font-bold text-red-500">${totalBills.toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center p-3 mt-1 bg-primary/10 rounded border border-primary/20 shadow-sm">
-              <span className="text-sm font-semibold text-gray-800">{t('availableToSpend')}</span>
+              <span className="text-sm font-semibold text-gray-800">{t('remaining')}</span>
               <span className="text-sm font-bold text-primary">${availableToSpend.toFixed(2)}</span>
             </div>
           </div>
