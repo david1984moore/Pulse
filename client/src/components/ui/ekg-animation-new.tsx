@@ -9,7 +9,7 @@ interface EkgAnimationProps {
   height?: number;
 }
 
-// This function creates a very simple EKG line using HTML/CSS only
+// Super simple span-only implementation to avoid DOM nesting issues
 export function EkgAnimation({
   runAnimation,
   onComplete,
@@ -19,15 +19,15 @@ export function EkgAnimation({
 }: EkgAnimationProps) {
   const [isVisible, setIsVisible] = useState(false);
   
-  // Control visibility and trigger completion function
+  // Control visibility and completion
   useEffect(() => {
     if (runAnimation) {
       setIsVisible(true);
       
-      // Call onComplete after a fixed duration
+      // Simulate animation completion
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 7000);
+      }, 5000);
       
       return () => clearTimeout(timer);
     } else {
@@ -37,10 +37,10 @@ export function EkgAnimation({
   
   if (!isVisible) return null;
 
-  // Create a simple ECG line with pure CSS
+  // Simple static green line - no animation - just to show something
   return (
-    <div className="ecg-animation">
-      <div className="heartbeat"></div>
-    </div>
+    <span className="ekg-animation-wrapper">
+      <span className="ekg-line">━━━∿∿∿╭╮╰╯━━━∿∿</span>
+    </span>
   );
 }
