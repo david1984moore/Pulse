@@ -17,8 +17,10 @@ export function EkgAnimation({
 }: EkgAnimationProps) {
   const [showAnimation, setShowAnimation] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  // Keep track of the last isActive state to prevent multiple triggers
+  const lastActiveState = useRef(false);
   
-  // Clear existing timer to prevent multiple animations
+  // Clear existing timer when component unmounts
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -28,27 +30,28 @@ export function EkgAnimation({
     };
   }, []);
   
-  // Handle animation start/stop
+  // Handle animation start/stop only on isActive transitions
   useEffect(() => {
-    // Clear any existing timer first to avoid overlapping animations
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    
-    if (isActive) {
-      // Only start animation if it's not already showing
-      if (!showAnimation) {
-        setShowAnimation(true);
+    // Only trigger animation on a false->true transition of isActive
+    if (isActive && !lastActiveState.current) {
+      // Clean up any existing animation
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
       }
       
-      // Use duration * 1.5 to match the tail animation duration
+      // Start the animation
+      setShowAnimation(true);
+      
+      // Set a timer to hide the animation after it completes
       timerRef.current = setTimeout(() => {
         setShowAnimation(false);
         timerRef.current = null;
-      }, duration * 1.5);
+      }, duration * 2); // Extend the duration to keep the trace visible longer
     }
-  }, [isActive, duration, showAnimation]);
+    
+    // Update the ref to current isActive state
+    lastActiveState.current = isActive;
+  }, [isActive, duration]);
   
   if (!showAnimation) return null;
   
@@ -74,71 +77,75 @@ export function EkgAnimation({
   const animationStyles = `
     @keyframes drawLeadingPoint {
       0% {
-        stroke-dasharray: 10, ${width * 3}; /* Larger leading dot (10px) */
+        stroke-dasharray: 5, ${width * 3}; /* Smaller leading dot (5px) for smoother animation */
         stroke-dashoffset: ${width * 3};
       }
-      25% {
-        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
-        stroke-dashoffset: ${width * 2.5}; /* Slower at beginning */
+      15% {
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: ${width * 2.75}; /* Gradual start */
       }
-      50% {
-        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
-        stroke-dashoffset: ${width * 1.8}; /* Speed up before peak */
+      30% {
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: ${width * 2.3}; /* Starting to speed up */
       }
-      70% {
-        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
-        stroke-dashoffset: ${width * 1.0}; /* Faster at peak */
+      45% {
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: ${width * 1.6}; /* Moving faster before peak */
       }
-      /* Slow down towards the end */
-      80% {
-        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
-        stroke-dashoffset: ${width * 0.7}; /* Starting to slow down */
+      60% {
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: ${width * 1.0}; /* Fastest at QRS complex */
       }
-      90% {
-        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
-        stroke-dashoffset: ${width * 0.4}; /* Even slower */
+      75% {
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: ${width * 0.6}; /* Begin to slow down */
+      }
+      85% {
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: ${width * 0.3}; /* Slow near end */
       }
       95% {
-        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
-        stroke-dashoffset: ${width * 0.2}; /* Very slow at the end */
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: ${width * 0.1}; /* Very slow at the end */
       }
       100% {
-        stroke-dasharray: 10, ${width * 3}; /* Keep larger dot (10px) */
-        stroke-dashoffset: 0; /* Leading point completes */
+        stroke-dasharray: 5, ${width * 3};
+        stroke-dashoffset: 0; /* Complete the line */
       }
     }
     
     @keyframes completeTail {
-      0%, 80% {
-        /* Keep dash array unchanged until lead point is almost at end (80%) */
-        stroke-dasharray: 10, ${width * 3}; /* Match the 10px dot size */
+      0%, 65% {
+        /* Keep dash array unchanged for longer to let more of the trace remain visible */
+        stroke-dasharray: 5, ${width * 3};
       }
-      95% {
-        /* Start the tail very late, when lead is almost done */
-        stroke-dasharray: 10, ${width * 3}; /* Match the 10px dot size */
+      85% {
+        /* Start the tail later to leave more trace visible */
+        stroke-dasharray: 5, ${width * 3};
       }
       100% {
         stroke-dasharray: 0, 0; /* Tail catches up and completes */
       }
     }
     
-    /* Two-phase animation to keep the entire trace visible - entire path + final trace */
-    @keyframes maintainPathVisibility {
-      0%, 100% {
-        visibility: visible;
+    /* Animation to keep the trace visible longer */
+    @keyframes fadeOut {
+      0%, 80% {
         opacity: 1;
-        stroke-opacity: 1;
-        fill-opacity: 1;
+      }
+      100% {
+        opacity: 0;
       }
     }
     
     .animate-draw {
       stroke-linecap: round;
       stroke-linejoin: round;
+      will-change: stroke-dasharray, stroke-dashoffset; /* Performance optimization */
       animation: 
-        drawLeadingPoint ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
-        completeTail ${duration * 1.5}ms cubic-bezier(0.25, 0.1, 0.5, 1) forwards,
-        maintainPathVisibility ${duration * 1.5}ms linear forwards; /* Keep visible until tail finishes */
+        drawLeadingPoint ${duration}ms cubic-bezier(0.42, 0, 0.58, 1) forwards,
+        completeTail ${duration * 1.8}ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards,
+        fadeOut ${duration * 2}ms cubic-bezier(0.42, 0, 0.58, 1) forwards; /* Slow fade out */
     }
   `;
   
@@ -167,11 +174,11 @@ export function EkgAnimation({
           points={points}
           fill="none"
           stroke={color}
-          strokeWidth="2"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
           className="animate-draw"
-          filter="drop-shadow(0 0 1px rgba(59, 130, 246, 0.5))"
+          filter="drop-shadow(0 0 2px rgba(59, 130, 246, 0.7))"
         />
       </svg>
 

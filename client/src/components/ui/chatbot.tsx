@@ -227,16 +227,22 @@ export default function Chatbot({ bills }: ChatbotProps) {
   
   // Improved handler for submitting with EKG animation
   const handleSubmitWithEkg = async () => {
-    // Only trigger if the animation isn't already active
-    if (!showEkg) {
+    // Reset the EKG animation state first
+    setShowEkg(false);
+    
+    // Small delay to ensure state change is processed
+    setTimeout(() => {
+      // Trigger animation only when submitting
       setShowEkg(true);
       
-      // The EKG animation component has its own timer to auto-hide
-      // No need to manually set it back to false here
-    }
-    
-    // Process the submit immediately (no need for setTimeout)
-    handleSubmit();
+      // Process the submit request
+      handleSubmit();
+      
+      // Reset EKG state after the animation duration
+      setTimeout(() => {
+        setShowEkg(false);
+      }, 5000); // Ensure this is longer than the animation cycle
+    }, 10);
   };
   
   return (
@@ -247,7 +253,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
             {language === 'es' ? 'Alicia' : 'Alice'}
             <EkgAnimation 
               isActive={showEkg} 
-              duration={2400} 
+              duration={2800} 
               color="#3b82f6" 
               width={70} 
               height={22} 
