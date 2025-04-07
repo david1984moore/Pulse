@@ -1,23 +1,58 @@
 @keyframes trace {
   0% {
     stroke-dashoffset: 1000;
-    opacity: 0.7;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
     opacity: 1;
   }
   100% {
     stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/* Follow-through effect overlay */
+@keyframes followthrough {
+  0% {
+    opacity: 0;
+    stroke-width: 0;
+    filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
+  }
+  40% {
+    opacity: 0;
+    stroke-width: 1px;
+    filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
+  }
+  50% {
     opacity: 0.7;
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.9));
+  }
+  60% {
+    opacity: 0.6;
+    stroke-width: 3px;
+    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.8));
+  }
+  70% {
+    opacity: 0.4;
+    stroke-width: 2px;
+    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.7));
+  }
+  100% {
+    opacity: 0;
+    stroke-width: 1px;
+    filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
   }
 }
 
 .ekg-path {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.8));
-  animation: trace 1.5s ease-out forwards;
+  filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.8));
+  animation: trace 1s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+.ekg-follow {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+  animation: followthrough 0.8s ease-out forwards;
+  animation-delay: 0.6s;
 }
