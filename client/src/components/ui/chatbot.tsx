@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Send, Loader2, DollarSign } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { secureApiRequest } from "@/lib/csrf";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/use-language";
 import { TypeAnimation } from "@/components/ui/type-animation";
@@ -108,7 +109,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
     // Send request to API
     setIsPending(true);
     try {
-      const response = await apiRequest("POST", "/api/spending-advisor", { amount: amountToUse });
+      // Use secureApiRequest instead of apiRequest to include CSRF token
+      const response = await secureApiRequest("POST", "/api/spending-advisor", { amount: amountToUse });
       const data: SpendingResponse = await response.json();
       
       // Translate the response if in Spanish mode
@@ -225,22 +227,22 @@ export default function Chatbot({ bills }: ChatbotProps) {
   // State to track when to show the EKG animation
   const [showEkg, setShowEkg] = useState(false);
   
-  // Improved handler for submitting with EKG animation - single run only
+  // Handler for submitting with EKG animation - guaranteed to run only ONCE per button click
   const handleSubmitWithEkg = async () => {
-    // First process the submit request
+    // Prevent duplicate animations if already running
+    if (showEkg || isPending) return;
+    
+    // First, trigger the animation
+    setShowEkg(true);
+    
+    // Then process the submit request
     handleSubmit();
     
-    // Only show the EKG if it's not already active
-    if (!showEkg) {
-      // Trigger animation by setting state to true
-      setShowEkg(true);
-      
-      // Reset EKG state after a single animation cycle
-      // No additional animations should trigger until next button click
-      setTimeout(() => {
-        setShowEkg(false);
-      }, 3500); // Set just longer than animation duration to prevent immediate re-trigger
-    }
+    // Reset EKG state after a single animation cycle
+    // Duration set to match animation + small buffer
+    setTimeout(() => {
+      setShowEkg(false);
+    }, 2500);
   };
   
   return (
@@ -251,10 +253,10 @@ export default function Chatbot({ bills }: ChatbotProps) {
             {language === 'es' ? 'Alicia' : 'Alice'}
             <EkgAnimation 
               isActive={showEkg} 
-              duration={2800} 
+              duration={2000} 
               color="#3b82f6" 
-              width={70} 
-              height={22} 
+              width={80} 
+              height={25} 
             />
           </CardTitle>
           <CardDescription className="flex items-center bg-gray-100 px-4 py-2 rounded-md">
