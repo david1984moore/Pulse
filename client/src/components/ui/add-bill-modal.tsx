@@ -115,9 +115,9 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px] border-0 shadow-lg">
         <DialogHeader>
-          <DialogTitle>{t('addBillTitle')}</DialogTitle>
+          <DialogTitle className="text-lg font-medium text-gray-700">{t('addBillTitle')}</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
@@ -127,11 +127,15 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('billNameLabel')}</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-600">{t('billNameLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('billNamePlaceholder')} {...field} />
+                    <Input 
+                      placeholder={t('billNamePlaceholder')} 
+                      className="border-gray-200 focus-visible:ring-primary/50"
+                      {...field} 
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -141,16 +145,20 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('amountLabel')}</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-600">{t('amountLabel')}</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
                         $
                       </span>
-                      <Input className="pl-7" placeholder={t('amountPlaceholder').replace('e.g. $1000', '0.00')} {...field} />
+                      <Input 
+                        className="pl-7 border-gray-200 focus-visible:ring-primary/50" 
+                        placeholder={t('amountPlaceholder').replace('e.g. $1000', '0.00')} 
+                        {...field} 
+                      />
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -160,13 +168,13 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
               name="due_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('dueDateLabel')}</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-600">{t('dueDateLabel')}</FormLabel>
                   <Select
                     value={field.value.toString()}
                     onValueChange={(value) => field.onChange(parseInt(value))}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="border-gray-200 focus-visible:ring-primary/50">
                         <SelectValue placeholder={language === 'en' ? "Select a due date" : "Selecciona una fecha de vencimiento"} />
                       </SelectTrigger>
                     </FormControl>
@@ -187,16 +195,25 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
             
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
+            <DialogFooter className="mt-6 gap-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => handleOpenChange(false)}
+                className="border-gray-200 text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+              >
                 {t('cancel')}
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-red-500 hover:bg-red-600">
+              <Button 
+                type="submit" 
+                disabled={isSubmitting} 
+                className="bg-red-400 hover:bg-red-500 text-white shadow-sm"
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

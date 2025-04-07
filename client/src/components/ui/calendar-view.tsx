@@ -94,35 +94,35 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         bill={selectedBill} 
       />
       
-      <Card>
-        <CardHeader className="pb-3 border-b border-gray-100">
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-3 border-b border-gray-50">
           <div className="flex items-center justify-between">
-            <CardTitle>
+            <CardTitle className="text-base font-medium text-gray-700">
               {t('paymentCalendar')}
             </CardTitle>
             <div className="flex space-x-2">
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="icon" 
                 onClick={previousMonth}
-                className="hover:bg-gray-100"
+                className="rounded-full h-8 w-8 p-0"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="icon" 
                 onClick={nextMonth}
-                className="hover:bg-gray-100"
+                className="rounded-full h-8 w-8 p-0"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
               {onAddBill && (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   onClick={onAddBill}
-                  className="hover:bg-gray-100"
+                  className="rounded-full h-8 w-8 p-0 text-primary"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -132,23 +132,23 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         </CardHeader>
         <CardContent>
           <div className="bg-white rounded-lg">
-            <div className="mb-4">
-              <h3 className="text-lg font-bold text-gray-800">
+            <div className="mb-5">
+              <h3 className="text-sm font-medium text-gray-600">
                 {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
               </h3>
             </div>
             
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-1.5">
               {/* Day headers */}
               {daysOfWeek.map((day) => (
-                <div key={day} className="text-xs font-medium text-gray-500 text-center py-1 bg-gray-50 rounded">
+                <div key={day} className="text-xs uppercase text-gray-400 text-center py-1">
                   {day}
                 </div>
               ))}
               
               {/* Empty placeholders */}
               {placeholders.map((placeholder, index) => (
-                <div key={`empty-${index}`} className="h-10 bg-gray-50/50 rounded border border-gray-100"></div>
+                <div key={`empty-${index}`} className="h-10 bg-transparent"></div>
               ))}
               
               {/* Day cells */}
@@ -162,17 +162,17 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                   <div 
                     key={day.toString()}
                     className={`
-                      relative h-10 rounded border cursor-pointer hover:border-primary hover:bg-primary/5
+                      relative h-10 rounded-sm border-none cursor-pointer transition-colors
                       ${isToday 
-                        ? "border-primary bg-primary/5 text-primary" 
+                        ? "bg-primary/5 text-primary" 
                         : hasBills
-                          ? "border-gray-200 bg-gray-50/30"
-                          : "border-gray-100"
+                          ? "bg-gray-50/70"
+                          : "hover:bg-gray-50/60"
                       }
                     `}
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
                   >
-                    <span className={`text-sm absolute top-1 left-1.5 ${isToday ? "font-bold" : ""}`}>
+                    <span className={`text-sm absolute top-1 left-1.5 ${isToday ? "font-medium" : ""}`}>
                       {dayOfMonth}
                     </span>
                     
@@ -182,7 +182,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                         {dayBills.map((bill) => (
                           <div 
                             key={bill.id}
-                            className="w-3 h-3 rounded-full border bg-red-400 border-red-500"
+                            className="w-2 h-2 rounded-full bg-red-400/80"
                             title={`${bill.name}: $${Number(bill.amount).toFixed(2)}`}
                           />
                         ))}
@@ -194,12 +194,12 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             </div>
             
             {/* Legend */}
-            <div className="mt-5 pt-3 bg-gray-50 rounded p-3 border border-gray-200">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">{t('calendarLegend')}</h4>
+            <div className="mt-5 pt-3 bg-gray-50/30 rounded-sm p-3">
+              <h4 className="text-xs font-medium text-gray-500 mb-2">{t('calendarLegend')}</h4>
               <div className="flex items-center">
                 <div className="flex items-center">
-                  <div className="w-3 h-3 bg-red-400 border border-red-500 rounded-full mr-2"></div>
-                  <span className="text-xs font-medium text-gray-600">{t('billsDue')}</span>
+                  <div className="w-2 h-2 bg-red-400/80 rounded-full mr-2"></div>
+                  <span className="text-xs text-gray-500">{t('billsDue')}</span>
                 </div>
               </div>
             </div>

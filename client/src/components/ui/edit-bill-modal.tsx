@@ -116,10 +116,10 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] border-0 shadow-lg">
         <DialogHeader>
-          <DialogTitle>{t('editBillTitle')}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg font-medium text-gray-700">{t('editBillTitle')}</DialogTitle>
+          <DialogDescription className="text-gray-500">
             {t('updateBillDetails')}
           </DialogDescription>
         </DialogHeader>
@@ -130,11 +130,15 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('billNameLabel')}</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-600">{t('billNameLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('billNamePlaceholder')} {...field} />
+                    <Input 
+                      placeholder={t('billNamePlaceholder')} 
+                      className="border-gray-200 focus-visible:ring-primary/50" 
+                      {...field} 
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -143,16 +147,17 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('amountLabel')}</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-600">{t('amountLabel')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
                       placeholder={t('amountPlaceholder')} 
                       step="0.01"
+                      className="border-gray-200 focus-visible:ring-primary/50" 
                       {...field} 
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -161,12 +166,13 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
               name="due_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('dueDateLabel')}</FormLabel>
+                  <FormLabel className="text-sm font-medium text-gray-600">{t('dueDateLabel')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
                       min={1}
                       max={31}
+                      className="border-gray-200 focus-visible:ring-primary/50" 
                       {...field}
                       onChange={(e) => {
                         // Ensure the due date is between 1 and 31
@@ -181,15 +187,15 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
                       }}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
-            <DialogFooter>
+            <DialogFooter className="mt-6">
               <Button 
                 type="submit" 
                 disabled={editBillMutation.isPending}
-                className="bg-red-500 hover:bg-red-600"
+                className="bg-red-400 hover:bg-red-500 text-white shadow-sm"
               >
                 {editBillMutation.isPending ? t('updating') : t('updateBill')}
               </Button>
