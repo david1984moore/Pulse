@@ -99,25 +99,25 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0f172a]">
-      {/* Header */}
-      <header className="border-b border-border/40 backdrop-blur-sm bg-[#0f172a]/80 sticky top-0 z-10">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#0e1e38] via-[#132e4e] to-[#0c1c34]">
+      {/* Header - Modernized with gradient and glass effect */}
+      <header className="backdrop-blur-md bg-background/10 sticky top-0 z-10 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-              <span className="text-primary font-bold text-3xl mr-8 cursor-pointer glow-text">pulse</span>
+              <span className="text-white font-bold text-3xl mr-8 cursor-pointer glow-text bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">pulse</span>
             </Link>
-            <h1 className="text-2xl font-bold text-foreground">{t('dashboard')}</h1>
+            <h1 className="text-xl font-bold text-white/90">{t('dashboard')}</h1>
           </div>
           <div className="flex items-center space-x-4">
             <LanguageToggle />
-            <div className="bg-card/60 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-glow-sm">
-              <span className="text-sm font-medium text-foreground/90">{t('welcome')} {user?.name?.split(' ')[0]}</span>
+            <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full shadow-glow-sm">
+              <span className="text-sm font-medium text-white/90">{t('welcome')} {user?.name?.split(' ')[0]}</span>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="hover:bg-primary/10 border-primary/30"
+              className="bg-white/10 hover:bg-primary/20 border-white/20 text-white"
               onClick={() => logoutMutation.mutate()}
               disabled={logoutMutation.isPending}
             >
@@ -131,8 +131,38 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Main Dashboard Content */}
+      {/* Main Dashboard Content - Enhanced with card styling and spacing */}
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex-grow">
+        {/* Top balance summary - New widget at the top to highlight most important info */}
+        <div className="mb-8 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 backdrop-blur-md rounded-2xl shadow-glow-md p-6 border border-white/10">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
+            <div className="flex items-center gap-4">
+              <div className="bg-primary/30 p-4 rounded-xl shadow-glow-sm">
+                <div className="text-3xl font-bold text-white glow-text">
+                  ${accountBalance?.accountBalance || '0.00'}
+                </div>
+                <div className="text-sm text-white/70 mt-1">{t('accountBalance')}</div>
+              </div>
+              <Button 
+                onClick={() => setBalanceModalOpen(true)}
+                className="ml-2 bg-white/10 hover:bg-white/20 text-white border border-white/10"
+              >
+                {t('updateBalance')}
+              </Button>
+            </div>
+            <div className="flex gap-4">
+              <div className="text-center bg-white/10 px-4 py-3 rounded-xl shadow-glow-sm backdrop-blur-sm">
+                <div className="text-xl font-bold text-green-400">{income?.length || 0}</div>
+                <div className="text-xs text-white/70">{t('yourIncome')}</div>
+              </div>
+              <div className="text-center bg-white/10 px-4 py-3 rounded-xl shadow-glow-sm backdrop-blur-sm">
+                <div className="text-xl font-bold text-red-400">{bills?.length || 0}</div>
+                <div className="text-xs text-white/70">{t('yourBills')}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left column - Income & Bills */}
           <div className="lg:col-span-1">

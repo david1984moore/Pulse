@@ -126,27 +126,43 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         bill={selectedBill} 
       />
 
-      <Card className="bg-white shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
-        <CardContent>
-          <div className="bg-gradient-to-b from-background/40 to-background/20 rounded-lg backdrop-blur-sm">
-            <div className="flex items-center justify-between px-3 py-4 mb-2">
-              <h3 className="text-xl font-bold text-foreground/90 capitalize tracking-tighter">
-                {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
-              </h3>
+      <Card className="backdrop-blur-md bg-white/90 shadow-xl border border-white/20 overflow-hidden rounded-2xl">
+        <CardContent className="pt-6">
+          <div className="bg-gradient-to-br from-white/80 to-white/50 rounded-xl backdrop-blur-sm border border-white/40 shadow-sm p-4 mb-4">
+            {/* Calendar header with elegant styling */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20 p-2 rounded-xl shadow-sm mr-3">
+                  <h3 className="text-lg font-bold text-gray-800 capitalize">
+                    {t(format(currentDate, "MMMM").toLowerCase())}
+                  </h3>
+                  <div className="text-sm text-gray-500 font-medium">
+                    {format(currentDate, "yyyy")}
+                  </div>
+                </div>
+                <div className="hidden sm:block">
+                  <h2 className="text-gray-800 font-semibold text-sm uppercase tracking-wide flex items-center">
+                    <span className="inline-block w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                    {t('paymentCalendar')}
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-1">{t('calendarLegend')}</p>
+                </div>
+              </div>
+              
               <div className="flex space-x-2">
                 <Button 
-                  variant="ghost" 
+                  variant="outline" 
                   size="icon" 
                   onClick={previousMonth}
-                  className="rounded-full h-8 w-8 p-0 hover:bg-primary/20 hover:text-primary transition-all"
+                  className="rounded-full h-8 w-8 p-0 bg-white/50 hover:bg-primary/10 text-gray-600 hover:text-primary border border-gray-200 transition-all shadow-sm"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <Button 
-                  variant="ghost" 
+                  variant="outline" 
                   size="icon" 
                   onClick={nextMonth}
-                  className="rounded-full h-8 w-8 p-0 hover:bg-primary/20 hover:text-primary transition-all"
+                  className="rounded-full h-8 w-8 p-0 bg-white/50 hover:bg-primary/10 text-gray-600 hover:text-primary border border-gray-200 transition-all shadow-sm"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -154,48 +170,61 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             </div>
 
             {/* Day headers in a more cohesive row */}
-            <div className="flex w-full bg-primary/10 rounded-lg mb-2 backdrop-blur-sm">
-              {daysOfWeek.map((day) => (
-                <div key={day} className="flex-1 text-xs uppercase font-bold text-foreground/80 text-center py-2">
+            <div className="flex w-full bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl mb-3 shadow-sm overflow-hidden">
+              {daysOfWeek.map((day, index) => (
+                <div 
+                  key={day} 
+                  className={`flex-1 text-xs uppercase font-bold text-gray-700 text-center py-2.5
+                    ${index === 0 || index === 6 ? 'bg-primary/10' : ''}
+                  `}
+                >
                   {day}
                 </div>
               ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-2 p-1 rounded-lg">
+            <div className="grid grid-cols-7 gap-2 p-1">
               {/* Empty placeholders */}
               {placeholders.map((placeholder, index) => (
-                <div key={`empty-${index}`} className="h-12 rounded-lg"></div>
+                <div key={`empty-${index}`} className="h-14 rounded-xl bg-white/30"></div>
               ))}
 
-              {/* Day cells */}
+              {/* Day cells - Enhanced with modern styling */}
               {days.map((day) => {
                 const dayOfMonth = day.getDate();
                 const isToday = isSameDay(day, new Date());
                 const dayBills = getBillForDay(dayOfMonth);
                 const hasBills = dayBills.length > 0;
+                const isWeekend = day.getDay() === 0 || day.getDay() === 6;
 
                 return (
                   <div 
                     key={day.toString()}
                     className={`
-                      relative h-12 rounded-lg cursor-pointer transition-all hover:scale-[1.03] duration-200
+                      relative h-14 rounded-xl cursor-pointer transition-all hover:shadow-md
+                      duration-200 overflow-hidden group
                       ${isToday 
-                        ? "bg-primary/20 text-primary border border-primary/30 shadow-sm shadow-primary/20" 
+                        ? "bg-gradient-to-br from-primary/20 to-primary/10 text-primary border border-primary/30 shadow-sm" 
                         : hasBills
-                          ? "bg-red-900/20 hover:bg-red-900/30 text-red-400 border border-red-600/20"
-                          : "bg-background/60 backdrop-blur-sm hover:bg-primary/5 text-foreground/90"
+                          ? "bg-white border border-red-100 shadow-sm"
+                          : isWeekend
+                            ? "bg-gray-50/80 border border-gray-100 hover:bg-white/70"
+                            : "bg-white/80 border border-gray-100 hover:bg-white"
                       }
                     `}
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
                   >
-                    <span className={`text-sm absolute top-1.5 left-1.5 ${isToday ? "font-bold text-primary" : ""} ${hasBills ? "font-semibold text-red-300" : "font-medium text-foreground/90"}`}>
+                    <span className={`
+                      text-sm absolute top-1.5 left-2 
+                      ${isToday ? "font-bold text-primary" : ""} 
+                      ${hasBills ? "font-semibold text-gray-800" : isWeekend ? "font-medium text-gray-500" : "font-medium text-gray-700"}
+                    `}>
                       {dayOfMonth}
                     </span>
 
-                    {/* Bill indicators */}
+                    {/* Bill indicators with improved visuals */}
                     {hasBills && (
-                      <div className="absolute bottom-1.5 right-1.5 flex flex-wrap justify-center gap-1.5">
+                      <div className="absolute bottom-1.5 right-1.5 flex flex-wrap justify-end gap-1">
                         {dayBills.slice(0, 3).map((bill) => (
                           <div 
                             key={bill.id}

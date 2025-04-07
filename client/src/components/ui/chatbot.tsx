@@ -261,107 +261,126 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
   
   return (
-    <Card className="bg-white shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
-      <CardHeader className="pb-4 border-b border-border/30">
+    <Card className="backdrop-blur-md bg-white/90 shadow-xl border border-white/20 overflow-hidden rounded-2xl">
+      <CardHeader className="pb-4 border-b border-gray-100">
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">
-            <CardTitle className="flex items-center relative px-5 py-2.5 bg-primary/20 border border-primary/40 text-primary rounded-md shadow-glow-sm shadow-primary/10">
-              <span className="flex items-center justify-center tracking-wide">
+            <CardTitle className="flex items-center relative px-5 py-2.5 bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 text-primary-700 rounded-xl shadow-glow-sm shadow-primary/10">
+              <span className="flex items-center justify-center font-bold tracking-wide">
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
             </CardTitle>
-            {/* EKG trace appears only when thinking/processing */}
-            {isPending && (
-              <div className="ml-3">
+            {/* EKG trace with enhanced visuals */}
+            <div className="ml-3 h-6 min-w-[100px]">
+              {isPending ? (
                 <EkgAnimation 
                   runAnimation={isPending} 
                   width={100} 
                   height={24} 
                   color="hsl(192 91% 55%)"
                 />
-              </div>
-            )}
+              ) : (
+                <div className="text-xs text-gray-500 italic mt-1">Your spending assistant</div>
+              )}
+            </div>
           </div>
-          <CardDescription className="flex items-center bg-background/60 backdrop-blur-sm px-4 py-2 rounded-md shadow-md text-foreground border border-primary/20">
+          <CardDescription className="flex items-center bg-gradient-to-r from-gray-50 to-gray-100 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm text-gray-800 border border-primary/20">
             <DollarSign className="h-4 w-4 mr-2 text-primary" />
-            <span className="font-medium glow-text">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+            <span className="font-bold glow-text">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="pt-4">
-        <ScrollArea ref={scrollAreaRef} className="bg-background/40 backdrop-blur-sm rounded-lg p-4 mb-5 h-64 border border-border/30 shadow-inner">
-          {messages.map((message, index) => (
-            <div key={index} className="mb-3">
-              <div
-                className={`flex ${
-                  message.sender === "user" ? "justify-end" : "justify-start"
-                } mb-2`}
-              >
-                {/* Bot avatar for bot messages */}
-                {message.sender === "bot" && (
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center mr-2 shadow-glow-sm">
-                    <span className="text-primary text-xs font-bold">A</span>
-                  </div>
-                )}
-                
-                <div
-                  className={`p-3 rounded-lg max-w-sm ${
-                    message.sender === "user"
-                      ? "bg-primary/20 text-foreground rounded-tr-none shadow-md border border-primary/40"
-                      : "bg-background/60 backdrop-blur-sm text-foreground rounded-tl-none shadow-md border-l-2 border-primary/40"
-                  }`}
-                >
-                  <p className={`${message.sender === "bot" ? "text-sm leading-relaxed" : "text-sm"}`}>
-                    {message.sender === "bot" && message.isAnimating ? (
-                      <TypeAnimation 
-                        text={message.text} 
-                        speed={12}
-                        onComplete={() => handleAnimationComplete(index)}
-                        onCharacterTyped={() => {
-                          // Scroll to bottom on each character typed
-                          if (scrollAreaRef.current) {
-                            const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-                            if (scrollContainer) {
-                              scrollContainer.scrollTop = scrollContainer.scrollHeight;
-                            }
-                          }
-                        }}
-                      />
-                    ) : (
-                      message.text
-                    )}
-                  </p>
-                </div>
-                
-                {/* User avatar for user messages */}
-                {message.sender === "user" && (
-                  <div className="flex-shrink-0 h-8 w-8 rounded-md bg-primary/30 border border-primary/40 flex items-center justify-center ml-2 shadow-glow-sm text-foreground">
-                    <span className="text-xs font-medium">You</span>
-                  </div>
-                )}
+      
+      <CardContent className="pt-5">
+        {/* Chat message area with improved styling */}
+        <ScrollArea 
+          ref={scrollAreaRef} 
+          className="bg-gradient-to-br from-gray-50 to-gray-100/60 backdrop-blur-sm rounded-xl p-4 mb-5 h-72 border border-gray-200 shadow-inner"
+        >
+          {messages.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center p-6">
+              <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center mb-4 shadow-glow-sm">
+                <span className="text-primary text-xl font-bold">A</span>
               </div>
+              <p className="text-gray-500 text-sm max-w-xs">
+                Ask Alice if you can spend a specific amount and she'll analyze your financial situation.
+              </p>
             </div>
-          ))}
+          ) : (
+            messages.map((message, index) => (
+              <div key={index} className="mb-4">
+                <div
+                  className={`flex ${
+                    message.sender === "user" ? "justify-end" : "justify-start"
+                  } mb-2`}
+                >
+                  {/* Bot avatar with enhanced styling */}
+                  {message.sender === "bot" && (
+                    <div className="flex-shrink-0 h-9 w-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/20 border border-primary/40 flex items-center justify-center mr-2 shadow-glow-sm">
+                      <span className="text-primary font-bold text-sm">A</span>
+                    </div>
+                  )}
+                  
+                  <div
+                    className={`p-3 rounded-2xl max-w-sm ${
+                      message.sender === "user"
+                        ? "bg-gradient-to-br from-primary/20 to-primary/10 text-gray-800 rounded-tr-none shadow-sm border border-primary/30"
+                        : "bg-white text-gray-800 rounded-tl-none shadow-sm border border-gray-200"
+                    }`}
+                  >
+                    <p className={`${message.sender === "bot" ? "text-sm leading-relaxed" : "text-sm"}`}>
+                      {message.sender === "bot" && message.isAnimating ? (
+                        <TypeAnimation 
+                          text={message.text} 
+                          speed={12}
+                          onComplete={() => handleAnimationComplete(index)}
+                          onCharacterTyped={() => {
+                            // Scroll to bottom on each character typed
+                            if (scrollAreaRef.current) {
+                              const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+                              if (scrollContainer) {
+                                scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                              }
+                            }
+                          }}
+                        />
+                      ) : (
+                        message.text
+                      )}
+                    </p>
+                  </div>
+                  
+                  {/* User avatar with enhanced styling */}
+                  {message.sender === "user" && (
+                    <div className="flex-shrink-0 h-9 w-9 rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 border border-blue-300 flex items-center justify-center ml-2 shadow-sm text-white">
+                      <span className="text-xs font-medium">You</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </ScrollArea>
 
-        <div className="p-4 rounded-md bg-background/60 backdrop-blur-sm border border-border/30 shadow-glow-sm shadow-primary/5">
+        {/* Input area with enhanced styling */}
+        <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-sm">
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
             {isCustomAmount ? (
               <div className="flex w-full sm:flex-1">
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
                   <input
                     type="number"
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
                     placeholder="Enter amount"
-                    className="w-full pl-8 pr-4 py-2.5 border border-border/50 bg-background/60 text-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50 shadow-glow-sm backdrop-blur-sm transition-all duration-150"
+                    className="w-full pl-8 pr-4 py-2.5 border border-gray-200 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 shadow-sm transition-all duration-150"
                   />
                 </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="ml-2 bg-background/60 border-border/50 text-primary shadow-glow-sm hover:bg-primary/10 hover:text-primary/90 transition-all duration-150"
+                  className="ml-2 bg-white border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all duration-150"
                   onClick={() => {
                     setIsCustomAmount(false);
                     setCustomAmount("");
@@ -372,37 +391,37 @@ export default function Chatbot({ bills }: ChatbotProps) {
               </div>
             ) : (
               <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-                <SelectTrigger className="flex-1 border-border/50 bg-background/60 text-foreground shadow-glow-sm hover:border-primary/40 backdrop-blur-sm transition-colors duration-150">
+                <SelectTrigger className="flex-1 border-gray-200 bg-white text-gray-800 shadow-sm hover:border-primary/40 transition-colors duration-150">
                   <SelectValue placeholder={t('chatbotPlaceholder')} />
                 </SelectTrigger>
-                <SelectContent className="bg-background/95 backdrop-blur-lg border border-border/50 text-foreground">
+                <SelectContent className="bg-white border border-gray-200 text-gray-800">
                   <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
                   <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
                   <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
                   <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
-                  <SelectItem value="custom" className="text-primary">{t('customSpend')}</SelectItem>
+                  <SelectItem value="custom" className="text-primary font-medium">{t('customSpend')}</SelectItem>
                 </SelectContent>
               </Select>
             )}
             <Button
               onClick={handleSubmitClick}
               disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
-              className={`w-full sm:w-auto shadow-glow-sm transition-all duration-150 ${
+              className={`w-full sm:w-auto transition-all duration-200 ${
                 isPending 
-                  ? 'bg-primary/50' 
-                  : 'bg-primary/20 border border-primary/40 hover:bg-primary/30 text-primary'
+                  ? 'bg-primary/50 text-white' 
+                  : 'bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary text-white shadow-glow-sm'
               }`}
             >
               {isPending ? (
-                <>
+                <div className="flex items-center justify-center">
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('thinking')}
-                </>
+                  <span>{t('thinking')}</span>
+                </div>
               ) : (
-                <>
-                  <Send className="mr-2 h-4 w-4" />
-                  {t('ask')}
-                </>
+                <div className="flex items-center justify-center group">
+                  <Send className="mr-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                  <span>{t('ask')}</span>
+                </div>
               )}
             </Button>
           </div>
