@@ -53,13 +53,17 @@ export function EkgAnimation({
   // Don't render anything if not animating
   if (!runAnimation || !isVisible) return null;
   
-  // Classic EKG trace with more pronounced PQRST waveform pattern
+  // Classic EKG trace with traditional heart monitor shape
   const ekgPathData = `
     M 0,${height/2}
     L ${width*0.15},${height/2}
     L ${width*0.2},${height/2-height*0.1}
     L ${width*0.25},${height/2}
-    L ${width*0.3},${height/2-height*0.15}
+    L ${width*0.32},${height/2}
+    L ${width*0.34},${height/2-height*0.5}
+    L ${width*0.36},${height/2+height*0.5}
+    L ${width*0.38},${height/2-height*0.1}
+    L ${width*0.45},${height/2}
     L ${width*0.35},${height/2}
     L ${width*0.38},${height/2+height*0.1}
     L ${width*0.4},${height/2-height*0.8}
