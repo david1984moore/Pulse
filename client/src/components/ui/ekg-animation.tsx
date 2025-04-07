@@ -91,42 +91,66 @@ export function EkgAnimation({
       
       const pathLength = polyline.getTotalLength();
       
-      // Set initial state (invisible line)
-      polyline.style.strokeDasharray = pathLength.toString();
-      polyline.style.strokeDashoffset = pathLength.toString();
+      // Add shadow effect for a hospital monitor look
       polyline.style.filter = 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))';
       
       // Force a reflow to ensure initial state is set
       void polyline.getBoundingClientRect();
       
-      // Animate drawing the line
+      // Animate drawing the line with a follow-through effect
       const startTime = performance.now();
-      const duration = 800; // ms to complete animation (much faster)
+      const duration = 450; // Fast animation (450ms)
+      
+      // For the follow-through effect, we need a window of visibility that moves across the path
+      // This creates the classic heart monitor effect with leading & trailing edges
+      const traceLength = Math.min(width * 0.4, pathLength * 0.3); // Visible portion length
+      
+      // Set up initial state - only a portion of the trace is visible
+      polyline.style.strokeDasharray = `${traceLength}, ${pathLength}`;
+      polyline.style.strokeDashoffset = `${pathLength}`; // Start at the beginning
       
       const animate = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         
         if (elapsed < duration) {
-          // Calculate how much of the path to show (0 to 1)
+          // Calculate progress from 0 to 1
           const progress = elapsed / duration;
-          const dashOffset = pathLength * (1 - progress);
           
-          // Apply the current dash offset
-          polyline.style.strokeDashoffset = dashOffset.toString();
+          // Create sliding window effect
+          // As progress increases, we slide the visible portion of the line
+          const leadingEdge = pathLength * progress;
+          
+          // Offset needs to consider the trace length to create the follow-through
+          polyline.style.strokeDashoffset = `${pathLength - leadingEdge}`;
           
           // Continue animation
           requestAnimationFrame(animate);
         } else {
-          // Animation complete
-          polyline.style.strokeDashoffset = '0';
+          // Animation complete - now animate the trace off the screen to the right
+          // This creates a smooth "exit" effect similar to a real ECG monitor
+          const exitDuration = 150; // Very quick exit
+          const exitStartTime = performance.now();
           
-          // Hold final state briefly, then clean up
-          setTimeout(() => {
-            // Clear the container to completely remove the SVG
-            container.innerHTML = '';
-            animating.current = false;
-            if (onComplete) onComplete();
-          }, 200); // Shorter hold time
+          const animateExit = (exitTime: number) => {
+            const exitElapsed = exitTime - exitStartTime;
+            
+            if (exitElapsed < exitDuration) {
+              // Continue moving the trace off screen to the right
+              const exitProgress = exitElapsed / exitDuration;
+              const extraOffset = pathLength * exitProgress * 0.5; // Extra movement
+              
+              polyline.style.strokeDashoffset = `${-extraOffset}`;
+              requestAnimationFrame(animateExit);
+            } else {
+              // Clean up after exit animation
+              container.innerHTML = '';
+              animating.current = false;
+              if (onComplete) onComplete();
+            }
+          };
+          
+          // Start exit animation
+          requestAnimationFrame(animateExit);
         }
       };
       
