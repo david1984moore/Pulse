@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { EkgAnimation } from "@/components/ui/ekg-animation-new";
+import CanvasEkgAnimation from "./canvas-ekg-animation";
 import {
   Select,
   SelectContent,
@@ -262,41 +262,43 @@ export default function Chatbot({ bills }: ChatbotProps) {
   
   return (
     <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl">
-      <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
-        <div className="flex flex-row items-center justify-between">
-          <div className="flex items-center">
-            <div className="flex items-center px-5 py-2.5">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
-                <span className="text-white font-bold text-lg">A</span>
-              </div>
-              <div className="flex items-center">
-                <div className="text-xl font-bold tracking-wide text-primary-600">
-                  {language === 'es' ? 'Alicia' : 'Alice'}
+      <div className="relative">
+        {/* Full-width canvas ECG animation */}
+        {isPending && (
+          <div className="absolute top-0 left-0 w-full z-10 overflow-hidden rounded-t-2xl">
+            <CanvasEkgAnimation 
+              runAnimation={isPending}
+              width="100%"
+              height={56}
+              backgroundColor="#3B82F6" // Blue that matches the header
+            />
+          </div>
+        )}
+        
+        <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10 relative z-20">
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex items-center">
+              <div className="flex items-center px-5 py-2.5">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
+                  <span className="text-white font-bold text-lg">A</span>
                 </div>
-                
-                {/* ECG animation next to Alice's name without background */}
-                {isPending && (
-                  <div className="ml-3">
-                    <EkgAnimation 
-                      runAnimation={isPending} 
-                      width={80} 
-                      height={24} 
-                      color="#FFFFFF" 
-                    />
+                <div className="flex items-center">
+                  <div className="text-xl font-bold tracking-wide text-primary-600">
+                    {language === 'es' ? 'Alicia' : 'Alice'}
                   </div>
-                )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center px-4 py-2">
+              <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
+                <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
+                <span className="font-bold text-primary-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
               </div>
             </div>
           </div>
-          
-          <div className="flex items-center px-4 py-2">
-            <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
-              <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
-              <span className="font-bold text-primary-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
-            </div>
-          </div>
-        </div>
-      </CardHeader>
+        </CardHeader>
+      </div>
       
       <CardContent className="pt-5">
         {/* Chat message area with improved styling */}

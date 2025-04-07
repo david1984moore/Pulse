@@ -1,0 +1,11 @@
+want to add an animated ECG trace effect inspired by this video: https://www.vecteezy.com/video/13128083-heart-beat-glowing-line. Please implement this using HTML, CSS, and JavaScript (or a canvas-based approach if more suitable). Here’s what I need:
+
+Canvas Setup: Create an HTML canvas that spans the full width of the screen with a reasonable height for visibility. Set the canvas background color to match the blue already used in the header of 'Alice' (use a typical blue that I can adjust later if needed).
+Trace Line: Draw a glowing, neon-style line in white that moves horizontally from left to right across the canvas. The line should have a soft glow effect (e.g., using shadowBlur or a gradient) to stand out against the background.
+ECG Pattern: Simulate a simplified ECG heartbeat pattern with sharp peaks and troughs, resembling a typical heartbeat rhythm. The pattern should complete one full cycle in a short, natural duration (like a steady heartbeat).
+Trigger: The trace animation should only start when the user clicks the 'ask' button (assume an existing button with id='ask' in the HTML). Before the click, the canvas should remain empty (just the background color).
+Animation Behavior: When triggered, the white trace line should draw itself smoothly from left to right across the canvas, with a subtle fade or trail effect behind the leading edge. Once it reaches the right edge, the canvas should clear, and the animation should stop until the 'ask' button is clicked again. The animation should run consistently each time 'ask' is clicked.
+Independence: Ensure the trace animation runs independently of any other functions or logic in 'Alice'. It should not interfere with or depend on other features, only activating on the 'ask' button click.
+Glow Effect: Add a glowing effect to the white line using canvas shadow properties (e.g., shadowBlur, shadowColor) or another technique to make it visually striking against the background.
+Responsiveness: Ensure the canvas and animation adapt to the screen width while maintaining a suitable height.
+Performance: Optimize the code for smooth performance, using requestAnimationFrame for the animation loop.
