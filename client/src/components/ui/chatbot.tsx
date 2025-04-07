@@ -225,20 +225,18 @@ export default function Chatbot({ bills }: ChatbotProps) {
   // State to track when to show the EKG animation
   const [showEkg, setShowEkg] = useState(false);
   
-  // Modified handleSubmit to trigger EKG animation
+  // Improved handler for submitting with EKG animation
   const handleSubmitWithEkg = async () => {
-    // Force EKG animation to reset by toggling it off and then on
-    setShowEkg(false);
-    
-    // Use setTimeout with 0ms to ensure the state update is processed
-    setTimeout(() => {
+    // Only trigger if the animation isn't already active
+    if (!showEkg) {
       setShowEkg(true);
       
-      // Process the submit
-      handleSubmit();
-      
-      // EKG animation will auto-hide due to its internal timer
-    }, 0);
+      // The EKG animation component has its own timer to auto-hide
+      // No need to manually set it back to false here
+    }
+    
+    // Process the submit immediately (no need for setTimeout)
+    handleSubmit();
   };
   
   return (
@@ -249,10 +247,10 @@ export default function Chatbot({ bills }: ChatbotProps) {
             {language === 'es' ? 'Alicia' : 'Alice'}
             <EkgAnimation 
               isActive={showEkg} 
-              duration={2000} 
+              duration={2400} 
               color="#3b82f6" 
-              width={60} 
-              height={20} 
+              width={70} 
+              height={22} 
             />
           </CardTitle>
           <CardDescription className="flex items-center bg-gray-100 px-4 py-2 rounded-md">

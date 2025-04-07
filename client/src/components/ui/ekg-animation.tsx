@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface EkgAnimationProps {
   isActive: boolean;
@@ -16,31 +16,54 @@ export function EkgAnimation({
   height = 25
 }: EkgAnimationProps) {
   const [showAnimation, setShowAnimation] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   
+  // Clear existing timer to prevent multiple animations
   useEffect(() => {
-    if (isActive) {
-      setShowAnimation(true);
-      // Use duration * 1.5 to match the tail animation duration
-      const timer = setTimeout(() => {
-        setShowAnimation(false);
-      }, duration * 1.5);
-      
-      return () => clearTimeout(timer);
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+  
+  // Handle animation start/stop
+  useEffect(() => {
+    // Clear any existing timer first to avoid overlapping animations
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
-  }, [isActive, duration]);
+    
+    if (isActive) {
+      // Only start animation if it's not already showing
+      if (!showAnimation) {
+        setShowAnimation(true);
+      }
+      
+      // Use duration * 1.5 to match the tail animation duration
+      timerRef.current = setTimeout(() => {
+        setShowAnimation(false);
+        timerRef.current = null;
+      }, duration * 1.5);
+    }
+  }, [isActive, duration, showAnimation]);
   
   if (!showAnimation) return null;
   
-  // More realistic EKG signal points (QRS complex)
+  // Enhanced EKG signal points for a smoother, more attractive trace
   const points = [
-    [0, height/2],                      // Start with flat line (isoelectric)
-    [width*0.3, height/2],              // Flat line continues
-    [width*0.35, height/2 - height*0.1], // Q wave (small dip)
-    [width*0.4, height/2 - height*0.6],  // R wave (tall spike)
-    [width*0.45, height/2 + height*0.2], // S wave (downward deflection)
-    [width*0.5, height/2],               // Back to baseline
-    [width*0.55, height/2 - height*0.1], // T wave (small bump)
-    [width*0.6, height/2],               // Back to baseline
+    [0, height/2],                       // Start with flat line (isoelectric)
+    [width*0.25, height/2],              // Flat line continues
+    [width*0.3, height/2 - height*0.08], // P wave (small rounded bump)
+    [width*0.35, height/2],              // Back to baseline before QRS complex
+    [width*0.38, height/2 - height*0.1], // Q wave (small dip)
+    [width*0.42, height/2 - height*0.65], // R wave (tall spike, slightly higher)
+    [width*0.44, height/2 + height*0.25], // S wave (deeper downward deflection)
+    [width*0.48, height/2],              // Back to baseline after QRS
+    [width*0.58, height/2 - height*0.15], // T wave (more noticeable bump)
+    [width*0.65, height/2],              // Back to baseline
     [width*0.85, height/2],              // Flat line continues
     [width, height/2]                    // End with flat line
   ].map(point => point.join(',')).join(' ');
@@ -144,10 +167,11 @@ export function EkgAnimation({
           points={points}
           fill="none"
           stroke={color}
-          strokeWidth="2.5"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
           className="animate-draw"
+          filter="drop-shadow(0 0 1px rgba(59, 130, 246, 0.5))"
         />
       </svg>
 
