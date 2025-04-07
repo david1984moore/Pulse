@@ -1,5 +1,5 @@
 
-/* Simple and Elegant EKG Animation Styles */
+/* Continuous EKG Animation Styles */
 
 .ekg-wrapper {
   transition: opacity 0.3s ease;
@@ -9,15 +9,14 @@
   overflow: visible; /* Allow elements to render outside SVG bounds */
 }
 
-/* The EKG path with a subtle glow */
-.ekg-path {
-  filter: drop-shadow(0 0 1.5px rgba(99, 102, 241, 0.7));
-  transition: stroke-dashoffset 0.1s linear;
+/* The continuous moving EKG line */
+.ekg-line {
+  filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.7));
 }
 
-/* Grid lines fade in gently */
+/* Grid lines for medical device look */
 .ekg-grid line {
-  animation: fadeGrid 2s ease-in-out;
+  animation: fadeGrid 1s ease-in-out;
 }
 
 @keyframes fadeGrid {
@@ -31,8 +30,8 @@
 
 /* Moving dot with pulse effect */
 .ekg-dot {
-  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
-  animation: pulseDot 1s infinite alternate ease-in-out;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
+  animation: pulseDot 0.8s infinite alternate ease-in-out;
 }
 
 @keyframes pulseDot {
@@ -42,6 +41,6 @@
   }
   100% {
     r: 2.5;
-    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
   }
 }

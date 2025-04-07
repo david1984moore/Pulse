@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './ekg-animation.css';
 
 interface EkgAnimationProps {
@@ -9,6 +9,7 @@ interface EkgAnimationProps {
   height?: number;
 }
 
+// Create a continuous sliding EKG animation
 export function EkgAnimation({
   runAnimation,
   onComplete,
@@ -16,183 +17,234 @@ export function EkgAnimation({
   width = 160,
   height = 30
 }: EkgAnimationProps) {
-  const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
-  const [animationId, setAnimationId] = useState(0);
+  const animationRef = useRef<number | null>(null);
+  const animationStartTimeRef = useRef<number>(0);
+  const completionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [position, setPosition] = useState(0);
+  const [animationKey, setAnimationKey] = useState(0);
 
-  // Create simpler EKG path
-  const createEkgPath = () => {
+  // Define a single EKG beat pattern
+  const patternWidth = width * 0.75; // Width of a single EKG beat pattern
+  const segmentHeight = height * 0.6; // Height of the EKG spike
+
+  // Function to convert position (0-100) to actual path coordinates
+  const getPathPoints = (position: number): {x: number, y: number} => {
+    // This maps the relative position within a single EKG pattern
+    // to the corresponding y-coordinate
     const midY = height / 2;
+    const patternPos = (position % 100) / 100; // Normalize to 0-1 for one pattern
     
-    return `
-      M 0,${midY} 
-      L ${width * 0.3},${midY} 
-      L ${width * 0.35},${midY - height * 0.15} 
-      L ${width * 0.4},${midY - height * 0.5} 
-      L ${width * 0.45},${midY + height * 0.25} 
-      L ${width * 0.5},${midY} 
-      L ${width * 0.7},${midY} 
-      L ${width * 0.75},${midY - height * 0.2} 
-      L ${width * 0.8},${midY} 
-      L ${width},${midY}
-    `;
-  };
+    let x = patternPos * patternWidth;
+    let y = midY; // Default is the middle line
 
-  // Set up animation
-  useEffect(() => {
-    if (runAnimation) {
-      setVisible(false);
-      setProgress(0);
+    // Baseline segment (0-25%)
+    if (patternPos <= 0.25) {
+      y = midY;
+    } 
+    // P-wave (small bump) (25-35%)
+    else if (patternPos > 0.25 && patternPos <= 0.35) {
+      const t = (patternPos - 0.25) / 0.1; // Normalize to 0-1 for this segment
+      y = midY - Math.sin(Math.PI * t) * (height * 0.15);
+    }
+    // PR segment (return to baseline) (35-45%)
+    else if (patternPos > 0.35 && patternPos <= 0.45) {
+      y = midY;
+    }
+    // QRS complex (45-60%)
+    else if (patternPos > 0.45 && patternPos <= 0.6) {
+      const t = (patternPos - 0.45) / 0.15; // Normalize to 0-1 for QRS
       
-      // Small delay to ensure clean animation start
-      const startTimeout = setTimeout(() => {
-        setAnimationId(id => id + 1);
-        setVisible(true);
-      }, 50);
-
-      return () => clearTimeout(startTimeout);
-    }
-  }, [runAnimation]);
-
-  // Animation logic
-  useEffect(() => {
-    if (!runAnimation || !visible) return;
-
-    // Slow animation that progresses from 0 to 100 over 7 seconds
-    const duration = 7000;
-    const interval = 50; // Update every 50ms for smoothness
-    const step = 100 / (duration / interval);
-    
-    const timer = setInterval(() => {
-      setProgress(prev => {
-        const next = prev + step;
-        if (next >= 100) {
-          clearInterval(timer);
-          
-          // Keep the completed EKG visible for a moment
-          setTimeout(() => {
-            if (onComplete) onComplete();
-          }, 2000);
-          
-          return 100;
-        }
-        return next;
-      });
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [runAnimation, visible, onComplete]);
-
-  // Don't render anything when animation is not running
-  if (!visible) return null;
-
-  // Calculate where the dot should be on the path
-  const dotPosition = () => {
-    const x = width * (progress / 100);
-    let y = height / 2;
-    
-    // Adjust y position based on progress
-    if (progress > 35 && progress < 40) {
-      // P wave
-      y = height / 2 - height * 0.15 * ((progress - 35) / 5);
-    } else if (progress >= 40 && progress < 45) {
-      // QRS peak
-      const peakProgress = (progress - 40) / 5;
-      if (peakProgress < 0.5) {
-        // R up
-        y = height / 2 - height * 0.5 * (peakProgress * 2);
-      } else {
-        // S down
-        y = height / 2 - height * 0.5 + height * 0.75 * ((peakProgress - 0.5) * 2);
-      }
-    } else if (progress > 70 && progress < 80) {
-      // T wave
-      const tProgress = (progress - 70) / 10;
-      if (tProgress < 0.5) {
-        y = height / 2 - height * 0.2 * (tProgress * 2);
-      } else {
-        y = height / 2 - height * 0.2 + height * 0.2 * ((tProgress - 0.5) * 2);
+      if (t <= 0.2) { // Q wave (initial downward)
+        y = midY + t * 5 * (height * 0.1);
+      } else if (t <= 0.4) { // R wave (sharp upward)
+        y = midY + (height * 0.1) - ((t - 0.2) * 5 * (height * 0.7));
+      } else if (t <= 0.6) { // S wave (downward after peak)
+        y = midY - (height * 0.6) + ((t - 0.4) * 5 * (height * 0.7));
+      } else { // Return to baseline
+        y = midY + (height * 0.1) - ((t - 0.6) * 2.5 * (height * 0.1));
       }
     }
-    
+    // ST segment (60-75%)
+    else if (patternPos > 0.6 && patternPos <= 0.75) {
+      y = midY;
+    }
+    // T wave (75-90%)
+    else if (patternPos > 0.75 && patternPos <= 0.9) {
+      const t = (patternPos - 0.75) / 0.15; // Normalize to 0-1 for T wave
+      y = midY - Math.sin(Math.PI * t) * (height * 0.2);
+    }
+    // Final baseline (90-100%)
+    else {
+      y = midY;
+    }
+
     return { x, y };
   };
+
+  // Generate points for a continuous path with multiple beats
+  const generatePath = (offset = 0) => {
+    const points = [];
+    const segments = 100; // Number of segments to create a smooth curve
+    const repetitions = 3; // Generate multiple patterns for smooth scrolling
+    
+    for (let i = 0; i < segments * repetitions; i++) {
+      const pos = (i / segments) * 100 + offset;
+      const { x, y } = getPathPoints(pos);
+      points.push(`${x},${y}`);
+    }
+    
+    return points.join(' ');
+  };
+
+  // Animation frame function
+  const animate = (timestamp: number) => {
+    if (!animationStartTimeRef.current) {
+      animationStartTimeRef.current = timestamp;
+    }
+
+    const elapsed = timestamp - animationStartTimeRef.current;
+    
+    // Move slower - full animation takes 10 seconds
+    const animationDuration = 10000;
+    const newPosition = (elapsed / animationDuration) * 100;
+    
+    setPosition(newPosition % 200); // Loop between 0 and 200 for continuous effect
+    
+    animationRef.current = requestAnimationFrame(animate);
+    
+    // Set a fixed duration for the animation
+    if (!completionTimeoutRef.current && elapsed > animationDuration * 0.8) {
+      completionTimeoutRef.current = setTimeout(() => {
+        if (onComplete) onComplete();
+      }, animationDuration * 0.2);
+    }
+  };
+
+  // Start/stop animation based on runAnimation prop
+  useEffect(() => {
+    if (runAnimation) {
+      // Reset state for a clean animation
+      setVisible(false);
+      animationStartTimeRef.current = 0;
+      
+      // Clear any existing completion timeout
+      if (completionTimeoutRef.current) {
+        clearTimeout(completionTimeoutRef.current);
+        completionTimeoutRef.current = null;
+      }
+      
+      // Clean start with small delay
+      setTimeout(() => {
+        setPosition(0);
+        setAnimationKey(prev => prev + 1);
+        setVisible(true);
+        
+        // Start animation loop
+        animationRef.current = requestAnimationFrame(animate);
+      }, 50);
+    } else {
+      // Clean up animation on stop
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+      
+      if (completionTimeoutRef.current) {
+        clearTimeout(completionTimeoutRef.current);
+        completionTimeoutRef.current = null;
+      }
+      
+      setVisible(false);
+    }
+    
+    // Clean up on unmount
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (completionTimeoutRef.current) {
+        clearTimeout(completionTimeoutRef.current);
+      }
+    };
+  }, [runAnimation]);
+
+  // Don't render when not visible
+  if (!visible) return null;
   
-  const { x, y } = dotPosition();
-  const ekgPath = createEkgPath();
+  // Convert scroll position to translation for continuous scrolling
+  const translateX = -position * (patternWidth / 100);
   
+  // Points for the EKG trace
+  const pathPoints = generatePath(0);
+  
+  // Get current dot position
+  const { x: dotX, y: dotY } = getPathPoints(position);
+
   return (
-    <div 
-      key={animationId}
-      className="ekg-wrapper" 
-      style={{ 
-        width: `${width}px`, 
+    <div
+      key={animationKey}
+      className="ekg-wrapper"
+      style={{
+        width: `${width}px`,
         height: `${height}px`,
         marginLeft: '8px',
         position: 'relative',
-        display: 'inline-block'
+        display: 'inline-block',
+        overflow: 'hidden' // Hide parts of the path that go out of bounds
       }}
     >
-      <svg 
-        width="100%" 
-        height="100%" 
+      <svg
+        width="100%"
+        height="100%"
         viewBox={`0 0 ${width} ${height}`}
         className="ekg-svg"
       >
-        {/* Background grid for medical look */}
+        {/* Background grid */}
         <g className="ekg-grid">
           {[0, 1, 2, 3, 4].map(i => (
-            <line 
+            <line
               key={`h-${i}`}
-              x1="0" 
-              y1={height * (i / 4)} 
-              x2={width} 
-              y2={height * (i / 4)} 
+              x1="0"
+              y1={height * (i / 4)}
+              x2={width}
+              y2={height * (i / 4)}
               stroke="rgba(99, 102, 241, 0.08)"
               strokeWidth="0.5"
             />
           ))}
           {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-            <line 
+            <line
               key={`v-${i}`}
-              x1={width * (i / 8)} 
-              y1="0" 
-              x2={width * (i / 8)} 
-              y2={height} 
+              x1={width * (i / 8)}
+              y1="0"
+              x2={width * (i / 8)}
+              y2={height}
               stroke="rgba(99, 102, 241, 0.08)"
               strokeWidth="0.5"
             />
           ))}
         </g>
-      
-        {/* Complete EKG path (faded) */}
-        <path
-          d={ekgPath}
-          fill="none"
-          stroke="rgba(99, 102, 241, 0.15)"
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+
+        {/* Main scrolling group */}
+        <g transform={`translate(${translateX}, 0)`}>
+          {/* Continuous EKG line */}
+          <polyline
+            points={pathPoints}
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="ekg-line"
+          />
+        </g>
         
-        {/* Animated EKG portion */}
-        <path
-          className="ekg-path"
-          d={ekgPath}
-          fill="none"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeDasharray="1000"
-          strokeDashoffset={1000 - (progress / 100) * 1000}
-        />
-        
-        {/* Glowing dot following the line */}
+        {/* Current position dot */}
         <circle
           className="ekg-dot"
-          cx={x}
-          cy={y}
+          cx={(width / 2) + (dotX - (patternWidth / 2))}
+          cy={dotY}
           r="2"
           fill="white"
         />
