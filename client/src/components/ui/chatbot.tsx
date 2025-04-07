@@ -15,7 +15,7 @@ import { secureApiRequest } from "@/lib/csrf";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/use-language";
 import { TypeAnimation } from "@/components/ui/type-animation";
-import { EkgAnimation } from "@/components/ui/ekg-animation";
+import { EkgAnimation } from "@/components/ui/ekg-animation-new";
 
 interface ChatbotProps {
   bills: Bill[];
