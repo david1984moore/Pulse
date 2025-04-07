@@ -161,30 +161,30 @@ export default function IncomeBills({
         income={selectedIncome}
       />
       
-      <Card className="h-full shadow-sm bg-white/80">
+      <Card className="h-full bg-background/30 border-none">
         <CardContent className="space-y-6 pt-6">
         {/* Account Balance - Primary Feature */}
-        <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-5 rounded-lg">
+        <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-5 rounded-lg backdrop-blur-sm">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase">
+            <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wider">
               {t('accountBalance')}
             </h3>
             <Button 
-              variant="outline" 
+              variant="ghost" 
               size="sm" 
               onClick={onUpdateBalance}
-              className="h-7 text-xs hover:bg-primary/10 hover:text-primary transition-colors"
+              className="h-7 text-xs hover:bg-primary/20 hover:text-primary transition-all"
             >
               {t('updateBalance')}
             </Button>
           </div>
           <div className="mt-3">
-            <p className="text-4xl font-bold text-primary">
+            <p className="text-4xl font-bold text-primary glow-text">
               ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
             </p>
           </div>
           {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
-            <div className="mt-3 text-xs text-gray-700 bg-white/70 p-3 rounded-lg">
+            <div className="mt-3 text-xs text-foreground/80 bg-background/40 p-3 rounded-lg backdrop-blur-sm">
               <p className="font-semibold">{t('recentDeductions')}:</p>
               <ul className="mt-1 space-y-1">
                 {balanceData.deductedBills.map((bill) => (
@@ -193,7 +193,7 @@ export default function IncomeBills({
                       {getBillIcon(bill.name)}
                       <span className="font-semibold">{translateBillName(bill.name)}</span>
                     </div>
-                    <span className="text-red-500 font-semibold">-${bill.amount}</span>
+                    <span className="text-red-400 font-semibold">-${bill.amount}</span>
                   </li>
                 ))}
               </ul>
@@ -202,27 +202,27 @@ export default function IncomeBills({
         </div>
         
         {/* Financial Summary */}
-        <div className="bg-gray-50 p-5 rounded-lg">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">
+        <div className="bg-background/40 p-5 rounded-lg backdrop-blur-sm">
+          <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wider mb-3">
             {t('financialSummary')}
           </h3>
           <div className="space-y-2">
-            <div className="flex justify-between items-center p-3 bg-white/80 rounded-lg">
-              <span className="text-sm font-semibold text-gray-700 flex items-center">
+            <div className="flex justify-between items-center p-3 bg-background/60 rounded-lg">
+              <span className="text-sm font-semibold text-foreground/90 flex items-center">
                 <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                 {t('monthlyIncome')}
               </span>
-              <span className="text-sm font-bold text-green-600">${totalIncome.toFixed(2)}</span>
+              <span className="text-sm font-bold text-green-400">${totalIncome.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-white/80 rounded-lg">
-              <span className="text-sm font-semibold text-gray-700 flex items-center">
+            <div className="flex justify-between items-center p-3 bg-background/60 rounded-lg">
+              <span className="text-sm font-semibold text-foreground/90 flex items-center">
                 <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
                 {t('monthlyBills')}
               </span>
-              <span className="text-sm font-bold text-red-500">${totalBills.toFixed(2)}</span>
+              <span className="text-sm font-bold text-red-400">${totalBills.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center p-3 mt-1 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg">
-              <span className="text-sm font-semibold text-gray-800">{t('remaining')}</span>
+            <div className="flex justify-between items-center p-3 mt-1 bg-primary/10 rounded-lg backdrop-blur-sm">
+              <span className="text-sm font-semibold text-foreground/90">{t('remaining')}</span>
               <span className="text-sm font-bold text-primary">${availableToSpend.toFixed(2)}</span>
             </div>
           </div>
@@ -231,12 +231,12 @@ export default function IncomeBills({
         {/* Bills List */}
         <div className="mt-4">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase">
+            <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wider">
               {t('yourBills')}
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-red-500 hover:bg-red-600 h-8 w-8 p-0 rounded-full"
+              className="bg-red-500/80 hover:bg-red-500 h-8 w-8 p-0 rounded-full shadow-glow-sm shadow-red-500/20"
               size="icon"
             >
               <Plus className="h-4 w-4" />
@@ -248,7 +248,7 @@ export default function IncomeBills({
               {bills.map((bill) => (
                 <li 
                   key={bill.id} 
-                  className="p-3 flex justify-between items-center bg-white/80 rounded-lg hover:bg-primary/5 cursor-pointer transition-colors"
+                  className="p-3 flex justify-between items-center bg-background/60 backdrop-blur-sm rounded-lg hover:bg-primary/10 cursor-pointer transition-all duration-200"
                   onClick={() => {
                     setSelectedBill(bill);
                     setIsEditBillModalOpen(true);
@@ -257,14 +257,14 @@ export default function IncomeBills({
                   <div className="flex items-center">
                     {getBillIcon(bill.name)}
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">{translateBillName(bill.name)}</p>
-                      <p className="text-xs font-medium text-gray-500">
+                      <p className="text-sm font-semibold text-foreground/90">{translateBillName(bill.name)}</p>
+                      <p className="text-xs font-medium text-foreground/60">
                         {t('dueOnThe')} {bill.due_date}<sup>{getOrdinalSuffix(bill.due_date)}</sup>
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="px-3 py-1.5 rounded-md bg-red-100 text-red-600">
+                    <div className="px-3 py-1.5 rounded-md bg-red-950/50 text-red-400 border border-red-500/20">
                       <p className="text-sm font-bold">
                         ${Number(bill.amount).toFixed(2)}
                       </p>
@@ -272,7 +272,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-full"
+                      className="h-8 w-8 text-foreground/60 hover:text-red-400 hover:bg-red-950/40 transition-colors rounded-full"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick
                         onDeleteBill(bill.id);
@@ -285,19 +285,19 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg text-center">{t('noBillsAddedYet')}</div>
+            <div className="text-sm text-foreground/70 p-4 bg-background/40 rounded-lg text-center backdrop-blur-sm">{t('noBillsAddedYet')}</div>
           )}
         </div>
 
         {/* Income List */}
         <div className="mt-4">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase">
+            <h3 className="text-sm font-semibold text-foreground/80 uppercase tracking-wider">
               {t('yourIncome')}
             </h3>
             <Button
               onClick={onAddIncome}
-              className="bg-green-500 hover:bg-green-600 h-8 w-8 p-0 rounded-full"
+              className="bg-green-500/80 hover:bg-green-500 h-8 w-8 p-0 rounded-full shadow-glow-sm shadow-green-500/20"
               size="icon"
             >
               <Plus className="h-4 w-4" />
@@ -309,17 +309,17 @@ export default function IncomeBills({
               {income.map((inc) => (
                 <li 
                   key={inc.id} 
-                  className="p-3 flex justify-between items-center bg-white/80 rounded-lg hover:bg-primary/5 cursor-pointer transition-colors"
+                  className="p-3 flex justify-between items-center bg-background/60 backdrop-blur-sm rounded-lg hover:bg-primary/10 cursor-pointer transition-all duration-200"
                   onClick={() => {
                     setSelectedIncome(inc);
                     setIsEditIncomeModalOpen(true);
                   }}
                 >
                   <div className="flex items-center">
-                    <DollarSign className="h-4 w-4 mr-2 text-green-600" />
+                    <DollarSign className="h-4 w-4 mr-2 text-green-400" />
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">{inc.source || t('job')}</p>
-                      <p className="text-xs font-medium text-gray-500">
+                      <p className="text-sm font-semibold text-foreground/90">{inc.source || t('job')}</p>
+                      <p className="text-xs font-medium text-foreground/60">
                         {t(inc.frequency.toLowerCase())}
                         {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/${t('mo')})`}
                         {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/${t('mo')})`}
@@ -327,13 +327,13 @@ export default function IncomeBills({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="px-3 py-1.5 rounded-md bg-green-100 text-green-600">
+                    <div className="px-3 py-1.5 rounded-md bg-green-950/50 text-green-400 border border-green-500/20">
                       <p className="text-sm font-bold">${Number(inc.amount).toFixed(2)}</p>
                     </div>
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors rounded-full"
+                      className="h-8 w-8 text-foreground/60 hover:text-red-400 hover:bg-red-950/40 transition-colors rounded-full"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick
                         onDeleteIncome(inc.id);
@@ -346,7 +346,7 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-600 p-4 bg-gray-50 rounded-lg text-center">{t('noIncomeAddedYet')}</div>
+            <div className="text-sm text-foreground/70 p-4 bg-background/40 rounded-lg text-center backdrop-blur-sm">{t('noIncomeAddedYet')}</div>
           )}
         </div>
       </CardContent>
