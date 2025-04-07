@@ -236,29 +236,32 @@ export default function Chatbot({ bills }: ChatbotProps) {
 
   /**
    * Handle the "Ask" button click with EKG animation
-   * This function ensures:
-   * 1. The EKG animation runs exactly once
-   * 2. Multiple clicks are prevented
-   * 3. The API request is triggered
+   * This function manages both the EKG animation and API request
    */
   const handleSubmitWithEkg = () => {
-    // Prevent multiple rapid clicks or processing while waiting
+    // Prevent multiple rapid clicks or processing while waiting for response
     if (isPending || isSubmittingRef.current) return;
     
-    // Set processing flag to block double-clicks
+    // First, force the EKG animation to reset if it's still visible
+    // This ensures we can always trigger a new animation
+    setEkgTrigger(false);
+    
+    // Set processing flag to block multiple clicks
     isSubmittingRef.current = true;
     
-    // Trigger the EKG animation
-    setEkgTrigger(true);
-    
-    // Submit the request to the API
-    handleSubmit();
-    
-    // Reset the processing flag after a delay
-    // This is a safety measure in case the animation callback fails
+    // Small delay to ensure React has processed the previous state update
     setTimeout(() => {
-      isSubmittingRef.current = false;
-    }, 2000);
+      // Now trigger the EKG animation with a fresh state
+      setEkgTrigger(true);
+      
+      // Submit the request to the API
+      handleSubmit();
+      
+      // Reset the debounce flag after a reasonable delay
+      setTimeout(() => {
+        isSubmittingRef.current = false;
+      }, 2000);
+    }, 10); // Minimal delay for React to process state updates
   };
   
   return (
