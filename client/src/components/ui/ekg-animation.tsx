@@ -63,14 +63,32 @@ export function EkgAnimation({
   // Create a unique ID for this animation instance
   const uniqueId = `ekg-${animationKey.current}-${Date.now()}`;
   
-  // Pure CSS animation that will run exactly once (no looping)
+  // Pure CSS animation that will run exactly once with variable speed
+  // Start slow, accelerate through peak, then finish very fast
   const stylesheet = `
     @keyframes ekg-trace-${uniqueId} {
       0% {
         stroke-dashoffset: ${width * 2};
       }
+      /* Initial slow progression */
+      20% {
+        stroke-dashoffset: ${width * 1.4};
+      }
+      /* Accelerate toward the peak (QRS complex) */
+      40% {
+        stroke-dashoffset: ${width * 0.8};
+      }
+      /* Maximum speed at the peak */
+      60% {
+        stroke-dashoffset: ${width * 0.2};
+      }
+      /* Maintain high speed through to completion */
+      80% {
+        stroke-dashoffset: ${width * -0.2};
+      }
+      /* End with highest speed */
       100% {
-        stroke-dashoffset: -${width * 0.5};
+        stroke-dashoffset: ${width * -0.6};
       }
     }
   `;
@@ -79,7 +97,7 @@ export function EkgAnimation({
   if (onComplete) {
     setTimeout(() => {
       onComplete();
-    }, 600); // Animation duration + small buffer
+    }, 800); // Animation duration (700ms) + buffer (100ms)
   }
   
   return (
@@ -109,8 +127,7 @@ export function EkgAnimation({
           style={{
             filter: 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))',
             strokeDasharray: `${width * 0.4} ${width * 2}`,
-            animation: `ekg-trace-${uniqueId} 500ms ease-out forwards`,
-            animationIterationCount: 1
+            animation: `ekg-trace-${uniqueId} 700ms cubic-bezier(0.1, 0.3, 0.6, 1) forwards`
           }}
         />
       </svg>
