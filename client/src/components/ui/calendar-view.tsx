@@ -42,7 +42,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
   
   // Create array of placeholder elements for days before the month starts
   const placeholders = Array.from({ length: startDayOfWeek }, (_, i) => (
-    <div key={`empty-${i}`} className="h-10 border border-gray-100 bg-gray-50"></div>
+    <div key={`empty-${i}`} className="h-14 rounded-lg opacity-30 border border-dashed border-gray-200"></div>
   ));
   
   // Function to check if a day has a bill due
@@ -141,14 +141,14 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             <div className="grid grid-cols-7 gap-1">
               {/* Day headers */}
               {daysOfWeek.map((day) => (
-                <div key={day} className="text-xs font-medium text-gray-500 text-center py-1 bg-gray-50 rounded">
+                <div key={day} className="text-xs font-semibold uppercase tracking-wider text-gray-700 text-center py-2 mb-1 bg-gradient-to-b from-gray-50 to-gray-100 rounded-md shadow-sm">
                   {day}
                 </div>
               ))}
               
               {/* Empty placeholders */}
               {placeholders.map((placeholder, index) => (
-                <div key={`empty-${index}`} className="h-10 bg-gray-50/50 rounded border border-gray-100"></div>
+                <div key={`empty-${index}`} className="h-14 rounded-lg opacity-30 border border-dashed border-gray-200"></div>
               ))}
               
               {/* Day cells */}
@@ -162,31 +162,47 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                   <div 
                     key={day.toString()}
                     className={`
-                      relative h-10 rounded border cursor-pointer hover:border-primary hover:bg-primary/5
+                      relative h-14 rounded-lg shadow-sm border-2 cursor-pointer 
+                      transition-all duration-200 ease-in-out
+                      hover:border-primary hover:bg-primary/10 hover:shadow-md
+                      hover:scale-105 hover:-translate-y-0.5
                       ${isToday 
-                        ? "border-primary bg-primary/5 text-primary" 
+                        ? "border-primary bg-primary/10 text-primary" 
                         : hasBills
-                          ? "border-gray-200 bg-gray-50/30"
-                          : "border-gray-100"
+                          ? "border-red-300 bg-red-50"
+                          : "border-gray-200"
                       }
                     `}
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
                   >
-                    <span className={`text-sm absolute top-1 left-1.5 ${isToday ? "font-bold" : ""}`}>
+                    <span className={`
+                      text-sm font-medium absolute top-1 left-2 
+                      ${isToday ? "bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center" : ""}
+                    `}>
                       {dayOfMonth}
                     </span>
                     
                     {/* Bill indicators */}
                     {hasBills && (
-                      <div className="absolute bottom-1 right-1 flex flex-wrap justify-end gap-0.5">
-                        {dayBills.map((bill) => (
-                          <div 
-                            key={bill.id}
-                            className="w-3 h-3 rounded-full border bg-red-400 border-red-500"
-                            title={`${bill.name}: $${Number(bill.amount).toFixed(2)}`}
-                          />
-                        ))}
-                      </div>
+                      <>
+                        {/* Bill amount text */}
+                        <div className="absolute bottom-1 left-2 right-2 flex flex-col items-start text-xs">
+                          <span className="font-semibold text-red-600">
+                            ${dayBills.reduce((total, bill) => total + Number(bill.amount), 0).toFixed(0)}
+                          </span>
+                        </div>
+                        
+                        {/* Visual indicators */}
+                        <div className="absolute top-1 right-1 flex flex-wrap justify-end gap-0.5">
+                          {dayBills.map((bill) => (
+                            <div 
+                              key={bill.id}
+                              className="w-3 h-3 rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-sm"
+                              title={`${bill.name}: $${Number(bill.amount).toFixed(2)}`}
+                            />
+                          ))}
+                        </div>
+                      </>
                     )}
                   </div>
                 );
@@ -194,12 +210,30 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             </div>
             
             {/* Legend */}
-            <div className="mt-5 pt-3 bg-gray-50 rounded p-3 border border-gray-200">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">{t('calendarLegend')}</h4>
-              <div className="flex items-center">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-red-400 border border-red-500 rounded-full mr-2"></div>
-                  <span className="text-xs font-medium text-gray-600">{t('billsDue')}</span>
+            <div className="mt-5 py-4 px-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg shadow-sm border border-gray-200">
+              <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-700" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                {t('calendarLegend')}
+              </h4>
+              <div className="flex flex-wrap gap-4">
+                {/* Today Legend */}
+                <div className="flex items-center rounded-md bg-white p-1.5 shadow-sm">
+                  <div className="w-4 h-4 bg-primary rounded-full mr-2"></div>
+                  <span className="text-xs font-medium text-gray-700">Today</span>
+                </div>
+
+                {/* Bill Due Legend */}
+                <div className="flex items-center rounded-md bg-white p-1.5 shadow-sm">
+                  <div className="w-4 h-4 bg-gradient-to-br from-red-400 to-red-600 rounded-full mr-2"></div>
+                  <span className="text-xs font-medium text-gray-700">{t('billsDue')}</span>
+                </div>
+                
+                {/* Bill Amount Legend */}
+                <div className="flex items-center rounded-md bg-white p-1.5 shadow-sm">
+                  <span className="text-xs font-semibold text-red-600 mr-2">$100</span>
+                  <span className="text-xs font-medium text-gray-700">Amount Due</span>
                 </div>
               </div>
             </div>
