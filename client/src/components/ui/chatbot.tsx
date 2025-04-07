@@ -273,8 +273,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
             </CardTitle>
-            {/* EKG trace only displays when processing */}
-            <div className="ml-3 h-6 min-w-[100px]">
+            {/* EKG trace only displays when processing - canvas to avoid DOM nesting issues */}
+            <span className="ml-3 h-6 inline-block">
               {isPending && (
                 <EkgAnimation 
                   runAnimation={isPending} 
@@ -283,7 +283,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   color="hsl(192 91% 55%)"
                 />
               )}
-            </div>
+            </span>
           </div>
           <CardDescription className="flex items-center px-4 py-2">
             <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
