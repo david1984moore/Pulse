@@ -1,3 +1,4 @@
+
 /**
  * Super Simple EKG Animation
  * A single clean line that appears out of thin air and has a follow-through effect

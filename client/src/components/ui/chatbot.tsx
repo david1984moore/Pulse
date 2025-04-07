@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { EkgAnimation } from "@/components/ui/ekg-animation-new";
 import {
   Select,
   SelectContent,
@@ -258,7 +259,12 @@ export default function Chatbot({ bills }: ChatbotProps) {
         <div className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center">
             {language === 'es' ? 'Alicia' : 'Alice'}
-
+            <EkgAnimation 
+              runAnimation={isPending} 
+              width={120} 
+              height={24} 
+              color="#3b82f6"
+            />
           </CardTitle>
           <CardDescription className="flex items-center bg-gray-100 px-4 py-2 rounded-md">
             <DollarSign className="h-4 w-4 mr-2 text-primary" />
