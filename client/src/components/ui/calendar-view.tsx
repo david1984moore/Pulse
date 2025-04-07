@@ -74,7 +74,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
   
   // Create array of placeholder elements for days before the month starts
   const placeholders = Array.from({ length: startDayOfWeek }, (_, i) => (
-    <div key={`empty-${i}`} className="h-12 bg-white rounded-md border border-gray-200"></div>
+    <div key={`empty-${i}`} className="h-12 bg-gray-900 rounded-md border border-gray-700"></div>
   ));
   
   // Function to check if a day has a bill due
@@ -126,10 +126,10 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         bill={selectedBill} 
       />
       
-      <Card className="border border-gray-200 shadow-md">
-        <CardHeader className="pb-3 border-b border-gray-200 bg-gray-100">
+      <Card className="bg-gray-900 border border-gray-700 shadow-lg">
+        <CardHeader className="pb-3 border-b border-gray-800 bg-gray-800">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-bold text-gray-800">
+            <CardTitle className="text-base font-bold text-gray-200">
               {t('paymentCalendar')}
             </CardTitle>
             <div className="flex space-x-2">
@@ -137,7 +137,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                 variant="outline" 
                 size="icon" 
                 onClick={previousMonth}
-                className="rounded-md h-8 w-8 p-0 border border-gray-300 shadow-sm"
+                className="rounded-md h-8 w-8 p-0 bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -145,7 +145,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                 variant="outline" 
                 size="icon" 
                 onClick={nextMonth}
-                className="rounded-md h-8 w-8 p-0 border border-gray-300 shadow-sm"
+                className="rounded-md h-8 w-8 p-0 bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -154,7 +154,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                   variant="default"
                   size="icon"
                   onClick={onAddBill}
-                  className="rounded-md h-8 w-8 p-0 bg-red-500 hover:bg-red-600 shadow"
+                  className="rounded-md h-8 w-8 p-0 bg-red-500 hover:bg-red-600 shadow-lg"
                 >
                   <Plus className="h-4 w-4 text-white" />
                 </Button>
@@ -163,18 +163,18 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="bg-white rounded-lg">
+          <div className="bg-gray-900 rounded-lg">
             <div className="mb-4">
-              <h3 className="text-xl font-bold text-gray-800 capitalize pb-2">
+              <h3 className="text-xl font-bold text-gray-200 capitalize pb-2">
                 {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
               </h3>
-              <div className="h-0.5 w-32 bg-primary/30 rounded-full"></div>
+              <div className="h-0.5 w-32 bg-cyan-600/30 rounded-full"></div>
             </div>
             
             {/* Day headers in a more cohesive row */}
-            <div className="flex w-full bg-gray-100 rounded-md border border-gray-200 mb-2">
+            <div className="flex w-full bg-gray-800 rounded-md border border-gray-700 mb-2">
               {daysOfWeek.map((day) => (
-                <div key={day} className="flex-1 text-xs uppercase font-bold text-gray-700 text-center py-2">
+                <div key={day} className="flex-1 text-xs uppercase font-bold text-gray-300 text-center py-2">
                   {day}
                 </div>
               ))}
@@ -183,7 +183,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             <div className="grid grid-cols-7 gap-2">
               {/* Empty placeholders */}
               {placeholders.map((placeholder, index) => (
-                <div key={`empty-${index}`} className="h-12 bg-white rounded-md border border-gray-200"></div>
+                <div key={`empty-${index}`} className="h-12 bg-gray-900 rounded-md border border-gray-700"></div>
               ))}
               
               {/* Day cells */}
@@ -197,17 +197,19 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                   <div 
                     key={day.toString()}
                     className={`
-                      relative h-12 rounded-md border border-gray-200 cursor-pointer transition-colors
+                      group relative h-12 rounded-md border cursor-pointer transition-colors
                       ${isToday 
-                        ? "bg-primary/10 text-primary-600 border-primary/20" 
+                        ? "bg-cyan-900/30 text-cyan-300 border-cyan-700/50" 
                         : hasBills
-                          ? "bg-red-50 border-gray-200 hover:bg-red-100"
-                          : "bg-white hover:bg-gray-50"
+                          ? "bg-red-900/30 border-red-800/50 hover:bg-red-800/30"
+                          : "bg-gray-800 border-gray-700 hover:bg-gray-700"
                       }
                     `}
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
                   >
-                    <span className={`text-sm absolute top-1.5 left-1.5 ${isToday ? "font-bold text-primary-700" : ""} ${hasBills ? "font-semibold text-gray-800" : "font-medium text-gray-700"}`}>
+                    <span className={`text-sm absolute top-1.5 left-1.5 
+                      ${isToday ? "font-bold text-cyan-300" : ""} 
+                      ${hasBills ? "font-semibold text-gray-200" : "font-medium text-gray-300"}`}>
                       {dayOfMonth}
                     </span>
                     
@@ -231,7 +233,6 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                                 'bg-red-500'} 
                               hover:opacity-90 transition-colors
                             `}
-                            data-tooltip-id={`bill-tooltip-${bill.id}`}
                           >
                             {dayBills.length > 3 && bill === dayBills[2] ? (
                               <span className="text-[9px] font-bold text-white">+{dayBills.length - 2}</span>
@@ -243,45 +244,36 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                       </div>
                     )}
                     
-                    {/* Tooltips for bills */}
-                    {dayBills.map((bill) => (
-                      <TooltipProvider key={`tooltip-${bill.id}`}>
-                        <Tooltip id={`bill-tooltip-${bill.id}`} delayDuration={100}>
-                          <TooltipContent side="top" className="bg-slate-900 text-white border-0 shadow-lg p-3 rounded-lg max-w-[200px]">
-                            <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-2">
-                                <div className={`
-                                  w-4 h-4 rounded-full flex items-center justify-center
-                                  ${bill.name === 'Rent' ? 'bg-gray-600' : 
-                                    bill.name === 'Electric' ? 'bg-yellow-500' : 
-                                    bill.name === 'Water' ? 'bg-blue-500' : 
-                                    bill.name === 'Internet' ? 'bg-blue-400' : 
-                                    bill.name === 'Phone Service' ? 'bg-slate-500' : 
-                                    bill.name === 'Car Payment' ? 'bg-gray-600' :
-                                    bill.name === 'Credit Card' ? 'bg-purple-500' :
-                                    bill.name === 'Insurance' ? 'bg-indigo-500' :
-                                    bill.name === 'Groceries' ? 'bg-green-500' :
-                                    'bg-red-500'}
-                                `}>
-                                  {getBillIcon(bill.name)}
+                    {/* Using hover state instead of tooltips for better dark theme compatibility */}
+                    {hasBills && (
+                      <div className="absolute bottom-7 right-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        <div className="p-2 bg-gray-800 border border-gray-700 rounded-lg shadow-xl max-w-[150px]">
+                          <div className="text-xs text-gray-300">
+                            {dayBills.map((bill, idx) => (
+                              <div key={bill.id} className="mb-1 last:mb-0">
+                                <div className="flex items-center gap-1">
+                                  <div className={`
+                                    w-3 h-3 rounded-full flex items-center justify-center
+                                    ${bill.name === 'Rent' ? 'bg-gray-600' : 
+                                      bill.name === 'Electric' ? 'bg-yellow-500' : 
+                                      bill.name === 'Water' ? 'bg-blue-500' : 
+                                      bill.name === 'Internet' ? 'bg-blue-400' : 
+                                      bill.name === 'Phone Service' ? 'bg-slate-500' : 
+                                      bill.name === 'Car Payment' ? 'bg-gray-600' :
+                                      bill.name === 'Credit Card' ? 'bg-purple-500' :
+                                      bill.name === 'Insurance' ? 'bg-indigo-500' :
+                                      bill.name === 'Groceries' ? 'bg-green-500' :
+                                      'bg-red-500'}
+                                  `}></div>
+                                  <span className="font-medium truncate">{bill.name}</span>
                                 </div>
-                                <span className="font-semibold">{bill.name}</span>
+                                <div className="text-[10px] font-medium text-cyan-300">${Number(bill.amount).toFixed(2)}</div>
                               </div>
-                              <div className="text-sm text-slate-200 flex flex-col gap-1">
-                                <div className="flex justify-between">
-                                  <span>{t('amount')}:</span>
-                                  <span className="font-medium">${Number(bill.amount).toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>{t('dueDate')}:</span>
-                                  <span className="font-medium">{bill.due_date}<sup>{getOrdinalSuffix(bill.due_date)}</sup></span>
-                                </div>
-                              </div>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ))}
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}

@@ -99,25 +99,25 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-950">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-gray-900 border-b border-gray-800 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-              <span className="text-primary font-bold text-3xl mr-8 cursor-pointer">pulse</span>
+              <span className="text-cyan-400 font-bold text-3xl mr-8 cursor-pointer">pulse</span>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-800">{t('dashboard')}</h1>
+            <h1 className="text-2xl font-bold text-gray-200">{t('dashboard')}</h1>
           </div>
           <div className="flex items-center space-x-4">
             <LanguageToggle />
-            <div className="bg-gray-100 px-3 py-1.5 rounded-full">
-              <span className="text-sm font-medium text-gray-700">{t('welcome')} {user?.name?.split(' ')[0]}</span>
+            <div className="bg-gray-800 border border-gray-700 px-3 py-1.5 rounded-full">
+              <span className="text-sm font-medium text-gray-200">{t('welcome')} {user?.name?.split(' ')[0]}</span>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="hover:bg-gray-100"
+              className="bg-gray-800 text-cyan-300 border-gray-700 hover:bg-gray-700 hover:text-cyan-200"
               onClick={() => logoutMutation.mutate()}
               disabled={logoutMutation.isPending}
             >
