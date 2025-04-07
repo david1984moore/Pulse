@@ -1,12 +1,11 @@
 /**
- * EKG Animation Component - Simple, clean, once-per-click ECG trace
- * Uses CSS for animation because it's more reliable across browsers
+ * EKG Animation Component - One-time, hospital-style EKG trace animation
  */
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface EkgAnimationProps {
-  runAnimation: boolean;  // When true, animation will run
-  onComplete?: () => void; // Called when animation is done
+  runAnimation: boolean;  // When true, animation will run once
+  onComplete?: () => void; // Called when animation completes
   color?: string;         // Line color
   width?: number;         // Component width
   height?: number;        // Component height
@@ -19,38 +18,18 @@ export function EkgAnimation({
   width = 100,
   height = 25
 }: EkgAnimationProps) {
-  // Use key to force complete component remount on each trigger
-  const [key, setKey] = useState(0);
+  // Track animation state to prevent multiple animations
+  const animating = useRef(false);
+  const animationRef = useRef<HTMLDivElement>(null);
   
-  // Watch for animation trigger
-  useEffect(() => {
-    if (runAnimation) {
-      // Increment key to force a fresh component instance
-      setKey(prev => prev + 1);
-      
-      // Set a timer to call onComplete after animation finishes
-      const timer = setTimeout(() => {
-        if (onComplete) onComplete();
-      }, 2000); // Animation duration + small buffer
-      
-      return () => clearTimeout(timer);
-    }
-  }, [runAnimation, onComplete]);
-  
-  // If not triggered, render nothing
-  if (!runAnimation) {
-    return null;
-  }
-  
-  // ECG heartbeat path points
+  // Animation points - a realistic ECG trace
   const points = [
     [0, height/2],         // Start at baseline
-    [width*0.1, height/2], // Baseline
+    [width*0.08, height/2], // Baseline
     
     // P wave (atrial depolarization)
-    [width*0.15, height/2],
-    [width*0.18, height/2 - height*0.1],
-    [width*0.21, height/2],
+    [width*0.15, height/2 - height*0.1],
+    [width*0.18, height/2],
     
     // PR segment
     [width*0.25, height/2],
@@ -72,52 +51,100 @@ export function EkgAnimation({
     [width, height/2]
   ].map(point => point.join(',')).join(' ');
   
-  // CSS for animation
-  const cssAnimation = `
-    @keyframes drawLine${key} {
-      0% {
-        stroke-dasharray: ${width * 3};
-        stroke-dashoffset: ${width * 3};
-      }
-      100% {
-        stroke-dasharray: ${width * 3};
-        stroke-dashoffset: 0;
-      }
+  // Clean animation state whenever component unmounts
+  useEffect(() => {
+    return () => {
+      animating.current = false;
+    };
+  }, []);
+  
+  // Handle animation trigger
+  useEffect(() => {
+    // Only start a new animation if triggered and not already animating
+    if (runAnimation && !animating.current) {
+      animating.current = true;
+      
+      const container = animationRef.current;
+      if (!container) return;
+      
+      // Clear any existing content
+      container.innerHTML = '';
+      
+      // Create and configure a new SVG for this animation
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', width.toString());
+      svg.setAttribute('height', height.toString());
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      
+      // Create the polyline for the ECG trace
+      const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      polyline.setAttribute('points', points);
+      polyline.setAttribute('stroke', color);
+      polyline.setAttribute('stroke-width', '2.5');
+      polyline.setAttribute('stroke-linecap', 'round');
+      polyline.setAttribute('stroke-linejoin', 'round');
+      polyline.setAttribute('fill', 'none');
+      
+      // Get the total length of the path for animation
+      svg.appendChild(polyline);
+      container.appendChild(svg);
+      
+      const pathLength = polyline.getTotalLength();
+      
+      // Set initial state (invisible line)
+      polyline.style.strokeDasharray = pathLength.toString();
+      polyline.style.strokeDashoffset = pathLength.toString();
+      polyline.style.filter = 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))';
+      
+      // Force a reflow to ensure initial state is set
+      void polyline.getBoundingClientRect();
+      
+      // Animate drawing the line
+      const startTime = performance.now();
+      const duration = 1500; // ms to complete animation
+      
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        
+        if (elapsed < duration) {
+          // Calculate how much of the path to show (0 to 1)
+          const progress = elapsed / duration;
+          const dashOffset = pathLength * (1 - progress);
+          
+          // Apply the current dash offset
+          polyline.style.strokeDashoffset = dashOffset.toString();
+          
+          // Continue animation
+          requestAnimationFrame(animate);
+        } else {
+          // Animation complete
+          polyline.style.strokeDashoffset = '0';
+          
+          // Hold final state briefly, then clean up
+          setTimeout(() => {
+            animating.current = false;
+            if (onComplete) onComplete();
+          }, 300);
+        }
+      };
+      
+      // Start the animation
+      requestAnimationFrame(animate);
     }
-  `;
+  }, [runAnimation, color, height, width, points, onComplete]);
   
   return (
     <div 
-      key={key}
+      ref={animationRef}
       style={{
         width: `${width}px`,
         height: `${height}px`,
         display: 'inline-block',
         position: 'relative',
         marginLeft: '8px',
-        marginTop: '2px'
+        marginTop: '2px',
+        overflow: 'hidden'
       }}
-    >
-      <style>{cssAnimation}</style>
-      <svg
-        width={width}
-        height={height}
-        viewBox={`0 0 ${width} ${height}`}
-      >
-        <polyline
-          points={points}
-          stroke={color}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          style={{
-            filter: 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))',
-            animation: `drawLine${key} 1.8s ease-out forwards`,
-            animationIterationCount: 1
-          }}
-        />
-      </svg>
-    </div>
+    />
   );
 }

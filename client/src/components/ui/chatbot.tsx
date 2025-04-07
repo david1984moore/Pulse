@@ -236,32 +236,32 @@ export default function Chatbot({ bills }: ChatbotProps) {
 
   /**
    * Handle the "Ask" button click with EKG animation
-   * This function manages both the EKG animation and API request
+   * This is the main function that manages the EKG animation and API request
    */
   const handleSubmitWithEkg = () => {
     // Prevent multiple rapid clicks or processing while waiting for response
     if (isPending || isSubmittingRef.current) return;
     
-    // First, force the EKG animation to reset if it's still visible
-    // This ensures we can always trigger a new animation
-    setEkgTrigger(false);
-    
-    // Set processing flag to block multiple clicks
+    // Set the processing flag to prevent duplicate clicks
     isSubmittingRef.current = true;
     
-    // Small delay to ensure React has processed the previous state update
-    setTimeout(() => {
-      // Now trigger the EKG animation with a fresh state
-      setEkgTrigger(true);
+    // If animation is still running, force it to reset first
+    if (ekgTrigger) {
+      setEkgTrigger(false);
       
-      // Submit the request to the API
-      handleSubmit();
-      
-      // Reset the debounce flag after a reasonable delay
+      // Let React process the state change before starting a new animation
       setTimeout(() => {
-        isSubmittingRef.current = false;
-      }, 2000);
-    }, 10); // Minimal delay for React to process state updates
+        // Start a fresh animation
+        setEkgTrigger(true);
+        // Submit API request
+        handleSubmit();
+      }, 50);
+    } else {
+      // If no animation is running, simply start a new one
+      setEkgTrigger(true);
+      // Submit API request
+      handleSubmit();
+    }
   };
   
   return (
@@ -272,7 +272,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
             {language === 'es' ? 'Alicia' : 'Alice'}
             <EkgAnimation 
               runAnimation={ekgTrigger} 
-              onComplete={() => setEkgTrigger(false)}
+              onComplete={() => {
+                setEkgTrigger(false);
+                // Reset submission flag to allow new clicks
+                isSubmittingRef.current = false;
+              }}
               color="#3b82f6" 
               width={80} 
               height={25} 
