@@ -61,8 +61,9 @@ export function EkgAnimation({
   // Unique ID for this instance
   const ekgId = useRef(`ekg-${Math.random().toString(36).substring(2, 11)}`);
   
-  // When runAnimation changes to true, trigger the animation cycle
+  // React to both changes in runAnimation and cleanup when false
   useEffect(() => {
+    // Handle animation start
     if (runAnimation && !animationRef.current.isRunning) {
       // Mark as running
       animationRef.current.isRunning = true;
@@ -83,11 +84,24 @@ export function EkgAnimation({
           onComplete();
         }
       }, 1800); // Match animation duration plus a little extra time
+    } 
+    // Handle forced reset/cleanup 
+    else if (!runAnimation && animationRef.current.isRunning) {
+      // Clear any pending timeout
+      if (animationRef.current.timeoutId) {
+        clearTimeout(animationRef.current.timeoutId);
+      }
+      
+      // Reset animation state
+      setShowEkg(false);
+      animationRef.current.isRunning = false;
     }
     
-    // Clean up on unmount or when dependencies change
+    // Clean up on unmount
     return () => {
-      clearTimeout(animationRef.current.timeoutId);
+      if (animationRef.current.timeoutId) {
+        clearTimeout(animationRef.current.timeoutId);
+      }
     };
   }, [runAnimation, onComplete]);
   

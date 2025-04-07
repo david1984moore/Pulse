@@ -244,24 +244,17 @@ export default function Chatbot({ bills }: ChatbotProps) {
     
     // Set the processing flag to prevent duplicate clicks
     isSubmittingRef.current = true;
+
+    // Always reset the animation first to ensure a clean state
+    setEkgTrigger(false);
     
-    // If animation is still running, force it to reset first
-    if (ekgTrigger) {
-      setEkgTrigger(false);
-      
-      // Let React process the state change before starting a new animation
-      setTimeout(() => {
-        // Start a fresh animation
-        setEkgTrigger(true);
-        // Submit API request
-        handleSubmit();
-      }, 50);
-    } else {
-      // If no animation is running, simply start a new one
+    // Let React process the state change before starting a new animation
+    setTimeout(() => {
+      // Start a fresh animation
       setEkgTrigger(true);
       // Submit API request
       handleSubmit();
-    }
+    }, 50);
   };
   
   return (
