@@ -42,7 +42,7 @@ export function EkgAnimation({
       // Wait for the animation and follow-through to completely finish
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 14000); // 8s for drawing + 6s for follow-through
+      }, 18000); // 10s for drawing + 8s for follow-through
       
       return () => clearTimeout(timer);
     } else {
@@ -53,23 +53,20 @@ export function EkgAnimation({
   // Don't render anything if not animating
   if (!runAnimation || !isVisible) return null;
   
-  // Classic EKG trace with traditional heart monitor shape
+  // Classic EKG trace with hospital heart monitor shape
   const ekgPathData = `
     M 0,${height/2}
     L ${width*0.15},${height/2}
-    L ${width*0.2},${height/2-height*0.1}
-    L ${width*0.25},${height/2}
-    L ${width*0.32},${height/2}
-    L ${width*0.34},${height/2-height*0.5}
-    L ${width*0.36},${height/2+height*0.5}
-    L ${width*0.38},${height/2-height*0.1}
-    L ${width*0.45},${height/2}
+    L ${width*0.2},${height/2}
+    L ${width*0.25},${height/2-height*0.05}
+    L ${width*0.3},${height/2+height*0.05}
     L ${width*0.35},${height/2}
-    L ${width*0.38},${height/2+height*0.1}
-    L ${width*0.4},${height/2-height*0.8}
-    L ${width*0.45},${height/2+height*0.5}
-    L ${width*0.5},${height/2}
-    L ${width*0.6},${height/2-height*0.2}
+    L ${width*0.4},${height/2}
+    L ${width*0.45},${height/2-height*0.6}
+    L ${width*0.5},${height/2+height*0.6}
+    L ${width*0.55},${height/2}
+    L ${width*0.6},${height/2}
+    L ${width*0.65},${height/2-height*0.05}
     L ${width*0.7},${height/2}
     L ${width*0.85},${height/2}
     L ${width},${height/2}
