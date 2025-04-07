@@ -42,7 +42,7 @@ export function EkgAnimation({
       // Wait for the animation and follow-through to completely finish
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 6500); // 3.5s for drawing + 3.0s for follow-through
+      }, 8000); // 4.5s for drawing + 3.5s for follow-through
       
       return () => clearTimeout(timer);
     } else {
@@ -56,16 +56,16 @@ export function EkgAnimation({
   // Classic EKG trace with more pronounced PQRST waveform pattern
   const ekgPathData = `
     M 0,${height/2}
-    L ${width*0.2},${height/2}
-    L ${width*0.25},${height/2-height*0.05}
-    L ${width*0.3},${height/2}
-    L ${width*0.35},${height/2-height*0.1}
-    L ${width*0.38},${height/2}
-    L ${width*0.4},${height/2+height*0.1}
-    L ${width*0.42},${height/2-height*0.7}
-    L ${width*0.45},${height/2+height*0.4}
+    L ${width*0.15},${height/2}
+    L ${width*0.2},${height/2-height*0.1}
+    L ${width*0.25},${height/2}
+    L ${width*0.3},${height/2-height*0.15}
+    L ${width*0.35},${height/2}
+    L ${width*0.38},${height/2+height*0.1}
+    L ${width*0.4},${height/2-height*0.8}
+    L ${width*0.45},${height/2+height*0.5}
     L ${width*0.5},${height/2}
-    L ${width*0.6},${height/2+height*0.1}
+    L ${width*0.6},${height/2-height*0.2}
     L ${width*0.7},${height/2}
     L ${width*0.85},${height/2}
     L ${width},${height/2}
@@ -94,7 +94,7 @@ export function EkgAnimation({
           d={ekgPathData}
           fill="none"
           stroke={color}
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
           className="ekg-dot-to-line"
@@ -105,7 +105,7 @@ export function EkgAnimation({
           d={ekgPathData}
           fill="none"
           stroke={color}
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
           className="ekg-follow-through"
