@@ -100,12 +100,13 @@ export function EkgAnimation({
       polyline.style.filter = 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))';
       
       // Set up animation parameters for the dash effect
-      polyline.style.strokeDasharray = `${width * 0.4}, ${width * 2}`;
+      // Make visible trace segment a bit longer
+      polyline.style.strokeDasharray = `${width * 0.45}, ${width * 2}`;
       polyline.style.strokeDashoffset = `${pathLength}`;
       
       // Add variable speed animation with pure JS to guarantee one-time execution
       const startTime = performance.now();
-      const duration = 700; // Total animation time
+      const duration = 800; // Slightly slower total animation time
       
       // Single animation function that runs once and is not dependent on React state
       // This is key to preventing double animations or repetition
@@ -119,20 +120,24 @@ export function EkgAnimation({
           // Start slow, accelerate through spike, end faster
           let progress: number;
           
-          if (elapsed < duration * 0.2) {
-            // Slow start (0-20%)
-            progress = 0.2 * (elapsed / (duration * 0.2));
-          } else if (elapsed < duration * 0.4) {
-            // Accelerate (20-40%)
-            const segmentProgress = (elapsed - duration * 0.2) / (duration * 0.2);
+          if (elapsed < duration * 0.15) {
+            // Very slow start (0-15%)
+            progress = 0.05 * (elapsed / (duration * 0.15));
+          } else if (elapsed < duration * 0.3) {
+            // Gradually increasing (15-30%)
+            const segmentProgress = (elapsed - duration * 0.15) / (duration * 0.15);
+            progress = 0.05 + 0.15 * segmentProgress;
+          } else if (elapsed < duration * 0.5) {
+            // Approaching peak speed (30-50%)
+            const segmentProgress = (elapsed - duration * 0.3) / (duration * 0.2);
             progress = 0.2 + 0.3 * segmentProgress;
-          } else if (elapsed < duration * 0.6) {
-            // Peak speed (40-60%)
-            const segmentProgress = (elapsed - duration * 0.4) / (duration * 0.2);
+          } else if (elapsed < duration * 0.7) {
+            // Peak speed (50-70%)
+            const segmentProgress = (elapsed - duration * 0.5) / (duration * 0.2);
             progress = 0.5 + 0.3 * segmentProgress;
           } else {
-            // Maximum speed to finish (60-100%)
-            const segmentProgress = (elapsed - duration * 0.6) / (duration * 0.4);
+            // Maximum speed to finish (70-100%)
+            const segmentProgress = (elapsed - duration * 0.7) / (duration * 0.3);
             progress = 0.8 + 0.2 * segmentProgress;
           }
           
