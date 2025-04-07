@@ -11,7 +11,7 @@ interface EkgAnimationProps {
 export function EkgAnimation({ 
   isActive,
   duration = 2000,
-  color = '#10b981', // Medical green color for more hospital-like appearance
+  color = '#3b82f6', // Default blue color to match app
   width = 100,
   height = 25
 }: EkgAnimationProps) {
@@ -52,50 +52,54 @@ export function EkgAnimation({
   
   // Create animation styles for drawing the line
   const animationStyles = `
-    /* Background grid lines for hospital monitor effect */
-    .ekg-grid line {
-      stroke: rgba(0, 0, 0, 0.05);
-      stroke-width: 0.5;
-    }
-    
-    /* Draw the line from left to right */
-    @keyframes drawLine {
+    /* Draw the line from left to right with continous tail following */
+    @keyframes drawEkgTrace {
       0% {
-        stroke-dasharray: ${width * 2};
+        stroke-dasharray: 0.1, ${width * 2};
         stroke-dashoffset: ${width * 2};
-        opacity: 0.8;
       }
+      
+      /* Show just a small dot/point at the beginning */
+      5% {
+        stroke-dasharray: 1, ${width * 2};
+        stroke-dashoffset: ${width * 1.9};
+      }
+      
+      /* Start expanding the visible trace - show more of the beginning */
       20% {
-        opacity: 1;
+        stroke-dasharray: ${width * 0.3}, ${width * 2};
+        stroke-dashoffset: ${width * 1.6};
       }
-      100% {
-        stroke-dasharray: ${width * 2};
-        stroke-dashoffset: 0;
-        opacity: 1;
-      }
-    }
-    
-    /* Add glow effect */
-    @keyframes glowPulse {
-      0%, 100% {
-        filter: drop-shadow(0 0 1px rgba(16, 185, 129, 0.7));
-      }
+      
+      /* Middle point - half of the trace is drawn, with tail following */
       50% {
-        filter: drop-shadow(0 0 3px rgba(16, 185, 129, 1));
+        stroke-dasharray: ${width * 0.7}, ${width * 2};
+        stroke-dashoffset: ${width * 1.0};
+      }
+      
+      /* Near the end - most of the trace is visible with the tail still following */
+      80% {
+        stroke-dasharray: ${width * 0.9}, ${width * 2};
+        stroke-dashoffset: ${width * 0.4};
+      }
+      
+      /* End with the full trace drawn and visible */
+      100% {
+        stroke-dasharray: ${width * 2}, 0;
+        stroke-dashoffset: 0;
       }
     }
     
-    /* The animation that controls the EKG line */
+    /* The ECG trace line */
     .ekg-line {
       stroke: ${color};
-      stroke-width: 2.2px;
+      stroke-width: 2.5px;
       stroke-linecap: round;
       stroke-linejoin: round;
       fill: none;
-      animation: 
-        drawLine ${duration}ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
-        glowPulse ${duration * 0.3}ms ease-in-out;
-      will-change: stroke-dasharray, stroke-dashoffset, filter;
+      filter: drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6));
+      animation: drawEkgTrace ${duration}ms ease-out forwards;
+      will-change: stroke-dasharray, stroke-dashoffset;
     }
   `;
   
@@ -117,32 +121,7 @@ export function EkgAnimation({
         height={height}
         viewBox={`0 0 ${width} ${height}`}
       >
-        {/* Background grid for hospital monitor effect */}
-        <g className="ekg-grid">
-          {/* Horizontal grid lines */}
-          {[0, 0.25, 0.5, 0.75, 1].map((y, i) => (
-            <line 
-              key={`h-${i}`} 
-              x1="0" 
-              y1={height * y} 
-              x2={width} 
-              y2={height * y} 
-            />
-          ))}
-          
-          {/* Vertical grid lines */}
-          {Array.from({ length: 11 }).map((_, i) => (
-            <line 
-              key={`v-${i}`} 
-              x1={width * (i/10)} 
-              y1="0" 
-              x2={width * (i/10)} 
-              y2={height} 
-            />
-          ))}
-        </g>
-        
-        {/* The actual ECG trace */}
+        {/* Just the ECG trace line - no background grid */}
         <polyline
           className="ekg-line"
           points={points}

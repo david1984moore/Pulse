@@ -238,11 +238,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
     // Then process the submit request
     handleSubmit();
     
-    // Reset EKG state after a single animation cycle
-    // Duration set to match animation + small buffer
+    // Reset EKG state after the animation completes
+    // Duration matches the animation exactly with a small buffer
     setTimeout(() => {
       setShowEkg(false);
-    }, 2500);
+    }, 2100);
   };
   
   return (
