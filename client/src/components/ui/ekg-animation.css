@@ -1,142 +1,59 @@
 
-/* EKG Animation Styles - Simplified and Sleek */
+/* EKG Animation Styles - True Line Graph Approach */
 
-/* Wrapper animation effect */
+/* Wrapper animation effect with subtle pulsing glow */
 .ekg-wrapper {
   transition: all 0.3s ease;
-  animation: pulseGlow 3s infinite alternate;
+  filter: drop-shadow(0 0 3px rgba(6, 182, 212, 0.3));
 }
 
-@keyframes pulseGlow {
+/* The SVG element with subtle glow effect */
+.ekg-svg {
+  overflow: visible; /* Allow glow to extend beyond SVG bounds */
+}
+
+/* Main EKG line styling */
+.ekg-line {
+  filter: drop-shadow(0 0 1px rgba(99, 102, 241, 0.8));
+  animation: pulseLine 2s infinite alternate;
+}
+
+@keyframes pulseLine {
   0% {
-    filter: drop-shadow(0 0 4px rgba(6, 182, 212, 0.4));
-  }
-  50% {
-    filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.5));
+    filter: drop-shadow(0 0 1px rgba(99, 102, 241, 0.7));
   }
   100% {
-    filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.4));
+    filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.9));
   }
 }
 
-/* Main EKG path animation - clean, sleek line */
-.ekg-path {
-  stroke-dasharray: 500;
-  stroke-dashoffset: 500;
-  animation: drawEkg 1s cubic-bezier(0.17, 0.67, 0.53, 0.98) forwards;
-  filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.6));
+/* Grid styling for medical device look */
+.ekg-grid line {
+  animation: fadeGrid 1.5s ease-in-out;
 }
 
-@keyframes drawEkg {
+@keyframes fadeGrid {
   0% {
-    stroke-dashoffset: 500;
-    opacity: 0.8;
+    opacity: 0;
   }
   100% {
-    stroke-dashoffset: 0;
     opacity: 1;
   }
 }
 
-/* First echo animation - simplified follow-through */
-.ekg-echo-1 {
-  stroke-dasharray: 500;
-  stroke-dashoffset: 500;
-  opacity: 0;
-  animation: followThroughEcho1 1.5s ease-out forwards 0.7s;
-  filter: drop-shadow(0 0 1px rgba(6, 182, 212, 0.4));
+/* Dot at the end of the line */
+.ekg-dot {
+  filter: drop-shadow(0 0 3px white);
+  animation: pulseDot 0.6s infinite alternate;
 }
 
-@keyframes followThroughEcho1 {
+@keyframes pulseDot {
   0% {
-    stroke-dashoffset: 500;
-    opacity: 0;
-    transform: translateX(0);
+    r: 1.5;
+    filter: drop-shadow(0 0 2px white);
   }
   100% {
-    stroke-dashoffset: 0;
-    opacity: 0.2;
-    transform: translateX(30px);
-  }
-}
-
-/* Second echo animation - simplified */
-.ekg-echo-2 {
-  stroke-dasharray: 500;
-  stroke-dashoffset: 500;
-  opacity: 0;
-  animation: followThroughEcho2 1.8s ease-out forwards 0.9s;
-  filter: drop-shadow(0 0 1px rgba(6, 182, 212, 0.2));
-}
-
-@keyframes followThroughEcho2 {
-  0% {
-    stroke-dashoffset: 500;
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 0.1;
-    transform: translateX(60px);
-  }
-}
-
-/* Third echo animation - simplified */
-.ekg-echo-3 {
-  stroke-dasharray: 500;
-  stroke-dashoffset: 500;
-  opacity: 0;
-  animation: followThroughEcho3 2s ease-out forwards 1.1s;
-  filter: drop-shadow(0 0 1px rgba(6, 182, 212, 0.1));
-}
-
-@keyframes followThroughEcho3 {
-  0% {
-    stroke-dashoffset: 500;
-    opacity: 0;
-    transform: translateX(40px);
-  }
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 0.05;
-    transform: translateX(90px);
-  }
-}
-
-/* Subtle particle animations - simplified */
-.ekg-particle-1, .ekg-particle-2, .ekg-particle-3 {
-  opacity: 0;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.3));
-}
-
-.ekg-particle-1 {
-  animation: particle 1.5s ease-out forwards 0.6s;
-}
-
-.ekg-particle-2 {
-  animation: particle 1.5s ease-out forwards 0.9s;
-}
-
-.ekg-particle-3 {
-  animation: particle 1.5s ease-out forwards 1.2s;
-}
-
-@keyframes particle {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  20% {
-    opacity: 0.6;
-    transform: scale(1.2);
-  }
-  80% {
-    opacity: 0.3;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.2);
+    r: 2.5;
+    filter: drop-shadow(0 0 4px white);
   }
 }
