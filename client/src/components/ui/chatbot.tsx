@@ -261,11 +261,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
   
   return (
-    <Card className="bg-gradient-to-br from-gray-900 to-gray-800 shadow-lg border border-gray-700">
-      <CardHeader className="pb-4 border-b border-gray-700">
+    <Card className="bg-white shadow-lg border border-gray-200">
+      <CardHeader className="pb-4 border-b border-gray-200">
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">
-            <CardTitle className="flex items-center relative px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-md shadow-md">
+            <CardTitle className="flex items-center relative px-5 py-2.5 bg-primary text-primary-foreground rounded-md shadow-sm">
               <span className="flex items-center justify-center tracking-wide">
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
