@@ -23,24 +23,35 @@ export function EkgAnimation({
 }: EkgAnimationProps) {
   // Key to force re-mount the component when animation restarts
   const [animationKey, setAnimationKey] = useState(0);
+  // Visibility state to handle clean transitions
+  const [isVisible, setIsVisible] = useState(false);
   
   // When runAnimation changes to true, restart the animation
   useEffect(() => {
     if (runAnimation) {
-      // Increment key to force remount with fresh animation
-      setAnimationKey(prev => prev + 1);
+      // Make sure component is hidden before starting new animation
+      setIsVisible(false);
+      
+      // Short delay before starting new animation to ensure CSS reset
+      setTimeout(() => {
+        // Increment key to force remount with fresh animation
+        setAnimationKey(prev => prev + 1);
+        setIsVisible(true);
+      }, 50);
       
       // Wait for the animation and follow-through to completely finish
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 3400); // 1.7s for drawing + 1.6s for follow-through + 0.1s buffer
+      }, 3800); // 2.0s for drawing + 1.8s for follow-through
       
       return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
     }
   }, [runAnimation, onComplete]);
   
   // Don't render anything if not animating
-  if (!runAnimation) return null;
+  if (!runAnimation || !isVisible) return null;
   
   // Simplified path definition for a cleaner EKG trace
   const ekgPathData = `

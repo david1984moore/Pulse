@@ -244,13 +244,20 @@ export default function Chatbot({ bills }: ChatbotProps) {
     // Set the processing flag to prevent duplicate clicks
     isSubmittingRef.current = true;
     
-    // Submit API request
-    handleSubmit();
+    // Force EKG animation to reset completely before starting
+    setIsPending(false);
     
-    // Reset submission flag after a short delay to prevent double-clicks
+    // Small delay to ensure animation resets completely before starting again
+    setTimeout(() => {
+      // Submit API request and start new animation
+      setIsPending(true);
+      handleSubmit();
+    }, 50);
+    
+    // Reset submission flag after a delay to prevent double-clicks
     setTimeout(() => {
       isSubmittingRef.current = false;
-    }, 300);
+    }, 350);
   };
   
   return (

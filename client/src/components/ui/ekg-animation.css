@@ -8,7 +8,12 @@
   }
   5% {
     opacity: 1;
-    stroke-dasharray: 1 999;
+    stroke-dasharray: 1 999; 
+  }
+  95% {
+    stroke-dashoffset: 0;
+    stroke-dasharray: 1000 0;
+    opacity: 1;
   }
   100% {
     stroke-dashoffset: 0;
@@ -19,12 +24,12 @@
 
 /* Follow-through pulse effect - starts when main line is almost complete */
 @keyframes follow-through {
-  0%, 70% {
+  0%, 65% {
     stroke-dashoffset: 1000;
     opacity: 0;
   }
-  75% {
-    stroke-dashoffset: 200;
+  70% {
+    stroke-dashoffset: 300;
     stroke-width: 2.5px;
     opacity: 0.9;
     transform: translateX(0);
@@ -46,14 +51,16 @@
 .ekg-dot-to-line {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: dot-to-line 1.7s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  animation: dot-to-line 2s cubic-bezier(0.4, 0, 0.6, 1) forwards;
   filter: drop-shadow(0 0 1px rgba(59, 130, 246, 0.5));
+  will-change: stroke-dashoffset, stroke-dasharray, opacity;
 }
 
 /* Follow-through animation - starts slightly delayed */
 .ekg-follow-through {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: follow-through 1.6s ease-out forwards 1.4s;
+  animation: follow-through 1.8s ease-out forwards 1.6s;
   filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.7));
+  will-change: stroke-dashoffset, opacity, transform;
 }
