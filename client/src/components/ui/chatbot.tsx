@@ -273,17 +273,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
             </CardTitle>
-            {/* EKG trace only displays when processing - canvas to avoid DOM nesting issues */}
-            <span className="ml-3 h-6 inline-block">
-              {isPending && (
-                <EkgAnimation 
-                  runAnimation={isPending} 
-                  width={100} 
-                  height={24} 
-                  color="hsl(192 91% 55%)"
-                />
-              )}
-            </span>
+          
           </div>
           <CardDescription className="flex items-center px-4 py-2">
             <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
@@ -419,8 +409,13 @@ export default function Chatbot({ bills }: ChatbotProps) {
             >
               {isPending ? (
                 <div className="flex items-center justify-center">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span>{t('thinking')}</span>
+                  <EkgAnimation 
+                    runAnimation={isPending} 
+                    width={60} 
+                    height={20} 
+                    color="#FFFFFF"
+                  />
+                  <span className="ml-2">{t('thinking')}</span>
                 </div>
               ) : (
                 <div className="flex items-center justify-center group">

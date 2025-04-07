@@ -11,91 +11,132 @@ interface EkgAnimationProps {
 export function EkgAnimation({
   runAnimation,
   onComplete,
-  color = '#00FF00',
+  color = '#FFFFFF',
   width = 160,
   height = 30
 }: EkgAnimationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const animationFrameRef = useRef<number>(0);
-  const xRef = useRef<number>(0);
+  const offsetXRef = useRef<number>(0);
+  const dataPointsRef = useRef<number[]>([]);
   
-  // Draw the ECG waveform
+  // Initialize ECG data points for a hospital monitor style
+  useEffect(() => {
+    // Data pattern for a classic hospital ECG with flat line + heartbeat
+    const generateEcgPattern = () => {
+      const points: number[] = [];
+      
+      // Hospital-style ECG pattern (values between -1 and 1)
+      // Flat line
+      for (let i = 0; i < 50; i++) {
+        points.push(0);
+      }
+      
+      // P-wave (small bump)
+      for (let i = 0; i < 10; i++) {
+        points.push(0.1 * Math.sin(i * Math.PI / 10));
+      }
+      
+      // Slight pause
+      for (let i = 0; i < 5; i++) {
+        points.push(0);
+      }
+      
+      // QRS complex
+      points.push(-0.1); // Q
+      points.push(-0.2);
+      points.push(0.9);  // R (big spike up)
+      points.push(-0.4); // S (drop below baseline)
+      points.push(-0.2);
+      
+      // Return to baseline
+      for (let i = 0; i < 5; i++) {
+        points.push(-0.1 + (i * 0.1 / 5));
+      }
+      
+      // T-wave
+      for (let i = 0; i < 10; i++) {
+        points.push(0.2 * Math.sin(i * Math.PI / 10));
+      }
+      
+      // Flat line to end
+      for (let i = 0; i < 50; i++) {
+        points.push(0);
+      }
+      
+      return points;
+    };
+    
+    dataPointsRef.current = generateEcgPattern();
+  }, []);
+  
+  // Draw the ECG waveform with hospital style
   const drawECG = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || dataPointsRef.current.length === 0) return;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const w = canvas.width;
+    const h = canvas.height;
+    const centerY = h / 2;
+    const amplitudeScale = h / 3; // Scale to use 1/3 of the height
     
-    const centerY = canvas.height / 2;
-    ctx.lineWidth = 2;
+    // Hospital monitor background style
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Draw horizontal grid lines (faint)
+    ctx.strokeStyle = 'rgba(0, 50, 0, 0.2)';
+    ctx.lineWidth = 0.5;
+    const gridSize = 5;
+    for (let y = 0; y < h; y += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+    
+    // Draw vertical grid lines (faint)
+    for (let x = 0; x < w; x += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    
+    // Draw ECG line
     ctx.strokeStyle = color;
-    
-    // Start a new path for the main trace
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 2;
     ctx.beginPath();
     
-    // Draw a classic ECG pattern
-    for (let i = 0; i < canvas.width; i++) {
-      let x = i;
-      let y = centerY;
+    const dataPoints = dataPointsRef.current;
+    const totalPoints = dataPoints.length;
+    
+    for (let i = 0; i < w; i++) {
+      // Calculate data point index with offset for scrolling effect
+      const dataIndex = (i + Math.floor(offsetXRef.current)) % totalPoints;
+      const value = dataPoints[dataIndex];
       
-      // Create P wave (small bump)
-      if (i >= 10 && i < 20) {
-        y = centerY - Math.sin((i - 10) * 0.3) * 3;
-      } 
-      // Create QRS complex (big spike)
-      else if (i >= 30 && i < 50) {
-        // Q wave (small downward deflection)
-        if (i >= 30 && i < 35) {
-          y = centerY + (i - 30) * 1;
-        } 
-        // R wave (large upward spike)
-        else if (i >= 35 && i < 40) {
-          y = centerY + 5 - ((i - 35) * 3);
-        }
-        // S wave (downward deflection after R)
-        else if (i >= 40 && i < 50) {
-          y = centerY - 10 + ((i - 40) * 2);
-        }
-      }
-      // Create T wave (rounded bump after QRS)
-      else if (i >= 60 && i < 80) {
-        y = centerY - Math.sin((i - 60) * 0.2) * 5;
-      }
+      const y = centerY - (value * amplitudeScale);
       
       if (i === 0) {
-        ctx.moveTo(x, y);
+        ctx.moveTo(i, y);
       } else {
-        ctx.lineTo(x, y);
+        ctx.lineTo(i, y);
       }
     }
     
-    // Stroke the path
     ctx.stroke();
     
-    // Create a subtle glow effect
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 5;
-    ctx.stroke();
+    // Update animation state for next frame
+    offsetXRef.current = (offsetXRef.current + 0.5) % totalPoints;
     
-    // Reset shadow
-    ctx.shadowBlur = 0;
-    
-    // Update x position for animation
-    xRef.current = (xRef.current + 1) % 5;
-    if (xRef.current === 0) {
-      // Shift the canvas content left by 1 pixel
-      const imageData = ctx.getImageData(1, 0, canvas.width - 1, canvas.height);
-      ctx.putImageData(imageData, 0, 0);
-      // Clear the rightmost pixel
-      ctx.clearRect(canvas.width - 1, 0, 1, canvas.height);
-    }
-    
-    // Continue the animation loop
+    // Continue animation loop
     animationFrameRef.current = requestAnimationFrame(drawECG);
   };
   
@@ -125,7 +166,7 @@ export function EkgAnimation({
   
   if (!isVisible) return null;
 
-  // Canvas will be inline-block to avoid DOM nesting issues
+  // Using canvas with inline-block style to avoid DOM nesting issues
   return (
     <canvas 
       ref={canvasRef} 
@@ -134,7 +175,8 @@ export function EkgAnimation({
       style={{ 
         display: 'inline-block', 
         verticalAlign: 'middle',
-        margin: '0 0 0 8px'
+        margin: '0 0 0 8px',
+        borderRadius: '3px'
       }} 
     />
   );
