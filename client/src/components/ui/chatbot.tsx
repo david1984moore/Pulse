@@ -15,7 +15,6 @@ import { secureApiRequest } from "@/lib/csrf";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/use-language";
 import { TypeAnimation } from "@/components/ui/type-animation";
-import { EkgAnimation } from "@/components/ui/ekg-animation-new";
 
 interface ChatbotProps {
   bills: Bill[];
@@ -50,8 +49,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const [isCustomAmount, setIsCustomAmount] = useState<boolean>(false);
   const [isPending, setIsPending] = useState(false);
   
-  // Controls when the EKG animation should run (true = run, false = don't run)
-  const [ekgTrigger, setEkgTrigger] = useState(false);
+  // No EKG animation
   
   // Prevent multiple rapid/duplicate clicks
   const isSubmittingRef = useRef(false);
@@ -235,26 +233,23 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
 
   /**
-   * Handle the "Ask" button click with EKG animation
-   * This is the main function that manages the EKG animation and API request
+   * Handle the "Ask" button click
+   * This function manages the user submission
    */
-  const handleSubmitWithEkg = () => {
+  const handleSubmitClick = () => {
     // Prevent multiple rapid clicks or processing while waiting for response
     if (isPending || isSubmittingRef.current) return;
     
     // Set the processing flag to prevent duplicate clicks
     isSubmittingRef.current = true;
-
-    // Always reset the animation first to ensure a clean state
-    setEkgTrigger(false);
     
-    // Let React process the state change before starting a new animation
+    // Submit API request
+    handleSubmit();
+    
+    // Reset submission flag after a short delay to prevent double-clicks
     setTimeout(() => {
-      // Start a fresh animation
-      setEkgTrigger(true);
-      // Submit API request
-      handleSubmit();
-    }, 50);
+      isSubmittingRef.current = false;
+    }, 300);
   };
   
   return (
@@ -263,17 +258,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
         <div className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center">
             {language === 'es' ? 'Alicia' : 'Alice'}
-            <EkgAnimation 
-              runAnimation={ekgTrigger} 
-              onComplete={() => {
-                setEkgTrigger(false);
-                // Reset submission flag to allow new clicks
-                isSubmittingRef.current = false;
-              }}
-              color="#3b82f6" 
-              width={80} 
-              height={25} 
-            />
+
           </CardTitle>
           <CardDescription className="flex items-center bg-gray-100 px-4 py-2 rounded-md">
             <DollarSign className="h-4 w-4 mr-2 text-primary" />
@@ -363,7 +348,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
             </Select>
           )}
           <Button
-            onClick={handleSubmitWithEkg}
+            onClick={handleSubmitClick}
             disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
             className="w-full sm:w-auto"
           >
