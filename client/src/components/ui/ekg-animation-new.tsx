@@ -42,7 +42,7 @@ export function EkgAnimation({
       // Wait for the animation and follow-through to completely finish
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 4300); // 2.2s for drawing + 2.0s for follow-through + 0.1s buffer
+      }, 6500); // 3.5s for drawing + 3.0s for follow-through
       
       return () => clearTimeout(timer);
     } else {
