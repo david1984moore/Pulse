@@ -225,24 +225,22 @@ export default function Chatbot({ bills }: ChatbotProps) {
   // State to track when to show the EKG animation
   const [showEkg, setShowEkg] = useState(false);
   
-  // Improved handler for submitting with EKG animation
+  // Improved handler for submitting with EKG animation - single run only
   const handleSubmitWithEkg = async () => {
-    // Reset the EKG animation state first
-    setShowEkg(false);
+    // First process the submit request
+    handleSubmit();
     
-    // Small delay to ensure state change is processed
-    setTimeout(() => {
-      // Trigger animation only when submitting
+    // Only show the EKG if it's not already active
+    if (!showEkg) {
+      // Trigger animation by setting state to true
       setShowEkg(true);
       
-      // Process the submit request
-      handleSubmit();
-      
-      // Reset EKG state after the animation duration
+      // Reset EKG state after a single animation cycle
+      // No additional animations should trigger until next button click
       setTimeout(() => {
         setShowEkg(false);
-      }, 5000); // Ensure this is longer than the animation cycle
-    }, 10);
+      }, 3500); // Set just longer than animation duration to prevent immediate re-trigger
+    }
   };
   
   return (

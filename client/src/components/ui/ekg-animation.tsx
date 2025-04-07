@@ -55,19 +55,27 @@ export function EkgAnimation({
   
   if (!showAnimation) return null;
   
-  // Enhanced EKG signal points for a smoother, more attractive trace
+  // Realistic hospital-style ECG signal points with medical accuracy
   const points = [
-    [0, height/2],                       // Start with flat line (isoelectric)
-    [width*0.25, height/2],              // Flat line continues
-    [width*0.3, height/2 - height*0.08], // P wave (small rounded bump)
-    [width*0.35, height/2],              // Back to baseline before QRS complex
-    [width*0.38, height/2 - height*0.1], // Q wave (small dip)
-    [width*0.42, height/2 - height*0.65], // R wave (tall spike, slightly higher)
-    [width*0.44, height/2 + height*0.25], // S wave (deeper downward deflection)
-    [width*0.48, height/2],              // Back to baseline after QRS
-    [width*0.58, height/2 - height*0.15], // T wave (more noticeable bump)
-    [width*0.65, height/2],              // Back to baseline
-    [width*0.85, height/2],              // Flat line continues
+    [0, height/2],                       // Start with flat baseline (isoelectric)
+    [width*0.2, height/2],               // Flat baseline continues
+    [width*0.25, height/2 - height*0.05], // P wave start (atrial depolarization)
+    [width*0.27, height/2 - height*0.12], // P wave peak
+    [width*0.29, height/2 - height*0.05], // P wave end
+    [width*0.32, height/2],              // PR segment (flat)
+    [width*0.33, height/2 - height*0.02], // Q wave (small downward deflection)
+    [width*0.34, height/2 - height*0.12], // Q wave bottom
+    [width*0.35, height/2],              // Back to baseline
+    [width*0.36, height/2 - height*0.7], // R wave (sharp upward spike - ventricular depolarization)
+    [width*0.37, height/2 - height*0.1], // Downstroke from R peak
+    [width*0.38, height/2 + height*0.35], // S wave (deep downward deflection)
+    [width*0.39, height/2 + height*0.1], // S wave end approaching baseline
+    [width*0.4, height/2],               // Return to baseline
+    [width*0.42, height/2],              // ST segment (flat)
+    [width*0.48, height/2 - height*0.22], // T wave start (ventricular repolarization)
+    [width*0.53, height/2 - height*0.28], // T wave peak
+    [width*0.58, height/2],              // Return to baseline after T wave
+    [width*0.85, height/2],              // Extended flat baseline (diastole)
     [width, height/2]                    // End with flat line
   ].map(point => point.join(',')).join(' ');
   
@@ -115,26 +123,36 @@ export function EkgAnimation({
     }
     
     @keyframes completeTail {
-      0%, 65% {
-        /* Keep dash array unchanged for longer to let more of the trace remain visible */
+      0%, 85% {
+        /* Keep entire trace visible until 85% of animation - sexy hospital monitor effect */
         stroke-dasharray: 5, ${width * 3};
       }
-      85% {
-        /* Start the tail later to leave more trace visible */
-        stroke-dasharray: 5, ${width * 3};
+      92% {
+        /* Start the tail disappearing only when the leading point is almost at the end */
+        stroke-dasharray: ${width * 0.3}, ${width * 3};
+      }
+      96% {
+        /* Quickly clear the tail at the very end */
+        stroke-dasharray: ${width * 0.1}, ${width * 3};
       }
       100% {
         stroke-dasharray: 0, 0; /* Tail catches up and completes */
       }
     }
     
-    /* Animation to keep the trace visible longer */
-    @keyframes fadeOut {
-      0%, 80% {
-        opacity: 1;
+    /* Animation to add a pulse glow effect to the ECG trace */
+    @keyframes pulseGlow {
+      0%, 10% {
+        filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.4));
       }
-      100% {
-        opacity: 0;
+      40% {
+        filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.8));
+      }
+      60% {
+        filter: drop-shadow(0 0 4px rgba(59, 130, 246, 1));
+      }
+      90%, 100% {
+        filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.4));
       }
     }
     
@@ -145,7 +163,7 @@ export function EkgAnimation({
       animation: 
         drawLeadingPoint ${duration}ms cubic-bezier(0.42, 0, 0.58, 1) forwards,
         completeTail ${duration * 1.8}ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards,
-        fadeOut ${duration * 2}ms cubic-bezier(0.42, 0, 0.58, 1) forwards; /* Slow fade out */
+        pulseGlow ${duration * 0.75}ms ease-in-out; /* Add pulsing glow effect */
     }
   `;
   
@@ -174,11 +192,11 @@ export function EkgAnimation({
           points={points}
           fill="none"
           stroke={color}
-          strokeWidth="2.2"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           className="animate-draw"
-          filter="drop-shadow(0 0 2px rgba(59, 130, 246, 0.7))"
+          filter="drop-shadow(0 0 3px rgba(59, 130, 246, 0.8))"
         />
       </svg>
 
