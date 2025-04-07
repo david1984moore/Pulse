@@ -50,47 +50,29 @@ export function EkgAnimation({
       // Create and define the path for the ECG/EKG waveform
       const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
       
-      // Dramatic hospital-style ECG trace with prominent peaks
+      // Simple, clean hospital-style ECG trace with a single classic peak
       const points = [
-        [0, height/2],          // Start at baseline
-        [width*0.08, height/2], // Baseline
+        [0, height/2],           // Start at baseline
+        [width*0.2, height/2],   // Flat baseline
         
-        // First small bump (P wave - atrial depolarization)
-        [width*0.12, height/2 - height*0.12],
-        [width*0.15, height/2],
+        // Small preliminary bump (P wave)
+        [width*0.25, height/2 - height*0.1],
+        [width*0.3, height/2],
         
-        // PR segment (flat before the big spike)
-        [width*0.20, height/2],
+        // Flat segment before the spike
+        [width*0.4, height/2],
         
-        // QRS complex (ventricular depolarization) - THE DRAMATIC SPIKE
-        [width*0.24, height/2 - height*0.05],  // Small upward deflection
-        [width*0.26, height/2 + height*0.15],  // Q wave (downward)
-        [width*0.28, height/2 - height*0.85],  // R wave (dramatic tall spike)
-        [width*0.30, height/2 + height*0.25],  // S wave (deep downward)
-        [width*0.33, height/2],                // Back to baseline
+        // The classic "beep" spike (QRS complex)
+        [width*0.45, height/2 + height*0.08],  // Small dip down (Q wave)
+        [width*0.5, height/2 - height*0.7],    // Dramatic upward spike (R wave)
+        [width*0.55, height/2 + height*0.15],  // Downward after spike (S wave)
         
-        // ST segment
-        [width*0.36, height/2],
+        // Return to baseline with small bump (T wave)
+        [width*0.6, height/2],
+        [width*0.7, height/2 - height*0.15],   // T wave
+        [width*0.8, height/2],                 // Back to baseline
         
-        // T wave (ventricular repolarization)
-        [width*0.40, height/2],
-        [width*0.45, height/2 - height*0.25],  // More prominent T wave
-        [width*0.50, height/2],
-        
-        // Add a second heartbeat pattern (repeating the first but smaller)
-        [width*0.60, height/2],
-        [width*0.62, height/2 - height*0.08],  // P wave (smaller)
-        [width*0.64, height/2],
-        [width*0.68, height/2 - height*0.05],  // Q wave start
-        [width*0.70, height/2 + height*0.1],   // Q wave
-        [width*0.72, height/2 - height*0.6],   // R wave
-        [width*0.74, height/2 + height*0.15],  // S wave
-        [width*0.76, height/2],
-        [width*0.82, height/2 - height*0.15],  // T wave
-        [width*0.88, height/2],
-        
-        // Return to baseline
-        [width*0.95, height/2],
+        // Flat to the end
         [width, height/2]
       ].map(point => point.join(',')).join(' ');
       
@@ -121,7 +103,7 @@ export function EkgAnimation({
       
       // Add variable speed animation with pure JS to guarantee one-time execution
       const startTime = performance.now();
-      const duration = 800; // Slightly slower total animation time
+      const duration = 1500; // Much slower animation to make it clearly visible
       
       // Single animation function that runs once and is not dependent on React state
       // This is key to preventing double animations or repetition
@@ -132,28 +114,28 @@ export function EkgAnimation({
         // If animation not complete
         if (elapsed < duration) {
           // Calculate nonlinear progress for variable speed
-          // Start slow, accelerate through spike, end faster
+          // Gentler progression with a more hospital-like steady beep feel
           let progress: number;
           
-          if (elapsed < duration * 0.15) {
-            // Very slow start (0-15%)
-            progress = 0.05 * (elapsed / (duration * 0.15));
-          } else if (elapsed < duration * 0.3) {
-            // Gradually increasing (15-30%)
-            const segmentProgress = (elapsed - duration * 0.15) / (duration * 0.15);
+          if (elapsed < duration * 0.2) {
+            // Very slow start (0-20%)
+            progress = 0.05 * (elapsed / (duration * 0.2));
+          } else if (elapsed < duration * 0.4) {
+            // Gradually increasing (20-40%)
+            const segmentProgress = (elapsed - duration * 0.2) / (duration * 0.2);
             progress = 0.05 + 0.15 * segmentProgress;
           } else if (elapsed < duration * 0.5) {
-            // Approaching peak speed (30-50%)
-            const segmentProgress = (elapsed - duration * 0.3) / (duration * 0.2);
-            progress = 0.2 + 0.3 * segmentProgress;
+            // Brief acceleration for the peak (40-50%)
+            const segmentProgress = (elapsed - duration * 0.4) / (duration * 0.1);
+            progress = 0.2 + 0.2 * segmentProgress;
           } else if (elapsed < duration * 0.7) {
-            // Peak speed (50-70%)
+            // Steadier pace through middle section (50-70%)
             const segmentProgress = (elapsed - duration * 0.5) / (duration * 0.2);
-            progress = 0.5 + 0.3 * segmentProgress;
+            progress = 0.4 + 0.3 * segmentProgress;
           } else {
-            // Maximum speed to finish (70-100%)
+            // Gentle finish (70-100%)
             const segmentProgress = (elapsed - duration * 0.7) / (duration * 0.3);
-            progress = 0.8 + 0.2 * segmentProgress;
+            progress = 0.7 + 0.3 * segmentProgress;
           }
           
           // Calculate dash offset based on progress
