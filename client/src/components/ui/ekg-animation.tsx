@@ -50,32 +50,47 @@ export function EkgAnimation({
       // Create and define the path for the ECG/EKG waveform
       const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
       
-      // Realistic ECG trace points
+      // Dramatic hospital-style ECG trace with prominent peaks
       const points = [
-        [0, height/2],         // Start at baseline
-        [width*0.1, height/2], // Baseline
+        [0, height/2],          // Start at baseline
+        [width*0.08, height/2], // Baseline
         
-        // P wave (atrial depolarization)
-        [width*0.15, height/2 - height*0.1],
-        [width*0.18, height/2],
+        // First small bump (P wave - atrial depolarization)
+        [width*0.12, height/2 - height*0.12],
+        [width*0.15, height/2],
         
-        // PR segment
-        [width*0.25, height/2],
+        // PR segment (flat before the big spike)
+        [width*0.20, height/2],
         
-        // QRS complex (ventricular depolarization)
-        [width*0.28, height/2 + height*0.05], // Q wave
-        [width*0.30, height/2 - height*0.6],  // R wave (tall spike)
-        [width*0.33, height/2 + height*0.2],  // S wave
+        // QRS complex (ventricular depolarization) - THE DRAMATIC SPIKE
+        [width*0.24, height/2 - height*0.05],  // Small upward deflection
+        [width*0.26, height/2 + height*0.15],  // Q wave (downward)
+        [width*0.28, height/2 - height*0.85],  // R wave (dramatic tall spike)
+        [width*0.30, height/2 + height*0.25],  // S wave (deep downward)
+        [width*0.33, height/2],                // Back to baseline
         
         // ST segment
         [width*0.36, height/2],
         
         // T wave (ventricular repolarization)
-        [width*0.45, height/2 - height*0.15],
-        [width*0.52, height/2],
+        [width*0.40, height/2],
+        [width*0.45, height/2 - height*0.25],  // More prominent T wave
+        [width*0.50, height/2],
+        
+        // Add a second heartbeat pattern (repeating the first but smaller)
+        [width*0.60, height/2],
+        [width*0.62, height/2 - height*0.08],  // P wave (smaller)
+        [width*0.64, height/2],
+        [width*0.68, height/2 - height*0.05],  // Q wave start
+        [width*0.70, height/2 + height*0.1],   // Q wave
+        [width*0.72, height/2 - height*0.6],   // R wave
+        [width*0.74, height/2 + height*0.15],  // S wave
+        [width*0.76, height/2],
+        [width*0.82, height/2 - height*0.15],  // T wave
+        [width*0.88, height/2],
         
         // Return to baseline
-        [width*0.75, height/2],
+        [width*0.95, height/2],
         [width, height/2]
       ].map(point => point.join(',')).join(' ');
       
@@ -96,12 +111,12 @@ export function EkgAnimation({
       // Get the length of the path to use for animation
       const pathLength = polyline.getTotalLength();
       
-      // Create the hospital monitor look with a glow
-      polyline.style.filter = 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))';
+      // Create the hospital monitor look with a stronger, more noticeable glow
+      polyline.style.filter = 'drop-shadow(0 0 2px rgba(59, 130, 246, 0.7))';
       
       // Set up animation parameters for the dash effect
-      // Make visible trace segment a bit longer
-      polyline.style.strokeDasharray = `${width * 0.45}, ${width * 2}`;
+      // Make visible trace segment just right for the hospital look
+      polyline.style.strokeDasharray = `${width * 0.35}, ${width * 2}`; 
       polyline.style.strokeDashoffset = `${pathLength}`;
       
       // Add variable speed animation with pure JS to guarantee one-time execution
