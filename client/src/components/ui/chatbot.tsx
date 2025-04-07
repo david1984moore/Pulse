@@ -263,7 +263,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
   return (
     <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl">
       <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
-        <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-row items-start justify-between">
           <div className="flex items-center">
             <CardTitle className="flex items-center relative px-5 py-2.5">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
@@ -273,14 +273,27 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
             </CardTitle>
-          
           </div>
-          <CardDescription className="flex items-center px-4 py-2">
-            <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
-              <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
-              <span className="font-bold text-primary-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
-            </div>
-          </CardDescription>
+          
+          <div className="flex flex-col items-end gap-2">
+            {isPending && (
+              <div className="px-3 py-1.5 bg-black rounded-md flex items-center">
+                <EkgAnimation 
+                  runAnimation={isPending} 
+                  width={80} 
+                  height={20} 
+                  color="#FFFFFF"
+                />
+              </div>
+            )}
+            
+            <CardDescription className="flex items-center px-4 py-2">
+              <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
+                <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
+                <span className="font-bold text-primary-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+              </div>
+            </CardDescription>
+          </div>
         </div>
       </CardHeader>
       
@@ -398,32 +411,25 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 </SelectContent>
               </Select>
             )}
-            <Button
-              onClick={handleSubmitClick}
-              disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
-              className={`w-full sm:w-auto transition-all duration-200 ${
-                isPending 
-                  ? 'bg-primary/50 text-white' 
-                  : 'bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary text-white shadow-glow-sm'
-              }`}
-            >
-              {isPending ? (
-                <div className="flex items-center justify-center">
-                  <EkgAnimation 
-                    runAnimation={isPending} 
-                    width={60} 
-                    height={20} 
-                    color="#FFFFFF"
-                  />
-                  <span className="ml-2">{t('thinking')}</span>
-                </div>
-              ) : (
+            {isPending ? (
+              // Show custom processing button when pending
+              <div className="w-full sm:w-auto px-4 py-2 rounded-md bg-primary/50 text-white flex items-center justify-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <span>{t('thinking')}</span>
+              </div>
+            ) : (
+              // Standard button when not pending
+              <Button
+                onClick={handleSubmitClick}
+                disabled={isCustomAmount ? !customAmount : !selectedAmount}
+                className="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary text-white shadow-glow-sm transition-all duration-200"
+              >
                 <div className="flex items-center justify-center group">
                   <Send className="mr-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                   <span>{t('ask')}</span>
                 </div>
-              )}
-            </Button>
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
