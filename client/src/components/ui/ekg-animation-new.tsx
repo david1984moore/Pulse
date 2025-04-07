@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import './ekg-animation.css';
 
 interface EkgAnimationProps {
@@ -16,319 +16,186 @@ export function EkgAnimation({
   width = 160,
   height = 30
 }: EkgAnimationProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [points, setPoints] = useState<string>('');
-  const [position, setPosition] = useState(0);
-  const [animationKey, setAnimationKey] = useState(0);
-  
-  // Generate one complete cycle of EKG data
-  const generateEkgPoints = () => {
+  const [progress, setProgress] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [animationId, setAnimationId] = useState(0);
+
+  // Create simpler EKG path
+  const createEkgPath = () => {
     const midY = height / 2;
-    const baselineY = midY; // Baseline
-    const segments = 100; // Number of points to generate
-    const pointsArray = [];
     
-    // Add initial baseline
-    for (let i = 0; i < segments * 0.2; i++) {
-      const x = (i / segments) * width;
-      pointsArray.push(`${x},${baselineY}`);
-    }
-    
-    // P wave (small bump)
-    const pWaveStart = segments * 0.2;
-    const pWaveEnd = segments * 0.25;
-    for (let i = pWaveStart; i <= pWaveEnd; i++) {
-      const t = (i - pWaveStart) / (pWaveEnd - pWaveStart);
-      const x = (i / segments) * width;
-      const y = baselineY - Math.sin(t * Math.PI) * (height * 0.1);
-      pointsArray.push(`${x},${y}`);
-    }
-    
-    // PR segment (return to baseline)
-    const prSegmentEnd = segments * 0.35;
-    for (let i = pWaveEnd + 1; i <= prSegmentEnd; i++) {
-      const x = (i / segments) * width;
-      pointsArray.push(`${x},${baselineY}`);
-    }
-    
-    // QRS complex
-    // Q wave (small downward deflection)
-    const qWaveEnd = segments * 0.38;
-    for (let i = prSegmentEnd + 1; i <= qWaveEnd; i++) {
-      const t = (i - prSegmentEnd) / (qWaveEnd - prSegmentEnd);
-      const x = (i / segments) * width;
-      const y = baselineY + Math.sin(t * Math.PI / 2) * (height * 0.15);
-      pointsArray.push(`${x},${y}`);
-    }
-    
-    // R wave (sharp upward spike)
-    const rWaveEnd = segments * 0.42;
-    for (let i = qWaveEnd + 1; i <= rWaveEnd; i++) {
-      const t = (i - qWaveEnd) / (rWaveEnd - qWaveEnd);
-      const x = (i / segments) * width;
-      const y = baselineY - Math.sin(t * Math.PI) * (height * 0.7);
-      pointsArray.push(`${x},${y}`);
-    }
-    
-    // S wave (downward deflection after R)
-    const sWaveEnd = segments * 0.46;
-    for (let i = rWaveEnd + 1; i <= sWaveEnd; i++) {
-      const t = (i - rWaveEnd) / (sWaveEnd - rWaveEnd);
-      const x = (i / segments) * width;
-      const y = baselineY + Math.sin(t * Math.PI / 2) * (height * 0.3);
-      pointsArray.push(`${x},${y}`);
-    }
-    
-    // ST segment (return to baseline)
-    const stSegmentEnd = segments * 0.55;
-    for (let i = sWaveEnd + 1; i <= stSegmentEnd; i++) {
-      const t = (i - sWaveEnd) / (stSegmentEnd - sWaveEnd);
-      const x = (i / segments) * width;
-      const y = baselineY + (1 - t) * (height * 0.3);
-      pointsArray.push(`${x},${y}`);
-    }
-    
-    // T wave (rounded bump)
-    const tWaveEnd = segments * 0.7;
-    for (let i = stSegmentEnd + 1; i <= tWaveEnd; i++) {
-      const t = (i - stSegmentEnd) / (tWaveEnd - stSegmentEnd);
-      const x = (i / segments) * width;
-      const y = baselineY - Math.sin(t * Math.PI) * (height * 0.2);
-      pointsArray.push(`${x},${y}`);
-    }
-    
-    // Final baseline
-    for (let i = tWaveEnd + 1; i <= segments; i++) {
-      const x = (i / segments) * width;
-      pointsArray.push(`${x},${baselineY}`);
-    }
-    
-    return pointsArray.join(' ');
+    return `
+      M 0,${midY} 
+      L ${width * 0.3},${midY} 
+      L ${width * 0.35},${midY - height * 0.15} 
+      L ${width * 0.4},${midY - height * 0.5} 
+      L ${width * 0.45},${midY + height * 0.25} 
+      L ${width * 0.5},${midY} 
+      L ${width * 0.7},${midY} 
+      L ${width * 0.75},${midY - height * 0.2} 
+      L ${width * 0.8},${midY} 
+      L ${width},${midY}
+    `;
   };
-  
-  // Animation frame effect
-  useEffect(() => {
-    if (!runAnimation || !isVisible) return;
-    
-    let animationFrameId: number;
-    const totalPoints = 100;
-    const animationDuration = 2000; // 2 seconds for the trace
-    const frameDuration = animationDuration / totalPoints;
-    let lastTimestamp = 0;
-    
-    const animate = (timestamp: number) => {
-      if (!lastTimestamp) lastTimestamp = timestamp;
-      const elapsed = timestamp - lastTimestamp;
-      
-      if (elapsed > frameDuration) {
-        lastTimestamp = timestamp;
-        setPosition(prevPos => {
-          const newPos = prevPos + 1;
-          return newPos <= totalPoints ? newPos : totalPoints;
-        });
-      }
-      
-      if (position < totalPoints) {
-        animationFrameId = requestAnimationFrame(animate);
-      } else {
-        // Animation complete
-        setTimeout(() => {
-          if (onComplete) onComplete();
-        }, 500); // Small delay after trace completes
-      }
-    };
-    
-    animationFrameId = requestAnimationFrame(animate);
-    
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-    };
-  }, [runAnimation, isVisible, position, onComplete]);
-  
-  // Initial setup on animation request
+
+  // Set up animation
   useEffect(() => {
     if (runAnimation) {
-      setIsVisible(false);
-      setPosition(0);
+      setVisible(false);
+      setProgress(0);
       
-      // Generate the points
-      const ekgPoints = generateEkgPoints();
-      setPoints(ekgPoints);
-      
-      // Start the animation after a small delay
-      setTimeout(() => {
-        setAnimationKey(prev => prev + 1);
-        setIsVisible(true);
+      // Small delay to ensure clean animation start
+      const startTimeout = setTimeout(() => {
+        setAnimationId(id => id + 1);
+        setVisible(true);
       }, 50);
-    } else {
-      setIsVisible(false);
+
+      return () => clearTimeout(startTimeout);
     }
-  }, [runAnimation, width, height]);
-  
-  if (!runAnimation || !isVisible) return null;
-  
-  // Percentage of animation to show (for clipping effect)
-  const clipPercentage = (position / 100) * 100;
-  
-  // Calculate dot position y-coordinate based on current position
-  const getDotYPosition = (): number => {
-    const midY = height / 2;
-    const pos = position;
+  }, [runAnimation]);
+
+  // Animation logic
+  useEffect(() => {
+    if (!runAnimation || !visible) return;
+
+    // Slow animation that progresses from 0 to 100 over 7 seconds
+    const duration = 7000;
+    const interval = 50; // Update every 50ms for smoothness
+    const step = 100 / (duration / interval);
     
-    // Early part is baseline
-    if (pos < 20) {
-      return midY;
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        const next = prev + step;
+        if (next >= 100) {
+          clearInterval(timer);
+          
+          // Keep the completed EKG visible for a moment
+          setTimeout(() => {
+            if (onComplete) onComplete();
+          }, 2000);
+          
+          return 100;
+        }
+        return next;
+      });
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [runAnimation, visible, onComplete]);
+
+  // Don't render anything when animation is not running
+  if (!visible) return null;
+
+  // Calculate where the dot should be on the path
+  const dotPosition = () => {
+    const x = width * (progress / 100);
+    let y = height / 2;
+    
+    // Adjust y position based on progress
+    if (progress > 35 && progress < 40) {
+      // P wave
+      y = height / 2 - height * 0.15 * ((progress - 35) / 5);
+    } else if (progress >= 40 && progress < 45) {
+      // QRS peak
+      const peakProgress = (progress - 40) / 5;
+      if (peakProgress < 0.5) {
+        // R up
+        y = height / 2 - height * 0.5 * (peakProgress * 2);
+      } else {
+        // S down
+        y = height / 2 - height * 0.5 + height * 0.75 * ((peakProgress - 0.5) * 2);
+      }
+    } else if (progress > 70 && progress < 80) {
+      // T wave
+      const tProgress = (progress - 70) / 10;
+      if (tProgress < 0.5) {
+        y = height / 2 - height * 0.2 * (tProgress * 2);
+      } else {
+        y = height / 2 - height * 0.2 + height * 0.2 * ((tProgress - 0.5) * 2);
+      }
     }
     
-    // P wave (small bump)
-    if (pos >= 20 && pos < 25) {
-      const t = (pos - 20) / 5;
-      return midY - Math.sin(t * Math.PI) * (height * 0.1);
-    }
-    
-    // PR segment
-    if (pos >= 25 && pos < 35) {
-      return midY;
-    }
-    
-    // Q wave
-    if (pos >= 35 && pos < 38) {
-      const t = (pos - 35) / 3;
-      return midY + Math.sin(t * Math.PI / 2) * (height * 0.15);
-    }
-    
-    // R wave (peak)
-    if (pos >= 38 && pos < 42) {
-      const t = (pos - 38) / 4;
-      return midY - Math.sin(t * Math.PI) * (height * 0.7);
-    }
-    
-    // S wave
-    if (pos >= 42 && pos < 46) {
-      const t = (pos - 42) / 4;
-      return midY + Math.sin(t * Math.PI / 2) * (height * 0.3);
-    }
-    
-    // ST segment
-    if (pos >= 46 && pos < 55) {
-      const t = (pos - 46) / 9;
-      return midY + (1 - t) * (height * 0.3);
-    }
-    
-    // T wave
-    if (pos >= 55 && pos < 70) {
-      const t = (pos - 55) / 15;
-      return midY - Math.sin(t * Math.PI) * (height * 0.2);
-    }
-    
-    // Final baseline
-    return midY;
+    return { x, y };
   };
   
-  const dotY = getDotYPosition();
+  const { x, y } = dotPosition();
+  const ekgPath = createEkgPath();
   
   return (
-    <div
-      key={animationKey}
-      className="ekg-wrapper"
-      style={{
-        width: `${width}px`,
+    <div 
+      key={animationId}
+      className="ekg-wrapper" 
+      style={{ 
+        width: `${width}px`, 
         height: `${height}px`,
-        display: 'inline-block',
-        position: 'relative',
         marginLeft: '8px',
-        marginTop: '2px'
+        position: 'relative',
+        display: 'inline-block'
       }}
     >
-      <svg
-        ref={svgRef}
-        width="100%"
-        height="100%"
+      <svg 
+        width="100%" 
+        height="100%" 
         viewBox={`0 0 ${width} ${height}`}
-        xmlns="http://www.w3.org/2000/svg"
         className="ekg-svg"
       >
-        {/* Grid lines for EKG effect */}
+        {/* Background grid for medical look */}
         <g className="ekg-grid">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <line
+          {[0, 1, 2, 3, 4].map(i => (
+            <line 
               key={`h-${i}`}
-              x1="0"
-              y1={(height / 5) * i}
-              x2={width}
-              y2={(height / 5) * i}
-              stroke="rgba(6, 182, 212, 0.1)"
+              x1="0" 
+              y1={height * (i / 4)} 
+              x2={width} 
+              y2={height * (i / 4)} 
+              stroke="rgba(99, 102, 241, 0.08)"
               strokeWidth="0.5"
             />
           ))}
-          {Array.from({ length: 10 }).map((_, i) => (
-            <line
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            <line 
               key={`v-${i}`}
-              x1={(width / 10) * i}
-              y1="0"
-              x2={(width / 10) * i}
-              y2={height}
-              stroke="rgba(6, 182, 212, 0.1)"
+              x1={width * (i / 8)} 
+              y1="0" 
+              x2={width * (i / 8)} 
+              y2={height} 
+              stroke="rgba(99, 102, 241, 0.08)"
               strokeWidth="0.5"
             />
           ))}
         </g>
-        
-        {/* EKG line with gradient */}
-        <defs>
-          <linearGradient id="ekgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={color} stopOpacity="0.8" />
-            <stop offset="100%" stopColor={color} stopOpacity="1" />
-          </linearGradient>
-          
-          {/* Clipping mask for animation */}
-          <clipPath id="lineClip">
-            <rect x="0" y="0" width={`${clipPercentage}%`} height="100%" />
-          </clipPath>
-          
-          {/* Glow filter */}
-          <filter id="ekgGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="1.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-        
-        {/* Background EKG line - faded */}
-        <polyline
-          points={points}
+      
+        {/* Complete EKG path (faded) */}
+        <path
+          d={ekgPath}
           fill="none"
-          stroke="rgba(6, 182, 212, 0.1)"
+          stroke="rgba(99, 102, 241, 0.15)"
           strokeWidth="1"
-          strokeLinejoin="round"
           strokeLinecap="round"
+          strokeLinejoin="round"
         />
         
-        {/* Main EKG line with animation */}
-        <polyline
-          className="ekg-line"
-          points={points}
+        {/* Animated EKG portion */}
+        <path
+          className="ekg-path"
+          d={ekgPath}
           fill="none"
-          stroke="url(#ekgGradient)"
+          stroke={color}
           strokeWidth="2"
-          strokeLinejoin="round"
           strokeLinecap="round"
-          clipPath="url(#lineClip)"
-          filter="url(#ekgGlow)"
+          strokeLinejoin="round"
+          strokeDasharray="1000"
+          strokeDashoffset={1000 - (progress / 100) * 1000}
         />
         
-        {/* Moving dot at the head of the line */}
-        {position > 0 && position < 100 && (
-          <circle
-            className="ekg-dot"
-            cx={`${clipPercentage}%`}
-            cy={dotY}
-            r="2"
-            fill="white"
-          />
-        )}
+        {/* Glowing dot following the line */}
+        <circle
+          className="ekg-dot"
+          cx={x}
+          cy={y}
+          r="2"
+          fill="white"
+        />
       </svg>
     </div>
   );
