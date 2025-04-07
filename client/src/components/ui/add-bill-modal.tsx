@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -6,6 +6,7 @@ import { billFormSchema } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
+import { useBillFormState } from "@/hooks/use-bill-form-state";
 import {
   Dialog,
   DialogContent,
@@ -36,16 +37,27 @@ type FormValues = z.infer<typeof billFormSchema>;
 export default function AddBillModal({ open, onOpenChange, defaultDueDate }: AddBillModalProps) {
   const { toast } = useToast();
   const { t, language } = useLanguage();
+  const { selectedDueDate, setSelectedDueDate } = useBillFormState();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Determine the due date to use - prioritize props over context
+  const initialDueDate = defaultDueDate || selectedDueDate || 1;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(billFormSchema),
     defaultValues: {
       name: "",
       amount: "",
-      due_date: defaultDueDate || 1,
+      due_date: initialDueDate,
     },
   });
+  
+  // Update form value when selectedDueDate changes
+  useEffect(() => {
+    if (selectedDueDate) {
+      form.setValue("due_date", selectedDueDate);
+    }
+  }, [selectedDueDate, form]);
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
@@ -70,8 +82,9 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
         description: language === 'en' ? "Your bill has been added successfully" : "Tu factura ha sido añadida exitosamente",
       });
       
-      // Reset form and close modal
+      // Reset form and context, then close modal
       form.reset();
+      setSelectedDueDate(null); // Clear the context
       onOpenChange(false);
     } catch (error) {
       console.error("Add bill error:", error);
@@ -91,8 +104,17 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
   // Generate days 1-31 for the due date select
   const dueDate = Array.from({ length: 31 }, (_, i) => i + 1);
 
+  // Handle dialog close
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      // Clear the due date context when the modal is closed
+      setSelectedDueDate(null);
+    }
+    onOpenChange(open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('addBillTitle')}</DialogTitle>
@@ -171,7 +193,7 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
             />
             
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
                 {t('cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting} className="bg-red-500 hover:bg-red-600">

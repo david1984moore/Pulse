@@ -178,7 +178,10 @@ export default function DashboardPage() {
           {/* Right columns - Calendar & Chatbot */}
           <div className="lg:col-span-2 space-y-6">
             {/* Calendar */}
-            <CalendarView bills={bills || []} />
+            <CalendarView 
+              bills={bills || []} 
+              onAddBill={() => setAddBillOpen(true)} 
+            />
 
             {/* Alice */}
             <Chatbot bills={bills || []} />

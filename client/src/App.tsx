@@ -9,6 +9,7 @@ import DashboardPage from "@/pages/dashboard-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 import { LanguageProvider } from "./hooks/use-language";
+import { BillFormStateProvider } from "./hooks/use-bill-form-state";
 
 function Router() {
   return (
@@ -27,8 +28,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <LanguageProvider>
-          <Router />
-          <Toaster />
+          <BillFormStateProvider>
+            <Router />
+            <Toaster />
+          </BillFormStateProvider>
         </LanguageProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
+import { useBillFormState } from "@/hooks/use-bill-form-state";
 import EditBillModal from "@/components/ui/edit-bill-modal";
-import AddBillModal from "@/components/ui/add-bill-modal";
 import { 
   format, 
   startOfMonth, 
@@ -24,14 +24,13 @@ interface CalendarViewProps {
 
 export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
   const { t } = useLanguage();
+  const { setSelectedDueDate } = useBillFormState();
   const [currentDate, setCurrentDate] = useState(new Date());
   const daysOfWeek = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map(day => t(day));
   
   // State for edit bill modal
   const [isEditBillModalOpen, setIsEditBillModalOpen] = useState(false);
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
-  const [isAddBillModalOpen, setIsAddBillModalOpen] = useState(false);
-  const [selectedDueDate, setSelectedDueDate] = useState<number | null>(null);
   
   // Get all days in the current month
   const monthStart = startOfMonth(currentDate);
@@ -68,13 +67,8 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
     }
   };
   
-  // Handle closing add bill modal
-  const handleAddBillModalClose = (open: boolean) => {
-    setIsAddBillModalOpen(open);
-    if (!open) {
-      setSelectedDueDate(null);
-    }
-  };
+  // We don't need to handle closing the add bill modal locally
+  // as it's now done in the parent component
   
   // Handle clicking on a day
   const handleDayClick = (day: number, dayBills: Bill[]) => {
@@ -82,10 +76,12 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
       // If there are bills, select the first one to edit
       setSelectedBill(dayBills[0]);
       setIsEditBillModalOpen(true);
+      console.log("Opening edit modal for bill:", dayBills[0]);
     } else if (onAddBill) {
-      // If no bills and onAddBill is provided, open add bill modal with the selected day
+      // If no bills and onAddBill is provided, open the standardized add bill modal
       setSelectedDueDate(day);
-      setIsAddBillModalOpen(true);
+      onAddBill(); // Use the parent component's add bill handler
+      console.log("Opening add bill modal with due date:", day);
     }
   };
   
@@ -97,15 +93,6 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         onOpenChange={handleEditBillModalClose} 
         bill={selectedBill} 
       />
-      
-      {/* Add Bill Modal with pre-selected date */}
-      {onAddBill && selectedDueDate !== null && (
-        <AddBillModal
-          open={isAddBillModalOpen}
-          onOpenChange={handleAddBillModalClose}
-          defaultDueDate={selectedDueDate}
-        />
-      )}
       
       <Card>
         <CardHeader className="pb-3 border-b border-gray-100">
