@@ -320,13 +320,17 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   )}
                   
                   <div
-                    className={`p-3 rounded-2xl max-w-sm ${
+                    className={`max-w-sm ${
                       message.sender === "user"
-                        ? "bg-gradient-to-br from-primary/20 to-primary/10 text-gray-800 rounded-tr-none shadow-sm border border-primary/30"
-                        : "bg-white text-gray-800 rounded-tl-none shadow-sm border border-gray-200"
+                        ? "p-2 text-right"
+                        : "p-2"
                     }`}
                   >
-                    <p className={`${message.sender === "bot" ? "text-sm leading-relaxed" : "text-sm"}`}>
+                    <p className={`${
+                      message.sender === "user" 
+                        ? "text-sm text-primary font-medium" 
+                        : "text-sm leading-relaxed text-gray-800"
+                    }`}>
                       {message.sender === "bot" && message.isAnimating ? (
                         <TypeAnimation 
                           text={message.text} 
@@ -348,12 +352,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     </p>
                   </div>
                   
-                  {/* User avatar with enhanced styling */}
-                  {message.sender === "user" && (
-                    <div className="flex-shrink-0 h-9 w-9 rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 border border-blue-300 flex items-center justify-center ml-2 shadow-sm text-white">
-                      <span className="text-xs font-medium">You</span>
-                    </div>
-                  )}
+                  {/* Removed "You" indicator as requested */}
                 </div>
               </div>
             ))
