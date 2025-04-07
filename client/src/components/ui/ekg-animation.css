@@ -1,10 +1,78 @@
 
-/* Simplified ECG Line Animation */
+/* Pure CSS ECG/Heartbeat Animation */
 
-.ekg-inline-wrapper {
+.ecg-animation {
+  display: inline-block;
+  margin-left: 8px;
+  position: relative;
+  height: 30px;
+  width: 160px;
+  overflow: hidden;
   vertical-align: middle;
 }
 
-.ecg-line {
-  filter: drop-shadow(0 0 1px #00FF00);
+.heartbeat {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.heartbeat:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 500%;
+  height: 100%;
+  background: linear-gradient(to right, 
+    transparent 0%, transparent 35%, 
+    #00FF00 35%, #00FF00 35.5%, 
+    transparent 35.5%, transparent 37%,
+    #00FF00 37%, #00FF00 37.5%, 
+    transparent 37.5%, transparent 39.5%,
+    #00FF00 39.5%, #00FF00 40%,
+    #00FF00 40%, #00FF00 40.5%, 
+    transparent 40.5%, transparent 43%,
+    #00FF00 43%, #00FF00 44%,
+    #00FF00 44%, #00FF00 45%, 
+    transparent 45%, transparent 47%,
+    #00FF00 47%, #00FF00 48%,
+    transparent 48%, transparent 50%,
+    #00FF00 50%, #00FF00 51%,
+    transparent 51%, transparent 53%,
+    #00FF00 53%, #00FF00 54%, 
+    transparent 54%, transparent 56%,
+    #00FF00 56%, #00FF00 57%,
+    transparent 57%, transparent 59%,
+    #00FF00 59%, #00FF00 60%, 
+    transparent 60%, transparent 62%,
+    #00FF00 62%, #00FF00 63%,
+    transparent 63%, transparent 70%
+  ), linear-gradient(
+    to right,
+    transparent 0%, transparent 70%,
+    #00FF00 70%, #00FF00 70.5%,
+    transparent 70.5%, transparent 72%,
+    #00FF00 72%, #00FF00 72.5%, 
+    transparent 72.5%, transparent 74.5%,
+    #00FF00 74.5%, #00FF00 75%,
+    #00FF00 75%, #00FF00 75.5%, 
+    transparent 75.5%, transparent 78%,
+    #00FF00 78%, #00FF00 79%,
+    transparent 79%, transparent 100%
+  );
+  background-repeat: repeat-x;
+  background-position: 0 center;
+  animation: heartbeat 5s linear infinite;
+  filter: drop-shadow(0 0 2px rgba(0, 255, 0, 0.6));
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
