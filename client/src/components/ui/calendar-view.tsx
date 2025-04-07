@@ -74,7 +74,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
 
   // Create array of placeholder elements for days before the month starts
   const placeholders = Array.from({ length: startDayOfWeek }, (_, i) => (
-    <div key={`empty-${i}`} className="h-12 bg-white rounded-md border border-gray-200"></div>
+    <div key={`empty-${i}`} className="h-12 bg-gray-100 rounded-md border border-gray-200"></div>
   ));
 
   // Function to check if a day has a bill due
@@ -128,7 +128,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
 
       <Card className="border border-gray-200 shadow-md">
         <CardContent>
-          <div className="bg-white rounded-lg">
+          <div className="bg-gray-100 rounded-lg"> {/* Lightened background */}
             <div className="flex items-center justify-between px-2 py-4 mb-2">
               <h3 className="text-xl font-bold text-gray-800 capitalize">
                 {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
@@ -154,7 +154,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             </div>
 
             {/* Day headers in a more cohesive row */}
-            <div className="flex w-full bg-gray-100 rounded-md border border-gray-200 mb-2">
+            <div className="flex w-full bg-gray-200 rounded-md border border-gray-200 mb-2"> {/* Lightened background */}
               {daysOfWeek.map((day) => (
                 <div key={day} className="flex-1 text-xs uppercase font-bold text-gray-700 text-center py-2">
                   {day}
@@ -162,10 +162,10 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
               ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-2 bg-gray-100 p-1 rounded-b-md"> {/* Lightened background */}
               {/* Empty placeholders */}
               {placeholders.map((placeholder, index) => (
-                <div key={`empty-${index}`} className="h-12 bg-white rounded-md border border-gray-200"></div>
+                <div key={`empty-${index}`} className="h-12 bg-gray-100 rounded-md border border-gray-200"></div>
               ))}
 
               {/* Day cells */}
@@ -184,7 +184,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                         ? "bg-primary/10 text-primary-600 border-primary/20" 
                         : hasBills
                           ? "bg-red-50 border-gray-200 hover:bg-red-100"
-                          : "bg-white hover:bg-gray-50"
+                          : "bg-gray-50 hover:bg-gray-100" {/* Lightened background */}
                       }
                     `}
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
