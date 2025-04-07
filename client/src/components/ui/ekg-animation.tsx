@@ -1,13 +1,17 @@
-// Super simple EKG animation that runs exactly once when activated
-import { useState, useEffect } from 'react';
+/**
+ * EKG Animation Component - Creates a single-run hospital-style ECG trace
+ * 
+ * This component creates an ECG/EKG heartbeat trace animation that runs exactly once
+ * when triggered, with no repeats. It completely unmounts itself after completion.
+ */
+import React, { useRef, useLayoutEffect } from 'react';
 
-// Interface for the component props
 interface EkgAnimationProps {
-  runAnimation: boolean;
-  onComplete?: () => void;
-  color?: string;
-  width?: number;
-  height?: number;
+  runAnimation: boolean;  // Trigger to start the animation
+  onComplete?: () => void; // Callback when animation finishes
+  color?: string;         // Line color
+  width?: number;         // Component width
+  height?: number;        // Component height
 }
 
 export function EkgAnimation({
@@ -17,37 +21,71 @@ export function EkgAnimation({
   width = 100,
   height = 25
 }: EkgAnimationProps) {
-  // Animation key to force new animation on each trigger
-  const [animationKey, setAnimationKey] = useState(0);
+  // We'll use refs to interact directly with DOM elements
+  const containerRef = useRef<HTMLDivElement>(null);
+  const polylineRef = useRef<SVGPolylineElement>(null);
+  const animationStarted = useRef<boolean>(false);
   
-  // Visibility state
-  const [isVisible, setIsVisible] = useState(false);
-  
-  // When runAnimation changes to true, start a new animation cycle
-  useEffect(() => {
-    if (runAnimation && !isVisible) {
-      // Show the animation
-      setIsVisible(true);
+  // Run exactly once when the component mounts and runAnimation is true
+  useLayoutEffect(() => {
+    // Only run animation if triggered and not already running
+    if (runAnimation && !animationStarted.current) {
+      // Mark as started
+      animationStarted.current = true;
       
-      // Increment key to force new animation
-      setAnimationKey(prev => prev + 1);
+      // Grab the polyline element
+      const polyline = polylineRef.current;
       
-      // Set timeout to automatically hide and clean up after animation
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-        if (onComplete) onComplete();
-      }, 2000); // Match duration of animation
+      if (!polyline) return;
       
-      return () => clearTimeout(timer);
+      // Get total length of the path for precise animation
+      const pathLength = polyline.getTotalLength();
+      
+      // Set initial state - fully hidden
+      polyline.style.strokeDasharray = `${pathLength}`;
+      polyline.style.strokeDashoffset = `${pathLength}`;
+      
+      // Force a reflow to ensure initial state is applied
+      void polyline.getBoundingClientRect();
+      
+      // Define animation specs
+      const animDuration = 1500; // ms
+      
+      // Create and apply the animation
+      const animation = polyline.animate(
+        [
+          { strokeDashoffset: pathLength }, // Start (hidden)
+          { strokeDashoffset: 0 }           // End (fully visible)
+        ],
+        {
+          duration: animDuration,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+      
+      // When animation completes
+      animation.onfinish = () => {
+        // Hold the final state briefly
+        setTimeout(() => {
+          // Notify parent component
+          if (onComplete) onComplete();
+        }, 200);
+      };
+      
+      // Cleanup in case component unmounts during animation
+      return () => {
+        animation.cancel();
+      };
     }
   }, [runAnimation, onComplete]);
   
-  // If not visible, render nothing
-  if (!isVisible) {
+  // If not triggered, don't render anything
+  if (!runAnimation) {
     return null;
   }
   
-  // ECG trace points - creates a realistic heartbeat pattern
+  // ECG/EKG waveform points - mimics a realistic single heartbeat
   const points = [
     [0, height/2],         // Start at baseline
     [width*0.1, height/2], // Continue baseline
@@ -65,8 +103,10 @@ export function EkgAnimation({
     [width*0.30, height/2 - height*0.6],  // R wave (tall spike)
     [width*0.33, height/2 + height*0.2],  // S wave
     
-    // ST segment & T wave (ventricular repolarization)
+    // ST segment
     [width*0.36, height/2],
+    
+    // T wave (ventricular repolarization)
     [width*0.45, height/2 - height*0.15],
     [width*0.52, height/2],
     
@@ -75,41 +115,26 @@ export function EkgAnimation({
     [width, height/2]
   ].map(point => point.join(',')).join(' ');
   
-  // Create animation CSS for this specific instance
-  const animationCSS = `
-    @keyframes drawEkg_${animationKey} {
-      0% { 
-        stroke-dasharray: 0, ${width * 2}; 
-        stroke-dashoffset: ${width * 2}; 
-      }
-      100% { 
-        stroke-dasharray: ${width * 2}, 0; 
-        stroke-dashoffset: 0; 
-      }
-    }
-  `;
-  
   return (
     <div 
+      ref={containerRef}
       style={{
         width: `${width}px`,
         height: `${height}px`,
         display: 'inline-block',
         position: 'relative',
         marginLeft: '8px',
-        marginTop: '2px'
+        marginTop: '2px',
+        overflow: 'hidden'
       }}
     >
-      {/* Inject animation keyframes */}
-      <style>{animationCSS}</style>
-      
-      {/* SVG for the EKG line */}
       <svg
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
       >
         <polyline
+          ref={polylineRef}
           points={points}
           stroke={color}
           strokeWidth="2.5"
@@ -117,9 +142,7 @@ export function EkgAnimation({
           strokeLinejoin="round"
           fill="none"
           style={{
-            filter: 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))',
-            animation: `drawEkg_${animationKey} 2s ease-out forwards`,
-            animationIterationCount: '1'
+            filter: 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))'
           }}
         />
       </svg>

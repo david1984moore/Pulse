@@ -50,11 +50,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const [isCustomAmount, setIsCustomAmount] = useState<boolean>(false);
   const [isPending, setIsPending] = useState(false);
   
-  // Single EKG animation trigger that resets itself
+  // Controls when the EKG animation should run (true = run, false = don't run)
   const [ekgTrigger, setEkgTrigger] = useState(false);
   
-  // Block multiple rapid clicks
-  const isProcessingRef = useRef(false);
+  // Prevent multiple rapid/duplicate clicks
+  const isSubmittingRef = useRef(false);
   
   // Chat messages
   const [messages, setMessages] = useState<Message[]>([
@@ -234,26 +234,31 @@ export default function Chatbot({ bills }: ChatbotProps) {
     }
   };
 
-  // Handler for the "Ask" button click with EKG animation
+  /**
+   * Handle the "Ask" button click with EKG animation
+   * This function ensures:
+   * 1. The EKG animation runs exactly once
+   * 2. Multiple clicks are prevented
+   * 3. The API request is triggered
+   */
   const handleSubmitWithEkg = () => {
-    // Prevent multiple rapid clicks
-    if (isPending || isProcessingRef.current) return;
+    // Prevent multiple rapid clicks or processing while waiting
+    if (isPending || isSubmittingRef.current) return;
     
-    // Set processing flag to true to prevent double-clicks
-    isProcessingRef.current = true;
+    // Set processing flag to block double-clicks
+    isSubmittingRef.current = true;
     
-    // Simply toggle the trigger to true - the animation
-    // will control its own lifecycle thanks to the useEffect in EkgAnimation
+    // Trigger the EKG animation
     setEkgTrigger(true);
     
-    // Submit the request
+    // Submit the request to the API
     handleSubmit();
     
-    // Animation will automatically reset through the onComplete callback
-    // But we'll reset our isProcessing flag after a reasonable timeout
+    // Reset the processing flag after a delay
+    // This is a safety measure in case the animation callback fails
     setTimeout(() => {
-      isProcessingRef.current = false;
-    }, 2500);
+      isSubmittingRef.current = false;
+    }, 2000);
   };
   
   return (
