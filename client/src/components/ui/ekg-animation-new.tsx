@@ -1,6 +1,6 @@
 /**
  * Super Simple EKG Animation
- * Uses a basic CSS animation that runs once and disappears
+ * A single clean line that appears out of thin air and has a follow-through effect
  */
 import { useState, useEffect } from 'react';
 import './ekg-animation.css';
@@ -32,7 +32,7 @@ export function EkgAnimation({
       // Wait for the animation to finish, then call onComplete
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 1500);
+      }, 1800); // Extended slightly to allow follow-through to complete
       
       return () => clearTimeout(timer);
     }
@@ -45,13 +45,13 @@ export function EkgAnimation({
   const ekgPathData = `
     M 0,${height/2}
     L ${width*0.2},${height/2}
-    Q ${width*0.25},${height/2-3} ${width*0.3},${height/2}
+    L ${width*0.3},${height/2}
     L ${width*0.38},${height/2}
     L ${width*0.42},${height/2+3}
     L ${width*0.45},${height/2-height*0.6}
     L ${width*0.5},${height/2+height*0.2}
     L ${width*0.55},${height/2}
-    Q ${width*0.65},${height/2-height*0.25} ${width*0.75},${height/2}
+    L ${width*0.75},${height/2}
     L ${width},${height/2}
   `;
 
@@ -73,41 +73,15 @@ export function EkgAnimation({
         viewBox={`0 0 ${width} ${height}`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Base trace layer */}
+        {/* Simple, clean trace line with a single effect */}
         <path
           d={ekgPathData}
           fill="none"
           stroke={color}
-          strokeWidth="3.5"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="ekg-path"
-        />
-        
-        {/* Follow-through effect - appears with a delay after the main trace */}
-        <path
-          d={ekgPathData}
-          fill="none"
-          stroke={color} 
-          strokeWidth="5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="ekg-follow"
-        />
-        
-        {/* Additional subtle glow */}
-        <path
-          d={ekgPathData}
-          fill="none"
-          stroke="white"
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{ 
-            opacity: 0.4,
-            filter: 'blur(1px)'
-          }}
-          className="ekg-path"
+          className="ekg-path ekg-line"
         />
       </svg>
     </div>
