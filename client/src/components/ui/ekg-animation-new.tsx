@@ -100,7 +100,7 @@ export function EkgAnimation({
         position: 'relative',
         marginLeft: '8px',
         marginTop: '2px',
-        filter: 'drop-shadow(0 0 8px rgba(236, 72, 153, 0.7))'
+        filter: 'drop-shadow(0 0 8px rgba(99, 102, 241, 0.7))'
       }}
       className="ekg-wrapper"
     >
@@ -113,9 +113,9 @@ export function EkgAnimation({
         {/* Glowing background path for added effect */}
         <defs>
           <linearGradient id="ekgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(236, 72, 153, 0.1)" />
-            <stop offset="50%" stopColor="rgba(244, 114, 182, 0.35)" />
-            <stop offset="100%" stopColor="rgba(236, 72, 153, 0.1)" />
+            <stop offset="0%" stopColor="rgba(99, 102, 241, 0.1)" />
+            <stop offset="50%" stopColor="rgba(129, 140, 248, 0.35)" />
+            <stop offset="100%" stopColor="rgba(99, 102, 241, 0.1)" />
           </linearGradient>
         </defs>
         
