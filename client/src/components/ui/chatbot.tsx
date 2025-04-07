@@ -263,15 +263,18 @@ export default function Chatbot({ bills }: ChatbotProps) {
   return (
     <div className="relative">
       {/* Full width ECG animation that shows when active */}
-      <div className="ekg-fullwidth">
-        <CanvasEkgAnimation 
-          active={isPending} 
-          backgroundColor="rgba(59, 130, 246, 0.05)"
-          lineColor="#FFFFFF"
-          width={800} 
-          height={120}
-        />
-      </div>
+      {/* Only render the EKG when needed and with fixed width */}
+      {isPending && (
+        <div className="ekg-fullwidth">
+          <CanvasEkgAnimation 
+            active={isPending} 
+            backgroundColor="rgba(59, 130, 246, 0.05)"
+            lineColor="#FFFFFF"
+            width={600} 
+            height={100}
+          />
+        </div>
+      )}
       
       <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl relative z-10">
         <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">

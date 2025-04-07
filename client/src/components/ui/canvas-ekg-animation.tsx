@@ -56,12 +56,16 @@ export default function CanvasEkgAnimation({
     // Start at the left edge
     ctx.moveTo(0, centerY);
     
+    // Draw more efficiently with fewer points - calculate key points 
+    // only rather than every pixel (performance optimization)
+    const step = 6; // Larger step size means fewer calculations
+    
     // Only draw up to the current position based on progress
-    for (let x = 0; x <= leadX; x += 3) {
+    for (let x = 0; x <= leadX; x += step) {
       let y = centerY;
       const normalizedX = x / width;
       
-      // Create realistic ECG pattern
+      // Create realistic ECG pattern with fewer calculations
       // Baseline
       if (normalizedX < 0.1) {
         y = centerY;
@@ -75,7 +79,7 @@ export default function CanvasEkgAnimation({
       else if (normalizedX >= 0.2 && normalizedX < 0.25) {
         y = centerY;
       }
-      // QRS complex
+      // QRS complex (key feature - keep more detail here)
       else if (normalizedX >= 0.25 && normalizedX < 0.27) {
         // Q wave
         const qPhase = (normalizedX - 0.25) / 0.02;
@@ -84,12 +88,12 @@ export default function CanvasEkgAnimation({
       else if (normalizedX >= 0.27 && normalizedX < 0.3) {
         // R wave (big spike)
         const rPhase = (normalizedX - 0.27) / 0.03;
-        y = centerY + 7 - 45 * rPhase; 
+        y = centerY + 7 - 40 * rPhase; 
       }
       else if (normalizedX >= 0.3 && normalizedX < 0.33) {
         // S wave
         const sPhase = (normalizedX - 0.3) / 0.03;
-        y = centerY - 38 + 50 * sPhase;
+        y = centerY - 33 + 45 * sPhase;
       }
       // ST segment
       else if (normalizedX >= 0.33 && normalizedX < 0.4) {
@@ -151,58 +155,61 @@ export default function CanvasEkgAnimation({
       ctx.fill();
     }
     
-    // Add subtle trail effect
-    const trailLength = Math.min(leadX, 150);
-    const gradient = ctx.createLinearGradient(
-      leadX - trailLength, 0, 
-      leadX, 0
-    );
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
-    gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.3)');
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
-    
-    ctx.strokeStyle = gradient;
-    ctx.lineWidth = 3;
-    ctx.shadowBlur = 8;
-    ctx.beginPath();
-    
-    // Calculate and draw only the visible part of the trail
-    let trailStartX = Math.max(0, leadX - trailLength);
-    ctx.moveTo(trailStartX, centerY);
-    
-    for (let x = trailStartX; x <= leadX; x += 3) {
-      let y = centerY;
-      const normalizedX = x / width;
+    // Simplified trail effect - just a short gradient line for performance
+    // This creates a similar visual effect with much fewer calculations
+    if (leadX > 50) { // Only draw trail after we have enough of a line
+      const trailLength = Math.min(leadX, 100); // Shorter trail for better performance
       
-      // Use the same pattern calculation as the main line
-      if (normalizedX < 0.1) {
-        y = centerY;
-      } else if (normalizedX >= 0.1 && normalizedX < 0.2) {
-        const pPhase = (normalizedX - 0.1) / 0.1;
-        y = centerY - 5 * Math.sin(pPhase * Math.PI);
-      } else if (normalizedX >= 0.2 && normalizedX < 0.25) {
-        y = centerY;
-      } else if (normalizedX >= 0.25 && normalizedX < 0.27) {
-        const qPhase = (normalizedX - 0.25) / 0.02;
-        y = centerY + 7 * qPhase;
-      } else if (normalizedX >= 0.27 && normalizedX < 0.3) {
-        const rPhase = (normalizedX - 0.27) / 0.03;
-        y = centerY + 7 - 45 * rPhase;
-      } else if (normalizedX >= 0.3 && normalizedX < 0.33) {
-        const sPhase = (normalizedX - 0.3) / 0.03;
-        y = centerY - 38 + 50 * sPhase;
-      } else if (normalizedX >= 0.33 && normalizedX < 0.4) {
-        y = centerY + 12 - (12 * ((normalizedX - 0.33) / 0.07));
-      } else if (normalizedX >= 0.4 && normalizedX < 0.5) {
-        const tPhase = (normalizedX - 0.4) / 0.1;
-        y = centerY - 10 * Math.sin(tPhase * Math.PI);
-      } else {
-        y = centerY;
-      }
+      const gradient = ctx.createLinearGradient(
+        leadX - trailLength, 0, 
+        leadX, 0
+      );
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.3)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
       
-      ctx.lineTo(x, y);
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 3;
+      ctx.shadowBlur = 8;
+      
+      // Draw simplified trail with just 3 points - better performance
+      const trailStartX = Math.max(0, leadX - trailLength);
+      
+      // Find the y-values at start, middle and end points
+      const getYAtX = (x: number): number => {
+        const normalizedX = x / width;
+        
+        // Simplified pattern calculation
+        if (normalizedX < 0.2) {
+          return centerY;
+        } else if (normalizedX >= 0.27 && normalizedX < 0.31) {
+          // QRS peak (most important visual feature)
+          const rPhase = (normalizedX - 0.27) / 0.04;
+          if (rPhase < 0.5) {
+            return centerY - 30 * rPhase * 2;
+          } else {
+            return centerY - 30 + 40 * (rPhase - 0.5) * 2;
+          }
+        } else if (normalizedX >= 0.4 && normalizedX < 0.5) {
+          // T-wave
+          const tPhase = (normalizedX - 0.4) / 0.1;
+          return centerY - 8 * Math.sin(tPhase * Math.PI);
+        } else {
+          return centerY;
+        }
+      };
+      
+      // Draw just the simplified trail with fewer points
+      ctx.beginPath();
+      ctx.moveTo(trailStartX, getYAtX(trailStartX));
+      
+      // Add a few key points
+      const midX = trailStartX + (leadX - trailStartX) / 2;
+      ctx.lineTo(midX, getYAtX(midX));
+      ctx.lineTo(leadX, getYAtX(leadX));
+      
+      ctx.stroke();
     }
-    ctx.stroke();
     
     // If cycle completed, stop animation if not set to continuous
     if (progress >= 1) {
@@ -212,36 +219,39 @@ export default function CanvasEkgAnimation({
     return false; // Animation still in progress
   };
   
-  // Animation loop
+  // Animation loop with performance optimizations
   const animate = (timestamp: number) => {
     if (!startTimeRef.current) {
       startTimeRef.current = timestamp;
     }
     
+    // Calculate elapsed time but don't continuously update
+    // This helps prevent performance issues
     const elapsed = timestamp - startTimeRef.current;
     const ctx = canvasRef.current?.getContext('2d');
     
     if (ctx) {
       const isComplete = drawEkg(ctx, elapsed);
       
-      // If animation completed and still active, reset and start again
-      if (isComplete && active) {
-        startTimeRef.current = timestamp;
-      } else if (!isComplete && active) {
-        // Continue animation
-        animationFrameId.current = requestAnimationFrame(animate);
-      } else if (!active) {
-        // Not active, stop animation
-        if (animationFrameId.current) {
-          cancelAnimationFrame(animationFrameId.current);
-          animationFrameId.current = null;
+      // If animation completed, stop the animation loop
+      if (isComplete) {
+        // Finished one cycle
+        if (active) {
+          // Only restart if still active (prevents continuous looping)
+          startTimeRef.current = timestamp;
+          // Schedule next frame only after completing current cycle
+          animationFrameId.current = requestAnimationFrame(animate);
+        } else {
+          // Not active anymore, just stop
+          if (animationFrameId.current) {
+            cancelAnimationFrame(animationFrameId.current);
+            animationFrameId.current = null;
+          }
         }
+      } else if (active) {
+        // Still animating current cycle, continue
+        animationFrameId.current = requestAnimationFrame(animate);
       }
-    }
-    
-    // Only request next frame if active
-    if (active) {
-      animationFrameId.current = requestAnimationFrame(animate);
     }
   };
   
