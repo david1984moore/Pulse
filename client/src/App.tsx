@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 import { LanguageProvider } from "./hooks/use-language";
 import { BillFormStateProvider } from "./hooks/use-bill-form-state";
+import { useEffect } from "react";
 
 function Router() {
   return (
@@ -24,6 +25,11 @@ function Router() {
 }
 
 function App() {
+  // Force dark mode across the application
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
+  
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
