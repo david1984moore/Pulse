@@ -276,7 +276,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 } mb-2`}
               >
                 <div
-                  className={`p-3 rounded-lg max-w-xs ${
+                  className={`p-3 rounded-lg max-w-sm ${
                     message.sender === "user"
                       ? "bg-primary/10 text-gray-800 rounded-tr-none"
                       : "text-gray-800 rounded-tl-none"
@@ -286,7 +286,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     {message.sender === "bot" && message.isAnimating ? (
                       <TypeAnimation 
                         text={message.text} 
-                        speed={15}
+                        speed={12}
                         onComplete={() => handleAnimationComplete(index)}
                         onCharacterTyped={() => {
                           // Scroll to bottom on each character typed
