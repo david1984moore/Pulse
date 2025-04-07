@@ -247,12 +247,18 @@ export default function Chatbot({ bills }: ChatbotProps) {
     // Force animation to reset completely before starting
     setIsPending(false);
     
-    // Small delay to ensure animation resets completely before starting again
+    // Properly sequence the animation start with a longer delay
+    // This ensures the component has time to unmount/remount properly
     setTimeout(() => {
-      // Submit API request and start new animation
+      // Start animation first
       setIsPending(true);
-      handleSubmit();
-    }, 50);
+      
+      // Then submit API request after animation has started
+      // This small delay ensures the animation is visible
+      setTimeout(() => {
+        handleSubmit();
+      }, 100);
+    }, 100);
     
     // Reset submission flag after a delay to prevent double-clicks
     setTimeout(() => {
@@ -265,13 +271,13 @@ export default function Chatbot({ bills }: ChatbotProps) {
       {/* Full width ECG animation that shows when active */}
       {/* Only render the EKG when needed and with fixed width */}
       {isPending && (
-        <div className="ekg-fullwidth">
+        <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
           <CanvasEkgAnimation 
             active={isPending} 
             backgroundColor="rgba(59, 130, 246, 0.05)"
             lineColor="#FFFFFF"
             width={600} 
-            height={100}
+            height={300}
           />
         </div>
       )}

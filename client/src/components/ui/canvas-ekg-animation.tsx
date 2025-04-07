@@ -310,13 +310,21 @@ export default function CanvasEkgAnimation({
     };
   }, []);
   
+  // Make sure canvas is visible with a good z-index and clear fade in/out
   return (
-    <div className="ekg-animation-container w-full relative">
+    <div className="ekg-animation-container w-full relative z-0">
       <canvas
         ref={canvasRef}
         width={width}
         height={height}
-        className={`transition-opacity duration-300 ${active ? 'opacity-100' : 'opacity-0'}`}
+        className={`transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%'
+        }}
       />
     </div>
   );
