@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import AliceEcg from "./alice-ecg";
-import CanvasEkgAnimation from "./canvas-ekg-animation";
 import {
   Select,
   SelectContent,
@@ -17,7 +16,6 @@ import { secureApiRequest } from "@/lib/csrf";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/use-language";
 import { TypeAnimation } from "@/components/ui/type-animation";
-import "./ekg-animation.css";
 
 interface ChatbotProps {
   bills: Bill[];
@@ -261,185 +259,172 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
   
   return (
-    <div className="relative">
-      {/* Full width ECG animation that shows when active */}
-      <div className="ekg-fullwidth">
-        <CanvasEkgAnimation 
-          active={isPending} 
-          backgroundColor="rgba(59, 130, 246, 0.05)"
-          lineColor="#FFFFFF"
-          width={800} 
-          height={120}
-        />
-      </div>
-      
-      <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl relative z-10">
-        <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
-          <div className="flex flex-row items-center justify-between">
-            <div className="flex items-center">
-              <div className="flex items-center px-5 py-2.5">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
-                  <span className="text-white font-bold text-lg">A</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="text-xl font-bold tracking-wide text-primary-600">
-                    {language === 'es' ? 'Alicia' : 'Alice'}
-                  </div>
-                  
-                  {/* Sexy ECG heartbeat animation next to Alice's name */}
-                  <AliceEcg active={isPending} color="#FFFFFF" />
-                </div>
+    <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl">
+      <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
+        <div className="flex flex-row items-center justify-between">
+          <div className="flex items-center">
+            <div className="flex items-center px-5 py-2.5">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
+                <span className="text-white font-bold text-lg">A</span>
               </div>
-            </div>
-            
-            <div className="flex items-center px-4 py-2">
-              <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
-                <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
-                <span className="font-bold text-primary-700">
-                  ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
-                </span>
+              <div className="flex items-center">
+                <div className="text-xl font-bold tracking-wide text-primary-600">
+                  {language === 'es' ? 'Alicia' : 'Alice'}
+                </div>
+                
+                {/* Sexy ECG heartbeat animation next to Alice's name */}
+                <AliceEcg active={isPending} color="#FFFFFF" />
               </div>
             </div>
           </div>
-        </CardHeader>
+          
+          <div className="flex items-center px-4 py-2">
+            <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
+              <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
+              <span className="font-bold text-primary-700">
+                ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </CardHeader>
       
-        <CardContent className="pt-5">
-          {/* Chat message area with improved styling */}
-          <ScrollArea 
-            ref={scrollAreaRef} 
-            className="bg-white/50 backdrop-blur-sm rounded-xl p-4 mb-5 h-72 border border-gray-100"
-          >
-            {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mb-4 shadow-md">
-                  <span className="text-white text-xl font-bold">A</span>
-                </div>
-                <h3 className="text-primary-600 font-bold text-lg mb-2">Your Financial Companion</h3>
-                <p className="text-gray-600 text-sm max-w-xs">
-                  Ask Alice if you can spend a specific amount and she'll analyze your financial situation.
-                </p>
+      <CardContent className="pt-5">
+        {/* Chat message area with improved styling */}
+        <ScrollArea 
+          ref={scrollAreaRef} 
+          className="bg-white/50 backdrop-blur-sm rounded-xl p-4 mb-5 h-72 border border-gray-100"
+        >
+          {messages.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center p-6">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mb-4 shadow-md">
+                <span className="text-white text-xl font-bold">A</span>
               </div>
-            ) : (
-              messages.map((message, index) => (
-                <div key={index} className="mb-6">
+              <h3 className="text-primary-600 font-bold text-lg mb-2">Your Financial Companion</h3>
+              <p className="text-gray-600 text-sm max-w-xs">
+                Ask Alice if you can spend a specific amount and she'll analyze your financial situation.
+              </p>
+            </div>
+          ) : (
+            messages.map((message, index) => (
+              <div key={index} className="mb-6">
+                <div
+                  className={`flex ${
+                    message.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {/* Bot avatar with attractive styling */}
+                  {message.sender === "bot" && (
+                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-sm">
+                      <span className="text-white font-bold text-sm">A</span>
+                    </div>
+                  )}
+                  
                   <div
-                    className={`flex ${
-                      message.sender === "user" ? "justify-end" : "justify-start"
+                    className={`max-w-sm ${
+                      message.sender === "user"
+                        ? "text-right"
+                        : ""
                     }`}
                   >
-                    {/* Bot avatar with attractive styling */}
-                    {message.sender === "bot" && (
-                      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-sm">
-                        <span className="text-white font-bold text-sm">A</span>
-                      </div>
-                    )}
-                    
-                    <div
-                      className={`max-w-sm ${
-                        message.sender === "user"
-                          ? "text-right"
-                          : ""
-                      }`}
-                    >
-                      <p className={`${
-                        message.sender === "user" 
-                          ? "text-sm text-primary-600 font-medium pb-1" 
-                          : "text-sm leading-relaxed text-gray-700 pb-1"
-                      }`}>
-                        {message.sender === "bot" && message.isAnimating ? (
-                          <TypeAnimation 
-                            text={message.text} 
-                            speed={12}
-                            onComplete={() => handleAnimationComplete(index)}
-                            onCharacterTyped={() => {
-                              // Scroll to bottom on each character typed
-                              if (scrollAreaRef.current) {
-                                const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-                                if (scrollContainer) {
-                                  scrollContainer.scrollTop = scrollContainer.scrollHeight;
-                                }
+                    <p className={`${
+                      message.sender === "user" 
+                        ? "text-sm text-primary-600 font-medium pb-1" 
+                        : "text-sm leading-relaxed text-gray-700 pb-1"
+                    }`}>
+                      {message.sender === "bot" && message.isAnimating ? (
+                        <TypeAnimation 
+                          text={message.text} 
+                          speed={12}
+                          onComplete={() => handleAnimationComplete(index)}
+                          onCharacterTyped={() => {
+                            // Scroll to bottom on each character typed
+                            if (scrollAreaRef.current) {
+                              const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+                              if (scrollContainer) {
+                                scrollContainer.scrollTop = scrollContainer.scrollHeight;
                               }
-                            }}
-                          />
-                        ) : (
-                          message.text
-                        )}
-                      </p>
-                      {/* Add subtle timestamp */}
-                      <div className={`text-[10px] text-gray-400 ${message.sender === "user" ? "text-right" : ""}`}>
-                        {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                      </div>
+                            }
+                          }}
+                        />
+                      ) : (
+                        message.text
+                      )}
+                    </p>
+                    {/* Add subtle timestamp */}
+                    <div className={`text-[10px] text-gray-400 ${message.sender === "user" ? "text-right" : ""}`}>
+                      {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </div>
                   </div>
                 </div>
-              ))
-            )}
-          </ScrollArea>
+              </div>
+            ))
+          )}
+        </ScrollArea>
 
-          {/* Input area with sleek modern styling */}
-          <div className="p-4 rounded-xl bg-white/80 border border-gray-100 shadow-sm">
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
-              {isCustomAmount ? (
-                <div className="flex w-full sm:flex-1">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
-                    <input
-                      type="number"
-                      value={customAmount}
-                      onChange={(e) => setCustomAmount(e.target.value)}
-                      placeholder="Enter amount"
-                      className="w-full pl-8 pr-4 py-2.5 border border-gray-200 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 shadow-sm transition-all duration-150"
-                    />
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="ml-2 bg-white border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all duration-150"
-                    onClick={() => {
-                      setIsCustomAmount(false);
-                      setCustomAmount("");
-                    }}
-                  >
-                    Cancel
-                  </Button>
+        {/* Input area with sleek modern styling */}
+        <div className="p-4 rounded-xl bg-white/80 border border-gray-100 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
+            {isCustomAmount ? (
+              <div className="flex w-full sm:flex-1">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
+                  <input
+                    type="number"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    placeholder="Enter amount"
+                    className="w-full pl-8 pr-4 py-2.5 border border-gray-200 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 shadow-sm transition-all duration-150"
+                  />
                 </div>
-              ) : (
-                <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-                  <SelectTrigger className="flex-1 border-gray-200 bg-white text-gray-800 shadow-sm hover:border-primary/40 transition-colors duration-150">
-                    <SelectValue placeholder={t('chatbotPlaceholder')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 text-gray-800">
-                    <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
-                    <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
-                    <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
-                    <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
-                    <SelectItem value="custom" className="text-primary font-medium">{t('customSpend')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-              {isPending ? (
-                // Show custom processing button when pending
-                <div className="w-full sm:w-auto px-4 py-2 rounded-md bg-primary/50 text-white flex items-center justify-center">
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  <span>{t('thinking')}</span>
-                </div>
-              ) : (
-                // Standard button when not pending
-                <Button
-                  onClick={handleSubmitClick}
-                  disabled={isCustomAmount ? !customAmount : !selectedAmount}
-                  className="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary text-white shadow-glow-sm transition-all duration-200"
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="ml-2 bg-white border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all duration-150"
+                  onClick={() => {
+                    setIsCustomAmount(false);
+                    setCustomAmount("");
+                  }}
                 >
-                  <div className="flex items-center justify-center group">
-                    <Send className="mr-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-                    <span>{t('ask')}</span>
-                  </div>
+                  Cancel
                 </Button>
-              )}
-            </div>
+              </div>
+            ) : (
+              <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
+                <SelectTrigger className="flex-1 border-gray-200 bg-white text-gray-800 shadow-sm hover:border-primary/40 transition-colors duration-150">
+                  <SelectValue placeholder={t('chatbotPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent className="bg-white border border-gray-200 text-gray-800">
+                  <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
+                  <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
+                  <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
+                  <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
+                  <SelectItem value="custom" className="text-primary font-medium">{t('customSpend')}</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+            {isPending ? (
+              // Show custom processing button when pending
+              <div className="w-full sm:w-auto px-4 py-2 rounded-md bg-primary/50 text-white flex items-center justify-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <span>{t('thinking')}</span>
+              </div>
+            ) : (
+              // Standard button when not pending
+              <Button
+                onClick={handleSubmitClick}
+                disabled={isCustomAmount ? !customAmount : !selectedAmount}
+                className="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary text-white shadow-glow-sm transition-all duration-200"
+              >
+                <div className="flex items-center justify-center group">
+                  <Send className="mr-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                  <span>{t('ask')}</span>
+                </div>
+              </Button>
+            )}
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
