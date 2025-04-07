@@ -1,26 +1,33 @@
-/* EKG Line Animation */
-.ekg-line {
+
+/* EKG Animation Styles */
+
+/* Main EKG path animation */
+.ekg-path {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: drawEkg 1.5s ease-in-out forwards;
-  filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.7));
+  animation: drawEkg 2s ease-in-out forwards;
+  filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.7));
 }
 
 @keyframes drawEkg {
   0% {
     stroke-dashoffset: 1000;
-    opacity: 0.3;
+    opacity: 0.5;
   }
-  30% {
-    stroke-dashoffset: 700;
-    opacity: 0.6;
+  20% {
+    stroke-dashoffset: 800;
+    opacity: 0.7;
+  }
+  40% {
+    stroke-dashoffset: 600;
+    opacity: 0.8;
   }
   60% {
     stroke-dashoffset: 400;
-    opacity: 0.8;
+    opacity: 0.9;
   }
-  90% {
-    stroke-dashoffset: 100;
+  80% {
+    stroke-dashoffset: 200;
     opacity: 1;
   }
   100% {
@@ -29,28 +36,21 @@
   }
 }
 
-/* Echo Animations - creates follow-through effect */
-.ekg-echo {
+/* First echo animation */
+.ekg-echo-1 {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   opacity: 0;
-  animation: echoEffect 1.5s ease-out forwards 0.5s;
-  filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+  animation: followThroughEcho1 2s ease-out forwards 1.5s;
+  filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.5));
 }
 
-.ekg-echo-2 {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  opacity: 0;
-  animation: echoEffect 1.5s ease-out forwards 1s;
-  filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.3));
-}
-
-@keyframes echoEffect {
+@keyframes followThroughEcho1 {
   0% {
     stroke-dashoffset: 1000;
     opacity: 0;
     transform: translateX(0);
+    stroke-width: 2px;
   }
   10% {
     opacity: 0.7;
@@ -59,25 +59,79 @@
   30% {
     stroke-dashoffset: 700;
     opacity: 0.5;
-    transform: translateX(5px);
+    transform: translateX(10px);
     stroke-width: 1.5px;
   }
-  60% {
-    stroke-dashoffset: 400;
+  50% {
+    stroke-dashoffset: 500;
+    opacity: 0.4;
+    transform: translateX(15px);
+    stroke-width: 1.3px;
+  }
+  70% {
+    stroke-dashoffset: 300;
     opacity: 0.3;
-    transform: translateX(10px);
-    stroke-width: 1.2px;
+    transform: translateX(20px);
+    stroke-width: 1px;
   }
   90% {
     stroke-dashoffset: 100;
+    opacity: 0.2;
+    transform: translateX(25px);
+    stroke-width: 0.8px;
+  }
+  100% {
+    stroke-dashoffset: 0;
     opacity: 0.1;
-    transform: translateX(15px);
+    transform: translateX(30px);
+    stroke-width: 0.5px;
+  }
+}
+
+/* Second echo animation for more follow-through effect */
+.ekg-echo-2 {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  opacity: 0;
+  animation: followThroughEcho2 2s ease-out forwards 2.5s;
+  filter: drop-shadow(0 0 1px rgba(59, 130, 246, 0.3));
+}
+
+@keyframes followThroughEcho2 {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+    transform: translateX(10px);
+    stroke-width: 1.5px;
+  }
+  20% {
+    stroke-dashoffset: 800;
+    opacity: 0.3;
+    transform: translateX(20px);
+    stroke-width: 1.2px;
+  }
+  40% {
+    stroke-dashoffset: 600;
+    opacity: 0.25;
+    transform: translateX(30px);
     stroke-width: 1px;
+  }
+  60% {
+    stroke-dashoffset: 400;
+    opacity: 0.2;
+    transform: translateX(40px);
+    stroke-width: 0.8px;
+  }
+  80% {
+    stroke-dashoffset: 200;
+    opacity: 0.1;
+    transform: translateX(50px);
+    stroke-width: 0.6px;
   }
   100% {
     stroke-dashoffset: 0;
     opacity: 0;
-    transform: translateX(20px);
-    stroke-width: 0.8px;
+    transform: translateX(60px);
+    stroke-width: 0.4px;
   }
 }

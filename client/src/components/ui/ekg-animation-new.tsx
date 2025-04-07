@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import './ekg-animation.css';
 
@@ -19,27 +18,27 @@ export function EkgAnimation({
 }: EkgAnimationProps) {
   const [animationKey, setAnimationKey] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const svgRef = useRef<SVGSVGElement>(null);
-  
+
   useEffect(() => {
     if (runAnimation) {
       setIsVisible(false);
-      
+
       setTimeout(() => {
         setAnimationKey(prev => prev + 1);
         setIsVisible(true);
       }, 50);
-      
+
+      // Wait for the animation and follow-through to completely finish
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 4000); // Total animation duration
-      
+      }, 6000); // Total animation duration
+
       return () => clearTimeout(timer);
     } else {
       setIsVisible(false);
     }
   }, [runAnimation, onComplete]);
-  
+
   if (!runAnimation || !isVisible) return null;
 
   return (
@@ -55,33 +54,27 @@ export function EkgAnimation({
       }}
     >
       <svg
-        ref={svgRef}
         width="100%"
         height="100%"
         viewBox={`0 0 ${width} ${height}`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <polyline
-          className="ekg-line"
-          points={`
-            0,${height/2} 
-            ${width*0.1},${height/2} 
-            ${width*0.15},${height/2} 
-            ${width*0.2},${height/2-1} 
-            ${width*0.25},${height/2+1} 
-            ${width*0.3},${height/2} 
-            ${width*0.35},${height/2-height*0.3} 
-            ${width*0.38},${height/2-height*0.7} 
-            ${width*0.4},${height/2+height*0.5} 
-            ${width*0.45},${height/2-height*0.1} 
-            ${width*0.5},${height/2} 
-            ${width*0.6},${height/2} 
-            ${width*0.65},${height/2} 
-            ${width*0.7},${height/2} 
-            ${width*0.75},${height/2} 
-            ${width*0.8},${height/2} 
-            ${width*0.85},${height/2} 
-            ${width},${height/2}
+        {/* Main EKG path */}
+        <path
+          className="ekg-path"
+          d={`
+            M 0,${height/2}
+            L ${width*0.2},${height/2}
+            L ${width*0.25},${height/2-1}
+            L ${width*0.3},${height/2+1}
+            L ${width*0.35},${height/2}
+            L ${width*0.4},${height/2}
+            L ${width*0.45},${height/2-height*0.6}
+            L ${width*0.5},${height/2+height*0.3}
+            L ${width*0.55},${height/2}
+            L ${width*0.7},${height/2}
+            L ${width*0.85},${height/2}
+            L ${width},${height/2}
           `}
           fill="none"
           stroke={color}
@@ -89,28 +82,23 @@ export function EkgAnimation({
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        
-        <polyline
-          className="ekg-echo"
-          points={`
-            0,${height/2} 
-            ${width*0.1},${height/2} 
-            ${width*0.15},${height/2} 
-            ${width*0.2},${height/2-1} 
-            ${width*0.25},${height/2+1} 
-            ${width*0.3},${height/2} 
-            ${width*0.35},${height/2-height*0.3} 
-            ${width*0.38},${height/2-height*0.7} 
-            ${width*0.4},${height/2+height*0.5} 
-            ${width*0.45},${height/2-height*0.1} 
-            ${width*0.5},${height/2} 
-            ${width*0.6},${height/2} 
-            ${width*0.65},${height/2} 
-            ${width*0.7},${height/2} 
-            ${width*0.75},${height/2} 
-            ${width*0.8},${height/2} 
-            ${width*0.85},${height/2} 
-            ${width},${height/2}
+
+        {/* First echo path for follow-through */}
+        <path
+          className="ekg-echo-1"
+          d={`
+            M 0,${height/2}
+            L ${width*0.2},${height/2}
+            L ${width*0.25},${height/2-1}
+            L ${width*0.3},${height/2+1}
+            L ${width*0.35},${height/2}
+            L ${width*0.4},${height/2}
+            L ${width*0.45},${height/2-height*0.6}
+            L ${width*0.5},${height/2+height*0.3}
+            L ${width*0.55},${height/2}
+            L ${width*0.7},${height/2}
+            L ${width*0.85},${height/2}
+            L ${width},${height/2}
           `}
           fill="none"
           stroke={color}
@@ -118,28 +106,23 @@ export function EkgAnimation({
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        
-        <polyline
+
+        {/* Second echo path for more follow-through */}
+        <path
           className="ekg-echo-2"
-          points={`
-            0,${height/2} 
-            ${width*0.1},${height/2} 
-            ${width*0.15},${height/2} 
-            ${width*0.2},${height/2-1} 
-            ${width*0.25},${height/2+1} 
-            ${width*0.3},${height/2} 
-            ${width*0.35},${height/2-height*0.3} 
-            ${width*0.38},${height/2-height*0.7} 
-            ${width*0.4},${height/2+height*0.5} 
-            ${width*0.45},${height/2-height*0.1} 
-            ${width*0.5},${height/2} 
-            ${width*0.6},${height/2} 
-            ${width*0.65},${height/2} 
-            ${width*0.7},${height/2} 
-            ${width*0.75},${height/2} 
-            ${width*0.8},${height/2} 
-            ${width*0.85},${height/2} 
-            ${width},${height/2}
+          d={`
+            M 0,${height/2}
+            L ${width*0.2},${height/2}
+            L ${width*0.25},${height/2-1}
+            L ${width*0.3},${height/2+1}
+            L ${width*0.35},${height/2}
+            L ${width*0.4},${height/2}
+            L ${width*0.45},${height/2-height*0.6}
+            L ${width*0.5},${height/2+height*0.3}
+            L ${width*0.55},${height/2}
+            L ${width*0.7},${height/2}
+            L ${width*0.85},${height/2}
+            L ${width},${height/2}
           `}
           fill="none"
           stroke={color}
