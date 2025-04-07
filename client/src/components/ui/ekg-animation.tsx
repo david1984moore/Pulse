@@ -115,8 +115,8 @@ export function EkgAnimation({
       polyline.style.filter = 'drop-shadow(0 0 2px rgba(59, 130, 246, 0.7))';
       
       // Set up animation parameters for the dash effect
-      // Make visible trace segment just right for the hospital look
-      polyline.style.strokeDasharray = `${width * 0.35}, ${width * 2}`; 
+      // Make visible trace segment much longer to show more of the pattern
+      polyline.style.strokeDasharray = `${width * 0.8}, ${width * 2}`; 
       polyline.style.strokeDashoffset = `${pathLength}`;
       
       // Add variable speed animation with pure JS to guarantee one-time execution
@@ -157,7 +157,8 @@ export function EkgAnimation({
           }
           
           // Calculate dash offset based on progress
-          const dashOffset = pathLength - (pathLength * 1.6 * progress);
+          // Use a larger multiplier to ensure more of the pattern is visible
+          const dashOffset = pathLength - (pathLength * 1.2 * progress);
           polyline.style.strokeDashoffset = `${dashOffset}`;
           
           // Continue animation
