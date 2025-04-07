@@ -12,154 +12,159 @@ interface EkgAnimationProps {
 export function EkgAnimation({
   runAnimation,
   onComplete,
-  color = '#6366f1',
+  color = '#00FF00',
   width = 160,
   height = 30
 }: EkgAnimationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
+  const dataBufferRef = useRef<number[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [animationId, setAnimationId] = useState(0);
   
-  // Generate EKG data similar to the Python matplotlib approach
-  const generateEkgData = (offset: number, stepSize = 0.05) => {
-    const samples = Math.floor(width / stepSize);
-    const data = [];
-    const midY = height / 2;
-    const amplitude = height * 0.3;
+  // Pre-generate a realistic ECG pattern based on the SciChart example
+  const generateEcgPattern = () => {
+    // We'll create a pattern that's approximately 2 seconds of ECG
+    const pattern: number[] = [];
+    const patternLength = 100;
     
-    for (let i = 0; i < samples; i++) {
-      // Normalize x to 0-1 range then adjust for offset
-      const x = (i * stepSize);
-      const normalizedX = ((x + offset) % width) / width * 2 * Math.PI * 2; // 2 cycles in the visible area
-      
-      // Base sine wave
-      let y = midY;
-      
-      // Baseline with occasional heartbeat waveform
-      // First determine if we're in a heartbeat segment
-      const cyclePoint = normalizedX % (2 * Math.PI);
-      
-      if (cyclePoint > 0.2 && cyclePoint < 1.0) {
-        // P wave
-        if (cyclePoint < 0.3) {
-          y = midY - Math.sin((cyclePoint - 0.2) * 10) * amplitude * 0.3;
-        }
-        // QRS complex
-        else if (cyclePoint >= 0.4 && cyclePoint < 0.6) {
-          const qrsPhase = (cyclePoint - 0.4) * 5; // normalize to 0-1 range
-          if (qrsPhase < 0.2) {
-            // Q wave (small downward)
-            y = midY + amplitude * 0.2 * (qrsPhase / 0.2);
-          } else if (qrsPhase < 0.5) {
-            // R wave (sharp upward)
-            y = midY + amplitude * 0.2 - amplitude * 1.0 * ((qrsPhase - 0.2) / 0.3);
-          } else if (qrsPhase < 0.8) {
-            // S wave (downward after R)
-            y = midY - amplitude * 0.8 + amplitude * 1.0 * ((qrsPhase - 0.5) / 0.3);
-          } else {
-            // Return to baseline
-            y = midY + amplitude * 0.2 - amplitude * 0.2 * ((qrsPhase - 0.8) / 0.2);
-          }
-        }
-        // T wave
-        else if (cyclePoint >= 0.7 && cyclePoint < 0.9) {
-          y = midY - Math.sin((cyclePoint - 0.7) * 5) * amplitude * 0.4;
-        }
-      }
-      
-      data.push({ x, y });
+    // Baseline
+    for (let i = 0; i < 10; i++) pattern.push(0);
+    
+    // P-wave (small bump)
+    for (let i = 0; i < 6; i++) {
+      pattern.push(Math.sin(i / 6 * Math.PI) * 0.15);
     }
     
-    return data;
+    // Back to baseline briefly
+    for (let i = 0; i < 6; i++) pattern.push(0);
+    
+    // QRS complex
+    pattern.push(-0.05); // Q-wave (small downward deflection)
+    pattern.push(-0.1);
+    pattern.push(0.05);  // Moving up to R
+    pattern.push(0.9);   // R-wave (sharp upward spike)
+    pattern.push(1.0);
+    pattern.push(0.9);
+    pattern.push(0.0);   // Moving down to S
+    pattern.push(-0.35); // S-wave (downward after R)
+    pattern.push(-0.2);
+    pattern.push(-0.1);
+    pattern.push(0.0);   // Back to baseline
+    
+    // ST segment (flat)
+    for (let i = 0; i < 10; i++) pattern.push(0);
+    
+    // T-wave (rounded bump)
+    for (let i = 0; i < 10; i++) {
+      pattern.push(Math.sin(i / 10 * Math.PI) * 0.3);
+    }
+    
+    // Back to baseline for remainder 
+    while (pattern.length < patternLength) {
+      pattern.push(0);
+    }
+    
+    return pattern;
   };
   
-  // Draw a frame of the animation
-  const drawFrame = (offset: number) => {
+  // Initialize the data buffer
+  useEffect(() => {
+    // Generate the pattern and repeat it to fill the buffer
+    const ecgPattern = generateEcgPattern();
+    const fullBuffer: number[] = [];
+    
+    // Fill buffer with multiple repetitions of the pattern
+    for (let i = 0; i < 10; i++) {
+      fullBuffer.push(...ecgPattern);
+    }
+    
+    dataBufferRef.current = fullBuffer;
+  }, []);
+  
+  // Draw one frame of the ECG animation
+  const drawFrame = (scrollPosition: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Clear canvas with dark blue background like SciChart example
+    ctx.fillStyle = '#0B0B2D';
+    ctx.fillRect(0, 0, width, height);
     
-    // Draw grid background for medical look
-    ctx.strokeStyle = 'rgba(99, 102, 241, 0.08)';
-    ctx.lineWidth = 0.5;
+    // Draw grid (dark blue lines)
+    ctx.strokeStyle = '#1C1C45';
+    ctx.lineWidth = 0.8;
     
-    // Horizontal grid lines
-    for (let i = 0; i <= 4; i++) {
+    // Major grid lines (vertical)
+    for (let i = 0; i <= width; i += 20) {
       ctx.beginPath();
-      const y = (height * i) / 4;
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, height);
       ctx.stroke();
     }
     
-    // Vertical grid lines
-    for (let i = 0; i <= 8; i++) {
+    // Major grid lines (horizontal)
+    for (let i = 0; i <= height; i += 10) {
       ctx.beginPath();
-      const x = (width * i) / 8;
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
+      ctx.moveTo(0, i);
+      ctx.lineTo(width, i);
       ctx.stroke();
     }
     
-    // Generate EKG data with current offset
-    const ekgData = generateEkgData(offset);
+    // Draw the ECG trace
+    const dataBuffer = dataBufferRef.current;
+    const dataLength = dataBuffer.length;
+    const midY = height / 2;
+    const amplitude = height * 0.4;
     
-    // Draw the EKG line
-    ctx.beginPath();
+    if (dataLength === 0) return;
+    
+    // Set up bright green line style with glow like SciChart
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 5;
     
-    // Create a subtle glow effect
-    ctx.shadowColor = 'rgba(99, 102, 241, 0.5)';
-    ctx.shadowBlur = 3;
+    // Drawing the continuous scrolling line
+    ctx.beginPath();
     
-    // Draw the continuous line
-    ekgData.forEach((point, index) => {
-      if (index === 0) {
-        ctx.moveTo(point.x, point.y);
+    // Start at the leftmost pixel on screen
+    const startIndex = Math.floor(scrollPosition) % dataLength;
+    let pointsDrawn = 0;
+    let currentIndex = startIndex;
+    
+    while (pointsDrawn < width) {
+      const x = pointsDrawn;
+      const dataPoint = dataBuffer[currentIndex % dataLength];
+      const y = midY - dataPoint * amplitude; // Transform data to screen coordinates
+      
+      if (pointsDrawn === 0) {
+        ctx.moveTo(x, y);
       } else {
-        ctx.lineTo(point.x, point.y);
+        ctx.lineTo(x, y);
       }
-    });
+      
+      currentIndex++;
+      pointsDrawn++;
+    }
+    
     ctx.stroke();
     
-    // Draw glowing dot at the most recent position
-    // Find the most recent EKG point (near starting edge)
-    const dotPosition = ekgData[5]; // Very close to start, but not the first point
-    if (dotPosition) {
-      // Outer glow
-      ctx.beginPath();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      ctx.arc(dotPosition.x, dotPosition.y, 3, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Inner dot
-      ctx.beginPath();
-      ctx.fillStyle = 'white';
-      ctx.shadowBlur = 5;
-      ctx.shadowColor = 'white';
-      ctx.arc(dotPosition.x, dotPosition.y, 2, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Reset shadow
-      ctx.shadowBlur = 0;
-    }
+    // Reset shadow blur
+    ctx.shadowBlur = 0;
   };
   
   // Animation loop
   useEffect(() => {
     if (!runAnimation || !isVisible) return;
     
-    let offset = 0;
-    const speed = 0.5; // Speed of the animation (pixels per frame)
+    let scrollPosition = 0;
+    const scrollSpeed = 1; // Pixels per frame to scroll
     const startTime = Date.now();
     const duration = 6000; // Animation duration in ms
     
@@ -167,14 +172,11 @@ export function EkgAnimation({
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // Update offset to scroll the EKG
-      offset += speed;
-      if (offset > width) {
-        offset = 0;
-      }
+      // Update scroll position
+      scrollPosition += scrollSpeed;
       
-      // Draw the current frame
-      drawFrame(offset);
+      // Draw current frame
+      drawFrame(scrollPosition);
       
       // Continue animation if still running
       if (progress < 1) {
@@ -222,10 +224,8 @@ export function EkgAnimation({
         height: `${height}px`,
         marginLeft: '8px',
         position: 'relative',
-        backgroundColor: 'black',
         borderRadius: '4px',
         overflow: 'hidden',
-        animation: 'pulse 2.0s linear infinite',
       }}
     >
       <canvas

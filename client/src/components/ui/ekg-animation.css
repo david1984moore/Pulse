@@ -1,10 +1,11 @@
 
-/* Real-time Medical Monitor EKG Animation Styles */
+/* SciChart-inspired Medical ECG Animation Styles */
 
-/* Main container with black background and subtle glow */
+/* Main container with dark blue background and subtle border */
 .ekg-container {
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.15);
+  border: 1px solid #0F0F3D;
+  background-color: #0B0B2D; /* Deep blue background */
 }
 
 /* Canvas element for drawing */
@@ -14,38 +15,18 @@
   left: 0;
 }
 
-/* Pulse animation for subtle glow effect */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
-  }
-  100% {
-    box-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
-  }
-}
-
-/* Additional subtle animations */
-.ekg-container::before {
+/* Add a subtle scanner effect */
+.ekg-container::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
+  bottom: 0;
+  width: 3px;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(99, 102, 241, 0), rgba(99, 102, 241, 0.5), rgba(99, 102, 241, 0));
-  animation: scan 2s linear infinite;
-}
-
-@keyframes scan {
-  0% {
-    transform: translateY(0);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
+  background: linear-gradient(to right, 
+    rgba(0, 0, 0, 0), 
+    rgba(0, 255, 0, 0.7)
+  );
+  opacity: 0.4;
+  pointer-events: none;
 }
