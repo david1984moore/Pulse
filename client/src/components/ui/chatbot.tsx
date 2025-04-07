@@ -261,12 +261,12 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
   
   return (
-    <Card className="backdrop-blur-md bg-white/90 shadow-xl border border-white/20 overflow-hidden rounded-2xl">
-      <CardHeader className="pb-4 border-b border-gray-100">
+    <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl">
+      <CardHeader className="pb-4 border-b border-gray-50 bg-gradient-to-r from-primary/5 to-primary/10">
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">
-            <CardTitle className="flex items-center relative px-5 py-2.5 bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 text-primary-700 rounded-xl shadow-glow-sm shadow-primary/10">
-              <span className="flex items-center justify-center font-bold tracking-wide">
+            <CardTitle className="flex items-center relative px-5 py-2.5 text-primary-700">
+              <span className="flex items-center justify-center font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-600">
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
             </CardTitle>
@@ -282,9 +282,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
               )}
             </div>
           </div>
-          <CardDescription className="flex items-center bg-gradient-to-r from-gray-50 to-gray-100 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm text-gray-800 border border-primary/20">
-            <DollarSign className="h-4 w-4 mr-2 text-primary" />
-            <span className="font-bold glow-text">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+          <CardDescription className="flex items-center px-4 py-2">
+            <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary/10 to-primary/20 shadow-sm">
+              <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
+              <span className="font-bold text-primary-600">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+            </div>
           </CardDescription>
         </div>
       </CardHeader>
@@ -293,7 +295,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
         {/* Chat message area with improved styling */}
         <ScrollArea 
           ref={scrollAreaRef} 
-          className="bg-gradient-to-br from-gray-50 to-gray-100/60 backdrop-blur-sm rounded-xl p-4 mb-5 h-72 border border-gray-200 shadow-inner"
+          className="bg-white/50 backdrop-blur-sm rounded-xl p-4 mb-5 h-72 border border-gray-100"
         >
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6">
@@ -306,30 +308,30 @@ export default function Chatbot({ bills }: ChatbotProps) {
             </div>
           ) : (
             messages.map((message, index) => (
-              <div key={index} className="mb-4">
+              <div key={index} className="mb-6">
                 <div
                   className={`flex ${
                     message.sender === "user" ? "justify-end" : "justify-start"
-                  } mb-2`}
+                  }`}
                 >
-                  {/* Bot avatar with enhanced styling */}
+                  {/* Bot avatar with minimal sleek styling */}
                   {message.sender === "bot" && (
-                    <div className="flex-shrink-0 h-9 w-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/20 border border-primary/40 flex items-center justify-center mr-2 shadow-glow-sm">
-                      <span className="text-primary font-bold text-sm">A</span>
+                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mr-3">
+                      <span className="text-primary-600 font-bold text-sm">A</span>
                     </div>
                   )}
                   
                   <div
                     className={`max-w-sm ${
                       message.sender === "user"
-                        ? "p-2 text-right"
-                        : "p-2"
+                        ? "text-right"
+                        : ""
                     }`}
                   >
                     <p className={`${
                       message.sender === "user" 
-                        ? "text-sm text-primary font-medium" 
-                        : "text-sm leading-relaxed text-gray-800"
+                        ? "text-sm text-primary-600 font-medium pb-1" 
+                        : "text-sm leading-relaxed text-gray-700 pb-1"
                     }`}>
                       {message.sender === "bot" && message.isAnimating ? (
                         <TypeAnimation 
@@ -350,17 +352,19 @@ export default function Chatbot({ bills }: ChatbotProps) {
                         message.text
                       )}
                     </p>
+                    {/* Add subtle timestamp */}
+                    <div className={`text-[10px] text-gray-400 ${message.sender === "user" ? "text-right" : ""}`}>
+                      {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </div>
                   </div>
-                  
-                  {/* Removed "You" indicator as requested */}
                 </div>
               </div>
             ))
           )}
         </ScrollArea>
 
-        {/* Input area with enhanced styling */}
-        <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-sm">
+        {/* Input area with sleek modern styling */}
+        <div className="p-4 rounded-xl bg-white/80 border border-gray-100 shadow-sm">
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
             {isCustomAmount ? (
               <div className="flex w-full sm:flex-1">
