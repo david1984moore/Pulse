@@ -31,7 +31,7 @@ export function EkgAnimation({
       // Wait for the animation and follow-through to completely finish
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 6000); // Total animation duration
+      }, 3500); // Reduced animation duration
 
       return () => clearTimeout(timer);
     } else {
@@ -41,42 +41,22 @@ export function EkgAnimation({
 
   if (!runAnimation || !isVisible) return null;
 
-  // Create a sleek, modern EKG pattern with a clean line and sophisticated rhythm
+  // Create a simplified, sleek EKG pattern with a clean trace
   const midY = height/2;
   const ekgPath = `
     M 0,${midY}
-    L ${width*0.12},${midY}
+    L ${width*0.25},${midY}
     
-    L ${width*0.15},${midY}
-    L ${width*0.17},${midY-height*0.08}
-    L ${width*0.18},${midY+height*0.04}
-    L ${width*0.21},${midY}
-    
-    L ${width*0.24},${midY}
-    L ${width*0.28},${midY}
-    
-    L ${width*0.32},${midY-height*0.05}
-    L ${width*0.33},${midY-height*0.7}
-    L ${width*0.34},${midY+height*0.3}
-    L ${width*0.36},${midY}
-    
-    L ${width*0.42},${midY}
-    L ${width*0.45},${midY}
-    
+    L ${width*0.35},${midY-height*0.1}
+    L ${width*0.4},${midY-height*0.5}
+    L ${width*0.45},${midY+height*0.2}
     L ${width*0.5},${midY}
-    L ${width*0.55},${midY}
     
-    L ${width*0.60},${midY-height*0.1}
-    L ${width*0.62},${midY-height*0.3}
-    L ${width*0.64},${midY}
+    L ${width*0.65},${midY}
     
-    L ${width*0.7},${midY}
-    L ${width*0.78},${midY}
-    
-    L ${width*0.82},${midY}
-    L ${width*0.84},${midY-height*0.15}
-    L ${width*0.86},${midY+height*0.07}
-    L ${width*0.88},${midY}
+    L ${width*0.7},${midY-height*0.15}
+    L ${width*0.75},${midY-height*0.05}
+    L ${width*0.8},${midY}
     
     L ${width},${midY}
   `;
@@ -149,13 +129,13 @@ export function EkgAnimation({
         
         {/* Subtle particles at key points of the EKG trace */}
         <g className="ekg-particles">
-          {[0.33, 0.62, 0.84].map((pos, i) => (
+          {[0.4, 0.7, 0.75].map((pos, i) => (
             <circle
               key={i}
               className={`ekg-particle-${i + 1}`}
               cx={width * pos}
-              cy={midY}
-              r="1.2"
+              cy={pos === 0.4 ? midY-height*0.5 : (pos === 0.7 ? midY-height*0.15 : midY-height*0.05)}
+              r="1"
               fill="white"
             />
           ))}
