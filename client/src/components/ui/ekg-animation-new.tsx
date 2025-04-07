@@ -12,7 +12,7 @@ interface EkgAnimationProps {
 export function EkgAnimation({
   runAnimation,
   onComplete,
-  color = '#6366f1',
+  color = '#0db4c7',
   width = 160,
   height = 28
 }: EkgAnimationProps) {
@@ -91,7 +91,7 @@ export function EkgAnimation({
         position: 'relative',
         marginLeft: '8px',
         marginTop: '2px',
-        filter: 'drop-shadow(0 0 6px rgba(6, 182, 212, 0.6))'
+        filter: 'drop-shadow(0 0 6px rgba(13, 180, 199, 0.6))'
       }}
       className="ekg-wrapper"
     >
