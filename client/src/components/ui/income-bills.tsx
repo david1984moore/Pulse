@@ -161,26 +161,25 @@ export default function IncomeBills({
         income={selectedIncome}
       />
       
-      <Card className="h-full border border-cyan-200 shadow-lg bg-gradient-to-b from-white to-blue-50/30">
+      <Card className="h-full border border-gray-200 shadow-md">
         <CardContent className="space-y-6 pt-6">
         {/* Account Balance - Primary Feature */}
-        <div className="bg-gradient-to-r from-cyan-50 to-blue-50 p-5 rounded-lg border border-cyan-200 shadow-md">
+        <div className="bg-primary/10 p-5 rounded-lg border border-primary/20 shadow">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase flex items-center">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase">
               {t('accountBalance')}
-              <span className="ml-2 h-1.5 w-1.5 rounded-full bg-cyan-500 animate-pulse"></span>
             </h3>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={onUpdateBalance}
-              className="h-7 text-xs border border-cyan-200 hover:border-cyan-300 hover:bg-cyan-50 transition-all duration-200"
+              className="h-7 text-xs border border-gray-300"
             >
               {t('updateBalance')}
             </Button>
           </div>
           <div className="mt-3">
-            <p className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+            <p className="text-4xl font-bold text-primary">
               ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
             </p>
           </div>
@@ -203,29 +202,28 @@ export default function IncomeBills({
         </div>
         
         {/* Financial Summary */}
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-lg border border-cyan-200 shadow-md">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3 flex items-center">
+        <div className="bg-gray-100 p-5 rounded-lg border border-gray-200 shadow">
+          <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">
             {t('financialSummary')}
-            <span className="ml-2 h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span>
           </h3>
           <div className="space-y-2">
-            <div className="flex justify-between items-center p-3 bg-white rounded border border-cyan-100 shadow-sm hover:border-cyan-200 transition-colors duration-200">
+            <div className="flex justify-between items-center p-3 bg-white rounded border border-gray-200 shadow-sm">
               <span className="text-sm font-semibold text-gray-700 flex items-center">
-                <span className="w-3 h-3 bg-green-500 rounded-full mr-2 shadow-sm"></span>
+                <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                 {t('monthlyIncome')}
               </span>
               <span className="text-sm font-bold text-green-600">${totalIncome.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-white rounded border border-cyan-100 shadow-sm hover:border-cyan-200 transition-colors duration-200">
+            <div className="flex justify-between items-center p-3 bg-white rounded border border-gray-200 shadow-sm">
               <span className="text-sm font-semibold text-gray-700 flex items-center">
-                <span className="w-3 h-3 bg-red-500 rounded-full mr-2 shadow-sm"></span>
+                <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
                 {t('monthlyBills')}
               </span>
               <span className="text-sm font-bold text-red-500">${totalBills.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center p-3 mt-1 bg-gradient-to-r from-cyan-600/10 to-blue-600/10 rounded border border-cyan-200 shadow-sm">
+            <div className="flex justify-between items-center p-3 mt-1 bg-primary/10 rounded border border-primary/20 shadow-sm">
               <span className="text-sm font-semibold text-gray-800">{t('availableToSpend')}</span>
-              <span className="text-sm font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">${availableToSpend.toFixed(2)}</span>
+              <span className="text-sm font-bold text-primary">${availableToSpend.toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -233,13 +231,12 @@ export default function IncomeBills({
         {/* Bills List */}
         <div className="mt-4">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase flex items-center">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase">
               {t('yourBills')}
-              <span className="ml-2 h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 h-8 w-8 p-0 shadow-md"
+              className="bg-red-500 hover:bg-red-600 h-8 w-8 p-0 shadow"
               size="icon"
             >
               <Plus className="h-4 w-4" />
@@ -249,7 +246,7 @@ export default function IncomeBills({
           {bills.length > 0 ? (
             <ul className="space-y-2">
               {bills.map((bill) => (
-                <li key={bill.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-cyan-100 shadow-md hover:border-cyan-200 transition-colors duration-200">
+                <li key={bill.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow">
                   <div className="flex items-center">
                     {getBillIcon(bill.name)}
                     <div>
@@ -260,7 +257,7 @@ export default function IncomeBills({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="px-3 py-1.5 rounded-md bg-red-50 text-red-600 border border-red-200 shadow-sm">
+                    <div className="px-3 py-1.5 rounded-md bg-red-100 text-red-600 border border-red-200">
                       <p className="text-sm font-bold">
                         ${Number(bill.amount).toFixed(2)}
                       </p>
@@ -268,7 +265,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="outline"
-                      className="h-8 w-8 border border-cyan-200 text-cyan-700 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
+                      className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-blue-600 hover:border-blue-300 transition-colors"
                       onClick={() => {
                         setSelectedBill(bill);
                         setIsEditBillModalOpen(true);
@@ -279,7 +276,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="outline"
-                      className="h-8 w-8 border border-cyan-200 text-cyan-700 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-all duration-200"
+                      className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors"
                       onClick={() => onDeleteBill(bill.id)}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -289,20 +286,19 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-600 p-4 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 rounded-lg border border-cyan-100 text-center shadow-md">{t('noBillsAddedYet')}</div>
+            <div className="text-sm text-gray-600 p-4 bg-gray-100 rounded-lg border border-gray-200 text-center shadow">{t('noBillsAddedYet')}</div>
           )}
         </div>
 
         {/* Income List */}
         <div className="mt-4">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase flex items-center">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase">
               {t('yourIncome')}
-              <span className="ml-2 h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
             </h3>
             <Button
               onClick={onAddIncome}
-              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 h-8 w-8 p-0 shadow-md"
+              className="bg-green-500 hover:bg-green-600 h-8 w-8 p-0 shadow"
               size="icon"
             >
               <Plus className="h-4 w-4" />
@@ -312,7 +308,7 @@ export default function IncomeBills({
           {income.length > 0 ? (
             <ul className="space-y-2">
               {income.map((inc) => (
-                <li key={inc.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-cyan-100 shadow-md hover:border-cyan-200 transition-colors duration-200">
+                <li key={inc.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow">
                   <div className="flex items-center">
                     <DollarSign className="h-4 w-4 mr-2 text-green-600" />
                     <div>
@@ -325,13 +321,13 @@ export default function IncomeBills({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="px-3 py-1.5 rounded-md bg-green-50 text-green-600 border border-green-200 shadow-sm">
+                    <div className="px-3 py-1.5 rounded-md bg-green-100 text-green-600 border border-green-200">
                       <p className="text-sm font-bold">${Number(inc.amount).toFixed(2)}</p>
                     </div>
                     <Button
                       size="icon"
                       variant="outline"
-                      className="h-8 w-8 border border-cyan-200 text-cyan-700 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
+                      className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-blue-600 hover:border-blue-300 transition-colors"
                       onClick={() => {
                         setSelectedIncome(inc);
                         setIsEditIncomeModalOpen(true);
@@ -342,7 +338,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="outline"
-                      className="h-8 w-8 border border-cyan-200 text-cyan-700 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-all duration-200"
+                      className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors"
                       onClick={() => onDeleteIncome(inc.id)}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -352,7 +348,7 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-600 p-4 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 rounded-lg border border-cyan-100 text-center shadow-md">{t('noIncomeAddedYet')}</div>
+            <div className="text-sm text-gray-600 p-4 bg-gray-100 rounded-lg border border-gray-200 text-center shadow">{t('noIncomeAddedYet')}</div>
           )}
         </div>
       </CardContent>

@@ -99,33 +99,30 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-blue-50/30">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-md border-b border-cyan-100">
+      <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-              <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent font-bold text-3xl mr-8 cursor-pointer">pulse</span>
+              <span className="text-primary font-bold text-3xl mr-8 cursor-pointer">pulse</span>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-              {t('dashboard')}
-              <span className="ml-2 h-1.5 w-1.5 rounded-full bg-cyan-500 shadow-glow-cyan animate-pulse"></span>
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-800">{t('dashboard')}</h1>
           </div>
           <div className="flex items-center space-x-4">
             <LanguageToggle />
-            <div className="bg-gradient-to-r from-cyan-50 to-blue-50 px-4 py-2 rounded-full shadow-sm border border-cyan-100">
+            <div className="bg-gray-100 px-3 py-1.5 rounded-full">
               <span className="text-sm font-medium text-gray-700">{t('welcome')} {user?.name?.split(' ')[0]}</span>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="border-cyan-200 hover:bg-cyan-50 text-gray-700 hover:text-cyan-700 transition-all duration-200"
+              className="hover:bg-gray-100"
               onClick={() => logoutMutation.mutate()}
               disabled={logoutMutation.isPending}
             >
               {logoutMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin text-cyan-600" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 t('logout')
               )}
