@@ -286,7 +286,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     {message.sender === "bot" && message.isAnimating ? (
                       <TypeAnimation 
                         text={message.text} 
-                        speed={20}
+                        speed={15}
                         onComplete={() => handleAnimationComplete(index)}
                         onCharacterTyped={() => {
                           // Scroll to bottom on each character typed
