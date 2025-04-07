@@ -29,10 +29,10 @@ export function EkgAnimation({
       // Increment key to force remount with fresh animation
       setAnimationKey(prev => prev + 1);
       
-      // Wait for the animation to finish, then call onComplete
+      // Wait for the animation and follow-through to completely finish
       const timer = setTimeout(() => {
         if (onComplete) onComplete();
-      }, 1800); // Extended slightly to allow follow-through to complete
+      }, 1600); // 0.8s for drawing + 0.7s for follow-through + 0.1s buffer
       
       return () => clearTimeout(timer);
     }
@@ -72,7 +72,7 @@ export function EkgAnimation({
         viewBox={`0 0 ${width} ${height}`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* A single, simple EKG line with follow-through effect */}
+        {/* Primary EKG trace line */}
         <path
           d={ekgPathData}
           fill="none"
@@ -80,7 +80,18 @@ export function EkgAnimation({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="ekg-line"
+          className="ekg-primary"
+        />
+        
+        {/* Follow-through effect trace - same path but different animation */}
+        <path
+          d={ekgPathData}
+          fill="none"
+          stroke={color}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="ekg-follow"
         />
       </svg>
     </div>

@@ -1,10 +1,10 @@
-/* This animation draws the EKG line */
-@keyframes draw-ekg {
+/* Draw the line animation */
+@keyframes draw-line {
   0% {
     stroke-dashoffset: 1000;
     opacity: 0;
   }
-  5% {
+  10% {
     opacity: 1;
   }
   100% {
@@ -13,21 +13,45 @@
   }
 }
 
-/* This animation creates the follow-through effect */
-@keyframes fade-away {
-  0% {
+/* Follow-through pulse effect */
+@keyframes follow-through {
+  0%, 5% {
+    stroke-width: 2.5px;
+    stroke-dashoffset: 0;
     opacity: 1;
     transform: translateX(0);
   }
+  30% {
+    stroke-width: 4px;
+    opacity: 0.9;
+    transform: translateX(3px);
+  }
+  60% {
+    stroke-width: 3px;
+    opacity: 0.5;
+    transform: translateX(7px);
+  }
   100% {
+    stroke-width: 0.5px;
     opacity: 0;
-    transform: translateX(5px);
+    transform: translateX(10px);
   }
 }
 
-/* The SVG path for the EKG line */
-.ekg-line {
+/* Primary animation */
+.ekg-primary {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: draw-ekg 1s ease-out forwards, fade-away 0.7s ease-out forwards 1s;
+  animation: draw-line 0.8s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  filter: drop-shadow(0 0 1px rgba(59, 130, 246, 0.5));
+}
+
+/* Follow-through animation */
+.ekg-follow {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: 
+    draw-line 0.8s cubic-bezier(0.4, 0, 0.6, 1) forwards,
+    follow-through 0.7s ease-out forwards 0.8s;
+  filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.7));
 }
