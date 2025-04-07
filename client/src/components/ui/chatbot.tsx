@@ -265,29 +265,31 @@ export default function Chatbot({ bills }: ChatbotProps) {
       <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">
-            <CardTitle className="flex items-center px-5 py-2.5">
+            <div className="flex items-center px-5 py-2.5">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
                 <span className="text-white font-bold text-lg">A</span>
               </div>
-              <span className="text-xl font-bold tracking-wide text-primary-600">
-                {language === 'es' ? 'Alicia' : 'Alice'}
-              </span>
-            </CardTitle>
+              <div className="flex items-center">
+                <div className="text-xl font-bold tracking-wide text-primary-600">
+                  {language === 'es' ? 'Alicia' : 'Alice'}
+                </div>
+                
+                {/* ECG animation next to Alice's name without background */}
+                {isPending && (
+                  <div className="ml-3">
+                    <EkgAnimation 
+                      runAnimation={isPending} 
+                      width={80} 
+                      height={24} 
+                      color="#FFFFFF" 
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
           
-          <div className="flex items-center gap-2 px-4 py-2">
-            {/* EKG animation in separate container */}
-            {isPending && (
-              <div className="bg-primary rounded-full px-2 py-1 mr-2">
-                <EkgAnimation 
-                  runAnimation={isPending} 
-                  width={60} 
-                  height={20} 
-                  color="#FFFFFF" 
-                />
-              </div>
-            )}
-            
+          <div className="flex items-center px-4 py-2">
             <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
               <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
               <span className="font-bold text-primary-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
