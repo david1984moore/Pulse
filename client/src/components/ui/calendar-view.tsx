@@ -53,7 +53,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
   
   // Create array of placeholder elements for days before the month starts
   const placeholders = Array.from({ length: startDayOfWeek }, (_, i) => (
-    <div key={`empty-${i}`} className="h-12 bg-gray-50 rounded-md border border-gray-100"></div>
+    <div key={`empty-${i}`} className="h-12 bg-white rounded-md border border-gray-200"></div>
   ));
   
   // Function to check if a day has a bill due
@@ -143,23 +143,26 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         </CardHeader>
         <CardContent>
           <div className="bg-white rounded-lg">
-            <div className="mb-6">
-              <h3 className="text-xl font-bold text-gray-800 capitalize border-b-2 border-primary/30 pb-2 inline-block">
+            <div className="mb-4">
+              <h3 className="text-xl font-bold text-gray-800 capitalize pb-2">
                 {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
               </h3>
+              <div className="h-0.5 w-32 bg-primary/30 rounded-full"></div>
             </div>
             
-            <div className="grid grid-cols-7 gap-2">
-              {/* Day headers */}
+            {/* Day headers in a more cohesive row */}
+            <div className="flex w-full bg-gray-100 rounded-md border border-gray-200 mb-2">
               {daysOfWeek.map((day) => (
-                <div key={day} className="text-xs uppercase font-bold text-gray-700 text-center py-1 mb-1 bg-gray-100 rounded-md border border-gray-200">
+                <div key={day} className="flex-1 text-xs uppercase font-bold text-gray-700 text-center py-2">
                   {day}
                 </div>
               ))}
-              
+            </div>
+            
+            <div className="grid grid-cols-7 gap-2">
               {/* Empty placeholders */}
               {placeholders.map((placeholder, index) => (
-                <div key={`empty-${index}`} className="h-12 bg-gray-50 rounded-md border border-gray-100"></div>
+                <div key={`empty-${index}`} className="h-12 bg-white rounded-md border border-gray-200"></div>
               ))}
               
               {/* Day cells */}
@@ -173,12 +176,12 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                   <div 
                     key={day.toString()}
                     className={`
-                      relative h-12 rounded-md border cursor-pointer transition-colors shadow-sm
+                      relative h-12 rounded-md border border-gray-200 cursor-pointer transition-colors
                       ${isToday 
-                        ? "bg-primary/20 text-primary-600 border-primary shadow" 
+                        ? "bg-primary/10 text-primary-600 border-primary/20" 
                         : hasBills
-                          ? "bg-red-50 border-red-300 hover:bg-red-100"
-                          : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                          ? "bg-red-50 border-gray-200 hover:bg-red-100"
+                          : "bg-white hover:bg-gray-50"
                       }
                     `}
                     onClick={() => handleDayClick(dayOfMonth, dayBills)}
@@ -189,15 +192,15 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                     
                     {/* Bill indicators */}
                     {hasBills && (
-                      <div className="absolute bottom-1.5 right-1.5 flex flex-wrap justify-end gap-1">
+                      <div className="absolute bottom-1.5 right-1.5 flex flex-wrap justify-center gap-1.5">
                         {dayBills.slice(0, 3).map((bill) => (
                           <div 
                             key={bill.id}
-                            className="flex items-center justify-center w-4 h-4 rounded-full bg-red-500 shadow-sm hover:bg-red-600 transition-colors"
+                            className="flex items-center justify-center w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
                             title={`${bill.name}: $${Number(bill.amount).toFixed(2)} - Due on the ${bill.due_date}${getOrdinalSuffix(bill.due_date)}`}
                           >
                             {dayBills.length > 3 && bill === dayBills[2] ? (
-                              <span className="text-[8px] font-bold text-white">+{dayBills.length - 2}</span>
+                              <span className="text-[9px] font-bold text-white">+{dayBills.length - 2}</span>
                             ) : null}
                           </div>
                         ))}
@@ -209,12 +212,12 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             </div>
             
             {/* Legend */}
-            <div className="mt-6 pt-4 bg-gradient-to-r from-gray-100 to-gray-50 rounded-lg border border-gray-200 p-4 shadow-sm">
-              <h4 className="text-sm font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">{t('calendarLegend')}</h4>
+            <div className="mt-6 bg-gray-50 rounded-lg border border-gray-200 p-4">
+              <h4 className="text-sm font-semibold text-gray-800 mb-3">{t('calendarLegend')}</h4>
               <div className="flex items-center">
                 <div className="flex items-center bg-white px-3 py-2 rounded-md border border-gray-200">
-                  <div className="w-4 h-4 bg-red-500 rounded-full mr-2 shadow"></div>
-                  <span className="text-sm font-semibold text-gray-700">{t('billsDue')}</span>
+                  <div className="w-5 h-5 bg-red-500 rounded-full mr-2"></div>
+                  <span className="text-sm text-gray-700">{t('billsDue')}</span>
                 </div>
               </div>
             </div>
