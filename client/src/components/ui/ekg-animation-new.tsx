@@ -53,16 +53,20 @@ export function EkgAnimation({
   // Don't render anything if not animating
   if (!runAnimation || !isVisible) return null;
   
-  // Simplified path definition for a cleaner EKG trace
+  // Classic EKG trace with PQRST waveform pattern
   const ekgPathData = `
     M 0,${height/2}
     L ${width*0.2},${height/2}
+    L ${width*0.25},${height/2-height*0.05}
     L ${width*0.3},${height/2}
-    L ${width*0.4},${height/2}
-    L ${width*0.45},${height/2-height*0.6}
-    L ${width*0.5},${height/2+height*0.3}
+    L ${width*0.35},${height/2-height*0.1}
+    L ${width*0.4},${height/2+height*0.4}
+    L ${width*0.45},${height/2-height*0.7}
+    L ${width*0.5},${height/2+height*0.2}
     L ${width*0.55},${height/2}
+    L ${width*0.65},${height/2+height*0.05}
     L ${width*0.7},${height/2}
+    L ${width*0.85},${height/2}
     L ${width},${height/2}
   `;
 

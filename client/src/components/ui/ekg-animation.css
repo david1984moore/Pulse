@@ -1,5 +1,5 @@
 
-/* Dot-to-line animation - draws the line from start to end with a scaling effect */
+/* Dot-to-line animation - draws the line from start to end with a natural EKG effect */
 @keyframes dot-to-line {
   0% {
     stroke-dashoffset: 1000;
@@ -9,6 +9,11 @@
   5% {
     opacity: 1;
     stroke-dasharray: 1 999; 
+  }
+  85% {
+    stroke-dashoffset: 0;
+    stroke-dasharray: 950 50;
+    opacity: 1;
   }
   95% {
     stroke-dashoffset: 0;
