@@ -62,6 +62,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
   
   // Handle animation completion
   const handleAnimationComplete = (index: number) => {
+    // Update message to stop animating
     setMessages(prevMessages => {
       const updatedMessages = [...prevMessages];
       if (updatedMessages[index]) {
@@ -69,6 +70,9 @@ export default function Chatbot({ bills }: ChatbotProps) {
       }
       return updatedMessages;
     });
+    
+    // Reset the EKG trigger when text animation finishes
+    setTriggerEkg(false);
   };
   
   // Update initial message when language changes
@@ -98,16 +102,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
     }
   }, [messages]);
   
-  // Cleanup function to clear any lingering timeouts when component unmounts
-  useEffect(() => {
-    return () => {
-      // Clear animation timeout when component unmounts to prevent memory leaks
-      if (animationIdRef.current !== null) {
-        window.clearTimeout(animationIdRef.current);
-        animationIdRef.current = null;
-      }
-    };
-  }, []);
+  // No cleanup needed - handled by EkgAnimation component's internal logic
 
   const handleSubmit = async () => {
     const amountToUse = isCustomAmount ? customAmount : (selectedAmount || "");
@@ -235,34 +230,24 @@ export default function Chatbot({ bills }: ChatbotProps) {
     }
   };
 
-  // State to track when to show the EKG animation - completely independent of Alice's output
-  const [showEkg, setShowEkg] = useState(false);
-  // Track animation ID to prevent multiple animations
-  const animationIdRef = useRef<number | null>(null);
+  // Simple state to track when to show EKG animation
+  // This is just a trigger - all animation handling is in the EkgAnimation component
+  const [triggerEkg, setTriggerEkg] = useState(false);
   
-  // Handler for submitting with EKG animation - guaranteed to run only ONCE per button click
-  const handleSubmitWithEkg = async () => {
-    // Don't allow new animations if one is in progress or if we're waiting for a response
-    if (showEkg || isPending) return;
+  // Handler for submitting with EKG animation
+  const handleSubmitWithEkg = () => {
+    // Prevent handling if already sending request
+    if (isPending) return;
     
-    // Clear any existing animation timeout to prevent multiple animations
-    if (animationIdRef.current !== null) {
-      window.clearTimeout(animationIdRef.current);
-      animationIdRef.current = null;
-    }
-    
-    // Trigger the animation
-    setShowEkg(true);
-    
-    // Set up a one-time animation cycle - totally independent of Alice's text output
-    // This ensures the animation runs exactly once per button click
-    animationIdRef.current = window.setTimeout(() => {
-      setShowEkg(false);
-      animationIdRef.current = null;
-    }, 2100); // Duration matches animation length plus small buffer
-    
-    // Process the submit request separately - now decoupled from the animation
-    handleSubmit();
+    // First, trigger the EKG animation with a true->false->true cycle
+    // This forces the animation to restart even if already displaying
+    setTriggerEkg(false);
+    // Force browser to process the false state
+    setTimeout(() => {
+      setTriggerEkg(true);
+      // Process the actual request
+      handleSubmit();
+    }, 0);
   };
   
   return (
@@ -272,7 +257,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
           <CardTitle className="flex items-center">
             {language === 'es' ? 'Alicia' : 'Alice'}
             <EkgAnimation 
-              isActive={showEkg} 
+              isActive={triggerEkg} 
               duration={2000} 
               color="#3b82f6" 
               width={80} 

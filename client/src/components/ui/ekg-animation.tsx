@@ -11,96 +11,112 @@ interface EkgAnimationProps {
 export function EkgAnimation({ 
   isActive,
   duration = 2000,
-  color = '#3b82f6', // Default blue color to match app
+  color = '#3b82f6',
   width = 100,
   height = 25
 }: EkgAnimationProps) {
-  // Only render animation when isActive is true
-  if (!isActive) return null;
+  // Create a key state to force re-render and restart animation
+  const [animationKey, setAnimationKey] = useState(0);
   
-  // Create a realistic hospital ECG waveform
-  // This models a standard cardiac cycle with proper P-QRS-T components
+  // Use a ref to track if we're in the middle of an animation cycle
+  const isAnimatingRef = useRef(false);
+  
+  // Use refs to handle cleanup and prevent issues with stale state
+  const timerRef = useRef<number | null>(null);
+
+  // Handle animation trigger
+  useEffect(() => {
+    // Only trigger on isActive going from false->true
+    if (isActive && !isAnimatingRef.current) {
+      // We're now animating
+      isAnimatingRef.current = true;
+      
+      // Clear any existing timer
+      if (timerRef.current !== null) {
+        window.clearTimeout(timerRef.current);
+      }
+      
+      // Force a fresh render with a new key
+      setAnimationKey(prev => prev + 1);
+      
+      // Set up cleanup - we use a timer to track when animation should be complete
+      timerRef.current = window.setTimeout(() => {
+        isAnimatingRef.current = false;
+        timerRef.current = null;
+      }, duration + 100); // Add buffer time
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      if (timerRef.current !== null) {
+        window.clearTimeout(timerRef.current);
+      }
+    };
+  }, [isActive, duration]);
+  
+  // Don't render anything when not active
+  if (!isActive) {
+    return null;
+  }
+  
+  // Create a realistic hospital ECG waveform with medical accuracy
   const points = [
-    // Start at baseline
+    // Start flat
     [0, height/2],
     [width*0.1, height/2],
     
-    // P wave (atrial depolarization)
+    // P wave
     [width*0.15, height/2],
     [width*0.18, height/2 - height*0.1],
     [width*0.21, height/2],
     
-    // PR segment (flat)
+    // PR segment
     [width*0.25, height/2],
     
-    // QRS complex (ventricular depolarization)
-    [width*0.28, height/2 + height*0.05], // Q wave
-    [width*0.30, height/2 - height*0.6],  // R wave (tall spike)
-    [width*0.33, height/2 + height*0.2],  // S wave
+    // QRS complex
+    [width*0.28, height/2 + height*0.05],
+    [width*0.30, height/2 - height*0.6],
+    [width*0.33, height/2 + height*0.2],
     
     // ST segment
     [width*0.36, height/2],
     
-    // T wave (ventricular repolarization)
+    // T wave
     [width*0.45, height/2 - height*0.15],
     [width*0.52, height/2],
     
-    // End with baseline
+    // End flat
     [width*0.75, height/2],
     [width, height/2]
   ].map(point => point.join(',')).join(' ');
   
-  // Create animation styles for drawing the line
-  const animationStyles = `
-    /* Draw the line from left to right with continous tail following */
-    @keyframes drawEkgTrace {
+  // The animation CSS for the trace
+  const css = `
+    @keyframes ekgDraw_${animationKey} {
       0% {
-        stroke-dasharray: 0.1, ${width * 2};
+        stroke-dasharray: 1, ${width * 2};
         stroke-dashoffset: ${width * 2};
       }
-      
-      /* Show just a small dot/point at the beginning */
-      5% {
-        stroke-dasharray: 1, ${width * 2};
-        stroke-dashoffset: ${width * 1.9};
-      }
-      
-      /* Start expanding the visible trace - show more of the beginning */
-      20% {
-        stroke-dasharray: ${width * 0.3}, ${width * 2};
-        stroke-dashoffset: ${width * 1.6};
-      }
-      
-      /* Middle point - half of the trace is drawn, with tail following */
-      50% {
-        stroke-dasharray: ${width * 0.7}, ${width * 2};
-        stroke-dashoffset: ${width * 1.0};
-      }
-      
-      /* Near the end - most of the trace is visible with the tail still following */
-      80% {
-        stroke-dasharray: ${width * 0.9}, ${width * 2};
-        stroke-dashoffset: ${width * 0.4};
-      }
-      
-      /* End with the full trace drawn and visible */
       100% {
         stroke-dasharray: ${width * 2}, 0;
         stroke-dashoffset: 0;
       }
     }
     
-    /* The ECG trace line */
-    .ekg-line {
+    .ekg-line-${animationKey} {
       stroke: ${color};
       stroke-width: 2.5px;
       stroke-linecap: round;
       stroke-linejoin: round;
       fill: none;
       filter: drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6));
-      animation: drawEkgTrace ${duration}ms ease-out forwards;
-      animation-iteration-count: 1; /* Explicitly set to run only once */
-      will-change: stroke-dasharray, stroke-dashoffset;
+      animation-name: ekgDraw_${animationKey};
+      animation-duration: ${duration}ms;
+      animation-timing-function: ease-out;
+      animation-delay: 0s;
+      animation-iteration-count: 1;
+      animation-fill-mode: forwards;
+      animation-play-state: running;
     }
   `;
   
@@ -116,21 +132,21 @@ export function EkgAnimation({
         marginTop: '2px'
       }}
     >
-      {/* SVG for the ECG trace */}
+      {/* SVG with key to force re-render */}
       <svg
+        key={animationKey}
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
       >
-        {/* Just the ECG trace line - no background grid */}
         <polyline
-          className="ekg-line"
+          className={`ekg-line-${animationKey}`}
           points={points}
         />
       </svg>
       
-      {/* Inject the animation styles */}
-      <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
+      {/* Dynamically created style element with animation */}
+      <style dangerouslySetInnerHTML={{ __html: css }} />
     </div>
   );
 }
