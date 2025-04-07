@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bill, billFormSchema } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
+import { secureApiRequest } from "@/lib/csrf";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
 
@@ -68,7 +68,7 @@ export default function EditBillModal({ open, onOpenChange, bill }: EditBillModa
     mutationFn: async (data: FormValues) => {
       if (!bill) return;
       
-      const response = await apiRequest(
+      const response = await secureApiRequest(
         "PUT",
         `/api/bills/${bill.id}`,
         {

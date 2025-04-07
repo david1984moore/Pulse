@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Bill } from "@shared/schema";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { secureApiRequest } from "@/lib/csrf";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -25,7 +26,7 @@ export default function RemoveBillModal({ open, onOpenChange, bills }: RemoveBil
   async function handleDeleteBill(billId: number) {
     setDeletingBillId(billId);
     try {
-      await apiRequest("DELETE", `/api/bills/${billId}`);
+      await secureApiRequest("DELETE", `/api/bills/${billId}`);
       
       // Invalidate bills query to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/bills"] });
