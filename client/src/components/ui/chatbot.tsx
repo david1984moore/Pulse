@@ -265,24 +265,28 @@ export default function Chatbot({ bills }: ChatbotProps) {
       <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">
-            <CardTitle className="flex items-center relative px-5 py-2.5">
+            <div className="flex items-center px-5 py-2.5">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
                 <span className="text-white font-bold text-lg">A</span>
               </div>
-              <span className="text-xl font-bold tracking-wide text-primary-600">
-                {language === 'es' ? 'Alicia' : 'Alice'}
-              </span>
+              <div>
+                <h3 className="text-xl font-bold tracking-wide text-primary-600">
+                  {language === 'es' ? 'Alicia' : 'Alice'}
+                </h3>
+              </div>
               
               {/* ECG animation next to Alice's name */}
               {isPending && (
-                <EkgAnimation 
-                  runAnimation={isPending} 
-                  width={120} 
-                  height={24} 
-                  color="#FFFFFF"
-                />
+                <div className="ml-3">
+                  <EkgAnimation 
+                    runAnimation={isPending} 
+                    width={120} 
+                    height={24} 
+                    color="#FFFFFF"
+                  />
+                </div>
               )}
-            </CardTitle>
+            </div>
           </div>
           
           <CardDescription className="flex items-center px-4 py-2">
