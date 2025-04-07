@@ -90,7 +90,7 @@
 .ekg-dot-to-line {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: dot-to-line 4.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: dot-to-line 8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.7));
   will-change: stroke-dashoffset, stroke-dasharray, opacity;
 }
@@ -99,7 +99,7 @@
 .ekg-follow-through {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: follow-through 3.5s ease-out forwards 3.5s;
+  animation: follow-through 6s ease-out forwards 6s;
   filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.9));
   will-change: stroke-dashoffset, opacity, transform;
 }
