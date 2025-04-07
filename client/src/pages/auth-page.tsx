@@ -267,14 +267,7 @@ export default function AuthPage() {
     return <Redirect to="/dashboard" />;
   }
   
-  // Welcome message
-  const welcomeContent = isLogin ? (
-    <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-md text-sm">
-      <p className="font-medium">{t('welcome')} {t('to')} Pulse Finance!</p>
-      <p>{t('loginDescription')}</p>
-      <p className="mt-1">{t('dontHaveAccount')}</p>
-    </div>
-  ) : null;
+  // Welcome message (removed)
   
   // Helper function to check if password requirements are met
   const passwordRequirementsMet = () => {
@@ -308,9 +301,9 @@ export default function AuthPage() {
           {isLogin ? t('login') : t('signup')}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          {t('or')} 
+          {t('or')}
           <Link href={isLogin ? "/signup" : "/login"}>
-            <span className="font-medium text-primary hover:text-primary-dark cursor-pointer">
+            <span className="font-medium text-primary hover:text-primary-dark cursor-pointer ml-2">
               {isLogin ? t('dontHaveAccount') : t('alreadyHaveAccount')}
             </span>
           </Link>
@@ -318,8 +311,7 @@ export default function AuthPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        {welcomeContent}
-        <Card className="mt-4">
+        <Card>
           <CardContent className="pt-6">
             {isLogin ? (
               <Form {...loginForm}>
