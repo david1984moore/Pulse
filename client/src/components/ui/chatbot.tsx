@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import AliceEcg from "./alice-ecg";
-import CanvasEkgAnimation from "./canvas-ekg-animation";
+import EkgSvgAnimation from "./ekg-svg-animation";
 import {
   Select,
   SelectContent,
@@ -269,15 +269,15 @@ export default function Chatbot({ bills }: ChatbotProps) {
   return (
     <div className="relative">
       {/* Full width ECG animation that shows when active */}
-      {/* Only render the EKG when needed and with fixed width */}
+      {/* Using the more consistent SVG-based animation */}
       {isPending && (
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
-          <CanvasEkgAnimation 
+          <EkgSvgAnimation 
             active={isPending} 
-            backgroundColor="rgba(59, 130, 246, 0.05)"
-            lineColor="#FFFFFF"
+            lineColor="rgba(255, 255, 255, 0.8)"
             width={600} 
             height={300}
+            strokeWidth={4}
           />
         </div>
       )}
