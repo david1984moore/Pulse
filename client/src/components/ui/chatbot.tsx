@@ -261,26 +261,30 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
   
   return (
-    <Card>
+    <Card className="bg-gradient-to-br from-white to-blue-50 shadow-lg">
       <CardHeader className="pb-4 border-b border-gray-100">
         <div className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center">
-            {language === 'es' ? 'Alicia' : 'Alice'}
-            <EkgAnimation 
-              runAnimation={isPending} 
-              width={120} 
-              height={24} 
-              color="#3b82f6"
-            />
+          <CardTitle className="flex items-center relative px-4 py-2 bg-gradient-to-r from-blue-600 to-violet-600 text-white rounded-lg shadow-md">
+            <span className="flex items-center justify-center">
+              {language === 'es' ? 'Alicia' : 'Alice'}
+            </span>
+            <div className="absolute left-1/2 transform -translate-x-1/2 top-full">
+              <EkgAnimation 
+                runAnimation={isPending} 
+                width={180} 
+                height={28} 
+                color="#6366f1"
+              />
+            </div>
           </CardTitle>
-          <CardDescription className="flex items-center bg-gray-100 px-4 py-2 rounded-md">
+          <CardDescription className="flex items-center bg-gradient-to-r from-gray-100 to-gray-50 px-4 py-2 rounded-md shadow-sm">
             <DollarSign className="h-4 w-4 mr-2 text-primary" />
             <span className="font-medium text-gray-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent className="pt-4">
-        <ScrollArea ref={scrollAreaRef} className="bg-gray-50 rounded-lg p-4 mb-5 h-64 border border-gray-200">
+        <ScrollArea ref={scrollAreaRef} className="bg-gradient-to-b from-gray-50 to-blue-50/30 rounded-lg p-4 mb-5 h-64 border border-gray-200 shadow-inner">
           {messages.map((message, index) => (
             <div key={index} className="mb-3">
               <div
@@ -288,14 +292,21 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   message.sender === "user" ? "justify-end" : "justify-start"
                 } mb-2`}
               >
+                {/* Bot avatar for bot messages */}
+                {message.sender === "bot" && (
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center mr-2 shadow-md">
+                    <span className="text-white text-xs font-bold">A</span>
+                  </div>
+                )}
+                
                 <div
                   className={`p-3 rounded-lg max-w-sm ${
                     message.sender === "user"
-                      ? "bg-primary/10 text-gray-800 rounded-tr-none"
-                      : "text-gray-800 rounded-tl-none"
+                      ? "bg-gradient-to-r from-primary/30 to-primary/10 text-gray-800 rounded-tr-none shadow-md"
+                      : "bg-white text-gray-800 rounded-tl-none shadow-md border-l-4 border-blue-500"
                   }`}
                 >
-                  <p className="text-sm">
+                  <p className={`${message.sender === "bot" ? "text-sm leading-relaxed" : "text-sm"}`}>
                     {message.sender === "bot" && message.isAnimating ? (
                       <TypeAnimation 
                         text={message.text} 
@@ -316,67 +327,76 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     )}
                   </p>
                 </div>
+                
+                {/* User avatar for user messages */}
+                {message.sender === "user" && (
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center ml-2 shadow-sm">
+                    <span className="text-gray-600 text-xs">You</span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
         </ScrollArea>
 
-        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
-          {isCustomAmount ? (
-            <div className="flex w-full sm:flex-1">
-              <div className="relative flex-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                <input
-                  type="number"
-                  value={customAmount}
-                  onChange={(e) => setCustomAmount(e.target.value)}
-                  placeholder="Enter amount"
-                  className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
+        <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg shadow-inner border border-gray-200">
+          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
+            {isCustomAmount ? (
+              <div className="flex w-full sm:flex-1">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+                  <input
+                    type="number"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    placeholder="Enter amount"
+                    className="w-full pl-8 pr-4 py-2.5 border border-gray-200 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+                  />
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="ml-2 bg-white shadow-sm"
+                  onClick={() => {
+                    setIsCustomAmount(false);
+                    setCustomAmount("");
+                  }}
+                >
+                  Cancel
+                </Button>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="ml-2"
-                onClick={() => {
-                  setIsCustomAmount(false);
-                  setCustomAmount("");
-                }}
-              >
-                Cancel
-              </Button>
-            </div>
-          ) : (
-            <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-              <SelectTrigger className="flex-1 border-gray-200">
-                <SelectValue placeholder={t('chatbotPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
-                <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
-                <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
-                <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
-                <SelectItem value="custom">{t('customSpend')}</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-          <Button
-            onClick={handleSubmitClick}
-            disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
-            className="w-full sm:w-auto"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('thinking')}
-              </>
             ) : (
-              <>
-                <Send className="mr-2 h-4 w-4" />
-                {t('ask')}
-              </>
+              <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
+                <SelectTrigger className="flex-1 border-gray-200 bg-white shadow-sm hover:border-blue-300 transition-colors">
+                  <SelectValue placeholder={t('chatbotPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
+                  <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
+                  <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
+                  <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
+                  <SelectItem value="custom">{t('customSpend')}</SelectItem>
+                </SelectContent>
+              </Select>
             )}
-          </Button>
+            <Button
+              onClick={handleSubmitClick}
+              disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
+              className={`w-full sm:w-auto shadow-md transition-all duration-200 ${isPending ? 'bg-blue-400' : 'bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700'}`}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('thinking')}
+                </>
+              ) : (
+                <>
+                  <Send className="mr-2 h-4 w-4" />
+                  {t('ask')}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

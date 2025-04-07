@@ -1,18 +1,56 @@
 
 /* EKG Animation Styles */
 
+/* Wrapper animation effect */
+.ekg-wrapper {
+  transition: all 0.3s ease;
+  animation: pulseGlow 3s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% {
+    filter: drop-shadow(0 0 6px rgba(129, 140, 248, 0.5));
+  }
+  100% {
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.8));
+  }
+}
+
+/* Background glow animation */
+.ekg-bg {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawBg 2.5s ease-in-out forwards;
+  opacity: 0.2;
+}
+
+@keyframes drawBg {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.2;
+  }
+}
+
 /* Main EKG path animation */
 .ekg-path {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: drawEkg 2s ease-in-out forwards;
-  filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.7));
+  animation: drawEkg 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.8));
 }
 
 @keyframes drawEkg {
   0% {
     stroke-dashoffset: 1000;
     opacity: 0.5;
+    stroke-width: 2.5px;
   }
   20% {
     stroke-dashoffset: 800;
@@ -21,18 +59,22 @@
   40% {
     stroke-dashoffset: 600;
     opacity: 0.8;
+    stroke-width: 3px;
   }
   60% {
     stroke-dashoffset: 400;
     opacity: 0.9;
+    stroke-width: 3.5px;
   }
   80% {
     stroke-dashoffset: 200;
     opacity: 1;
+    stroke-width: 3px;
   }
   100% {
     stroke-dashoffset: 0;
     opacity: 1;
+    stroke-width: 2.5px;
   }
 }
 
@@ -41,15 +83,15 @@
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   opacity: 0;
-  animation: followThroughEcho1 2s ease-out forwards 1.5s;
-  filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.5));
+  animation: followThroughEcho1 2s ease-out forwards 1.2s;
+  filter: drop-shadow(0 0 3px rgba(99, 102, 241, 0.6));
 }
 
 @keyframes followThroughEcho1 {
   0% {
     stroke-dashoffset: 1000;
     opacity: 0;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
     stroke-width: 2px;
   }
   10% {
@@ -59,31 +101,31 @@
   30% {
     stroke-dashoffset: 700;
     opacity: 0.5;
-    transform: translateX(10px);
+    transform: translateX(10px) scale(1.02);
     stroke-width: 1.5px;
   }
   50% {
     stroke-dashoffset: 500;
     opacity: 0.4;
-    transform: translateX(15px);
+    transform: translateX(15px) scale(1.03);
     stroke-width: 1.3px;
   }
   70% {
     stroke-dashoffset: 300;
     opacity: 0.3;
-    transform: translateX(20px);
+    transform: translateX(20px) scale(1.04);
     stroke-width: 1px;
   }
   90% {
     stroke-dashoffset: 100;
     opacity: 0.2;
-    transform: translateX(25px);
+    transform: translateX(25px) scale(1.05);
     stroke-width: 0.8px;
   }
   100% {
     stroke-dashoffset: 0;
     opacity: 0.1;
-    transform: translateX(30px);
+    transform: translateX(30px) scale(1.06);
     stroke-width: 0.5px;
   }
 }
@@ -93,45 +135,130 @@
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   opacity: 0;
-  animation: followThroughEcho2 2s ease-out forwards 2.5s;
-  filter: drop-shadow(0 0 1px rgba(59, 130, 246, 0.3));
+  animation: followThroughEcho2 2.5s ease-out forwards 2.2s;
+  filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.4));
 }
 
 @keyframes followThroughEcho2 {
   0% {
     stroke-dashoffset: 1000;
     opacity: 0;
-    transform: translateX(10px);
+    transform: translateX(10px) scale(1.01);
     stroke-width: 1.5px;
   }
   20% {
     stroke-dashoffset: 800;
     opacity: 0.3;
-    transform: translateX(20px);
+    transform: translateX(20px) scale(1.03);
     stroke-width: 1.2px;
   }
   40% {
     stroke-dashoffset: 600;
     opacity: 0.25;
-    transform: translateX(30px);
+    transform: translateX(30px) scale(1.05);
     stroke-width: 1px;
   }
   60% {
     stroke-dashoffset: 400;
     opacity: 0.2;
-    transform: translateX(40px);
+    transform: translateX(40px) scale(1.07);
     stroke-width: 0.8px;
   }
   80% {
     stroke-dashoffset: 200;
     opacity: 0.1;
-    transform: translateX(50px);
+    transform: translateX(50px) scale(1.09);
     stroke-width: 0.6px;
   }
   100% {
     stroke-dashoffset: 0;
     opacity: 0;
-    transform: translateX(60px);
+    transform: translateX(60px) scale(1.1);
     stroke-width: 0.4px;
+  }
+}
+
+/* Particle animations */
+.ekg-particle-1 {
+  animation: particle1 3s ease-out forwards 0.8s;
+  opacity: 0;
+  filter: drop-shadow(0 0 2px white);
+}
+
+.ekg-particle-2 {
+  animation: particle2 2.8s ease-out forwards 1.0s;
+  opacity: 0;
+  filter: drop-shadow(0 0 2px white);
+}
+
+.ekg-particle-3 {
+  animation: particle3 2.5s ease-out forwards 1.9s;
+  opacity: 0;
+  filter: drop-shadow(0 0 2px white);
+}
+
+.ekg-particle-4 {
+  animation: particle4 3.2s ease-out forwards 2.1s;
+  opacity: 0;
+  filter: drop-shadow(0 0 2px white);
+}
+
+@keyframes particle1 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(5px, -10px) scale(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(20px, -20px) scale(0.1);
+  }
+}
+
+@keyframes particle2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-8px, -12px) scale(1.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-25px, -25px) scale(0.1);
+  }
+}
+
+@keyframes particle3 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(6px, -8px) scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(18px, -22px) scale(0.1);
+  }
+}
+
+@keyframes particle4 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-5px, -10px) scale(1.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-15px, -20px) scale(0.1);
   }
 }
