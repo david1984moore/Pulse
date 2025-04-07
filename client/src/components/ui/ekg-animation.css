@@ -24,25 +24,43 @@
   overflow: visible;
 }
 
-/* New SVG animation keyframes */
+/* SVG animation keyframes with variable speeds */
 @keyframes ekg-dash {
-  from {
+  0% {
     stroke-dashoffset: 1000;
   }
-  to {
-    stroke-dashoffset: 0;
+  30% {
+    stroke-dashoffset: 850; /* Starts slow */
+  }
+  50% {
+    stroke-dashoffset: 600; /* Accelerating */
+  }
+  70% {
+    stroke-dashoffset: 300; /* Moving faster */
+  }
+  100% {
+    stroke-dashoffset: 0; /* Ends quickly */
   }
 }
 
 @keyframes ekg-dot {
-  from {
+  0% {
     opacity: 0;
   }
   5% {
-    opacity: 1;
+    opacity: 0.8;
   }
-  to {
+  30% {
     opacity: 1;
+    filter: drop-shadow(0 0 8px white);
+  }
+  70% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px white);
+  }
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 15px white);
   }
 }
 

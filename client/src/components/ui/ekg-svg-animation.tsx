@@ -50,6 +50,37 @@ export default function EkgSvgAnimation({
         preserveAspectRatio="xMidYMid meet"
       >
         {/* ECG Path with animation */}
+        {/* Shadow path for glow effect */}
+        <path
+          d={`M 0,${height/2} 
+              L 100,${height/2} 
+              L 120,${height/2 - 5} 
+              L 140,${height/2 + 5} 
+              L 160,${height/2} 
+              L 180,${height/2} 
+              L 200,${height/2} 
+              L 220,${height/2 - 40} 
+              L 240,${height/2 + 50} 
+              L 260,${height/2} 
+              L 280,${height/2} 
+              L 300,${height/2 - 10} 
+              L 320,${height/2 + 10} 
+              L 340,${height/2} 
+              L 800,${height/2}`}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.4)"
+          strokeWidth={strokeWidth + 4}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            strokeDasharray: 1000,
+            strokeDashoffset: 1000,
+            animation: 'ekg-dash 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+            filter: 'blur(8px)'
+          }}
+        />
+        
+        {/* Main visible path */}
         <path
           d={`M 0,${height/2} 
               L 100,${height/2} 
@@ -74,7 +105,7 @@ export default function EkgSvgAnimation({
           style={{
             strokeDasharray: 1000,
             strokeDashoffset: 1000,
-            animation: 'ekg-dash 1.5s linear forwards'
+            animation: 'ekg-dash 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards'
           }}
         />
         
@@ -84,13 +115,17 @@ export default function EkgSvgAnimation({
           fill="white"
           style={{
             filter: 'drop-shadow(0 0 8px white)',
-            animation: 'ekg-dot 1.5s linear forwards'
+            animation: 'ekg-dot 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards'
           }}
         >
           {/* Motion path animation for the dot */}
           <animateMotion
-            dur="1.5s"
+            dur="2.2s"
             repeatCount="1"
+            keyTimes="0; 0.3; 0.5; 0.7; 1"
+            keyPoints="0; 0.2; 0.4; 0.7; 1"
+            calcMode="spline"
+            keySplines="0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1"
             path={`M 0,${height/2} 
                   L 100,${height/2} 
                   L 120,${height/2 - 5} 
