@@ -261,30 +261,31 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
   
   return (
-    <Card className="bg-gradient-to-br from-white to-blue-50 shadow-lg">
+    <Card className="bg-gradient-to-br from-white to-rose-50 shadow-lg">
       <CardHeader className="pb-4 border-b border-gray-100">
         <div className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center relative px-4 py-2 bg-gradient-to-r from-blue-600 to-violet-600 text-white rounded-lg shadow-md">
+          <CardTitle className="flex items-center relative px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-lg shadow-md">
             <span className="flex items-center justify-center">
               {language === 'es' ? 'Alicia' : 'Alice'}
             </span>
-            <div className="absolute left-1/2 transform -translate-x-1/2 top-full">
+            {/* EKG trace moved to right side of Alice */}
+            <div className="absolute -right-24 top-1/2 transform -translate-y-1/2">
               <EkgAnimation 
-                runAnimation={isPending} 
-                width={180} 
-                height={28} 
-                color="#6366f1"
+                runAnimation={isPending || Math.random() > 0.7} 
+                width={100} 
+                height={24} 
+                color="#ec4899"
               />
             </div>
           </CardTitle>
           <CardDescription className="flex items-center bg-gradient-to-r from-gray-100 to-gray-50 px-4 py-2 rounded-md shadow-sm">
-            <DollarSign className="h-4 w-4 mr-2 text-primary" />
+            <DollarSign className="h-4 w-4 mr-2 text-pink-500" />
             <span className="font-medium text-gray-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent className="pt-4">
-        <ScrollArea ref={scrollAreaRef} className="bg-gradient-to-b from-gray-50 to-blue-50/30 rounded-lg p-4 mb-5 h-64 border border-gray-200 shadow-inner">
+        <ScrollArea ref={scrollAreaRef} className="bg-gradient-to-b from-gray-50 to-rose-50/40 rounded-lg p-4 mb-5 h-64 border border-gray-200 shadow-inner">
           {messages.map((message, index) => (
             <div key={index} className="mb-3">
               <div
@@ -294,7 +295,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
               >
                 {/* Bot avatar for bot messages */}
                 {message.sender === "bot" && (
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center mr-2 shadow-md">
+                  <div className="flex-shrink-0 h-9 w-9 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center mr-2 shadow-md transform hover:scale-105 transition-transform duration-200">
                     <span className="text-white text-xs font-bold">A</span>
                   </div>
                 )}
@@ -302,8 +303,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 <div
                   className={`p-3 rounded-lg max-w-sm ${
                     message.sender === "user"
-                      ? "bg-gradient-to-r from-primary/30 to-primary/10 text-gray-800 rounded-tr-none shadow-md"
-                      : "bg-white text-gray-800 rounded-tl-none shadow-md border-l-4 border-blue-500"
+                      ? "bg-gradient-to-r from-pink-400/20 to-pink-200/20 text-gray-800 rounded-tr-none shadow-md"
+                      : "bg-white text-gray-800 rounded-tl-none shadow-md border-l-4 border-pink-500"
                   }`}
                 >
                   <p className={`${message.sender === "bot" ? "text-sm leading-relaxed" : "text-sm"}`}>
@@ -330,8 +331,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 
                 {/* User avatar for user messages */}
                 {message.sender === "user" && (
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center ml-2 shadow-sm">
-                    <span className="text-gray-600 text-xs">You</span>
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center ml-2 shadow-sm text-pink-50">
+                    <span className="text-xs font-medium">You</span>
                   </div>
                 )}
               </div>
@@ -339,24 +340,24 @@ export default function Chatbot({ bills }: ChatbotProps) {
           ))}
         </ScrollArea>
 
-        <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg shadow-inner border border-gray-200">
+        <div className="bg-gradient-to-r from-gray-50 to-rose-50 p-4 rounded-lg shadow-inner border border-gray-200">
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
             {isCustomAmount ? (
               <div className="flex w-full sm:flex-1">
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-500 font-bold">$</span>
                   <input
                     type="number"
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
                     placeholder="Enter amount"
-                    className="w-full pl-8 pr-4 py-2.5 border border-gray-200 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+                    className="w-full pl-8 pr-4 py-2.5 border border-pink-100 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-sm transition-all duration-200"
                   />
                 </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="ml-2 bg-white shadow-sm"
+                  className="ml-2 bg-white border-pink-200 text-pink-700 shadow-sm hover:bg-pink-50 transition-colors duration-200"
                   onClick={() => {
                     setIsCustomAmount(false);
                     setCustomAmount("");
@@ -367,10 +368,10 @@ export default function Chatbot({ bills }: ChatbotProps) {
               </div>
             ) : (
               <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-                <SelectTrigger className="flex-1 border-gray-200 bg-white shadow-sm hover:border-blue-300 transition-colors">
+                <SelectTrigger className="flex-1 border-pink-100 bg-white shadow-sm hover:border-pink-300 transition-colors duration-200">
                   <SelectValue placeholder={t('chatbotPlaceholder')} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border border-pink-100">
                   <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
                   <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
                   <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
@@ -382,7 +383,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
             <Button
               onClick={handleSubmitClick}
               disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
-              className={`w-full sm:w-auto shadow-md transition-all duration-200 ${isPending ? 'bg-blue-400' : 'bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700'}`}
+              className={`w-full sm:w-auto shadow-md transition-all duration-200 ${
+                isPending 
+                  ? 'bg-pink-400' 
+                  : 'bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700'
+              }`}
             >
               {isPending ? (
                 <>

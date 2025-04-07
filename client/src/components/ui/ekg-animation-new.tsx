@@ -41,37 +41,51 @@ export function EkgAnimation({
 
   if (!runAnimation || !isVisible) return null;
 
-  // Create a more sophisticated EKG pattern with multiple peaks for a more realistic trace
+  // Create a more complex and sexy EKG pattern with dramatic peaks and subtle details
   const midY = height/2;
   const ekgPath = `
     M 0,${midY}
-    L ${width*0.1},${midY}
-    L ${width*0.12},${midY-2}
-    L ${width*0.14},${midY+2}
-    L ${width*0.16},${midY-1}
-    L ${width*0.18},${midY+1}
-    L ${width*0.2},${midY}
+    L ${width*0.08},${midY}
+    L ${width*0.1},${midY-1}
+    L ${width*0.11},${midY+1}
+    L ${width*0.12},${midY-1}
+    L ${width*0.13},${midY}
+    
+    L ${width*0.15},${midY}
+    L ${width*0.17},${midY-height*0.15}
+    L ${width*0.18},${midY+height*0.07}
+    L ${width*0.19},${midY-height*0.05}
+    L ${width*0.20},${midY}
+    
     L ${width*0.25},${midY}
-    L ${width*0.26},${midY-height*0.25}
-    L ${width*0.28},${midY+height*0.1}
-    L ${width*0.3},${midY}
-    L ${width*0.32},${midY-height*0.7}
-    L ${width*0.34},${midY+height*0.4}
+    L ${width*0.26},${midY-height*0.3}
+    L ${width*0.28},${midY+height*0.15}
+    L ${width*0.30},${midY}
+    
+    L ${width*0.32},${midY-height*0.1}
+    L ${width*0.33},${midY-height*0.8}
+    L ${width*0.34},${midY+height*0.5}
+    L ${width*0.35},${midY-height*0.1}
     L ${width*0.36},${midY}
+    
     L ${width*0.4},${midY}
-    L ${width*0.45},${midY-3}
-    L ${width*0.46},${midY+3}
-    L ${width*0.47},${midY-2}
-    L ${width*0.48},${midY+2}
+    L ${width*0.43},${midY-height*0.1}
+    L ${width*0.44},${midY-height*0.05}
+    L ${width*0.46},${midY+height*0.08}
+    L ${width*0.47},${midY-height*0.05}
+    L ${width*0.48},${midY+height*0.05}
     L ${width*0.5},${midY}
+    
     L ${width*0.55},${midY}
-    L ${width*0.57},${midY-2}
-    L ${width*0.58},${midY+2}
+    L ${width*0.57},${midY-height*0.4}
+    L ${width*0.59},${midY+height*0.2}
     L ${width*0.6},${midY}
-    L ${width*0.65},${midY-height*0.3}
-    L ${width*0.67},${midY+height*0.18}
-    L ${width*0.7},${midY}
-    L ${width*0.8},${midY}
+    
+    L ${width*0.65},${midY}
+    L ${width*0.7},${midY-2}
+    L ${width*0.75},${midY+2}
+    L ${width*0.8},${midY-1}
+    L ${width*0.85},${midY}
     L ${width*0.9},${midY}
     L ${width},${midY}
   `;
@@ -86,7 +100,7 @@ export function EkgAnimation({
         position: 'relative',
         marginLeft: '8px',
         marginTop: '2px',
-        filter: 'drop-shadow(0 0 6px rgba(129, 140, 248, 0.5))'
+        filter: 'drop-shadow(0 0 8px rgba(236, 72, 153, 0.7))'
       }}
       className="ekg-wrapper"
     >
@@ -99,9 +113,9 @@ export function EkgAnimation({
         {/* Glowing background path for added effect */}
         <defs>
           <linearGradient id="ekgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(99, 102, 241, 0.1)" />
-            <stop offset="50%" stopColor="rgba(168, 85, 247, 0.3)" />
-            <stop offset="100%" stopColor="rgba(99, 102, 241, 0.1)" />
+            <stop offset="0%" stopColor="rgba(236, 72, 153, 0.1)" />
+            <stop offset="50%" stopColor="rgba(244, 114, 182, 0.35)" />
+            <stop offset="100%" stopColor="rgba(236, 72, 153, 0.1)" />
           </linearGradient>
         </defs>
         
