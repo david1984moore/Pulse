@@ -74,7 +74,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
 
   // Create array of placeholder elements for days before the month starts
   const placeholders = Array.from({ length: startDayOfWeek }, (_, i) => (
-    <div key={`empty-${i}`} className="h-12 bg-gray-100 rounded-md border border-gray-200"></div>
+    <div key={`empty-${i}`} className="h-12 bg-background/40 rounded-lg"></div>
   ));
 
   // Function to check if a day has a bill due
@@ -126,7 +126,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
         bill={selectedBill} 
       />
 
-      <Card className="bg-background/30 border-none">
+      <Card className="bg-card/70 shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
         <CardContent>
           <div className="bg-gradient-to-b from-background/40 to-background/20 rounded-lg backdrop-blur-sm">
             <div className="flex items-center justify-between px-3 py-4 mb-2">

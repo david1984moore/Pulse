@@ -261,11 +261,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
   
   return (
-    <Card className="bg-gradient-to-br from-gray-900 to-gray-800 shadow-lg border border-gray-700">
-      <CardHeader className="pb-4 border-b border-gray-700">
+    <Card className="bg-card/70 shadow-lg shadow-primary/5 border border-border/40 backdrop-blur-md">
+      <CardHeader className="pb-4 border-b border-border/30">
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">
-            <CardTitle className="flex items-center relative px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-md shadow-md">
+            <CardTitle className="flex items-center relative px-5 py-2.5 bg-primary/20 border border-primary/40 text-primary rounded-md shadow-glow-sm shadow-primary/10">
               <span className="flex items-center justify-center tracking-wide">
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
@@ -277,19 +277,19 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   runAnimation={isPending} 
                   width={100} 
                   height={24} 
-                  color="#06b6d4"
+                  color="hsl(192 91% 55%)"
                 />
               </div>
             )}
           </div>
-          <CardDescription className="flex items-center bg-gradient-to-r from-cyan-900 to-blue-900 px-4 py-2 rounded-md shadow-md text-white border border-cyan-700">
-            <DollarSign className="h-4 w-4 mr-2 text-cyan-300" />
-            <span className="font-medium">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+          <CardDescription className="flex items-center bg-background/60 backdrop-blur-sm px-4 py-2 rounded-md shadow-md text-foreground border border-primary/20">
+            <DollarSign className="h-4 w-4 mr-2 text-primary" />
+            <span className="font-medium glow-text">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent className="pt-4">
-        <ScrollArea ref={scrollAreaRef} className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-lg p-4 mb-5 h-64 border border-gray-700 shadow-inner">
+        <ScrollArea ref={scrollAreaRef} className="bg-background/40 backdrop-blur-sm rounded-lg p-4 mb-5 h-64 border border-border/30 shadow-inner">
           {messages.map((message, index) => (
             <div key={index} className="mb-3">
               <div
@@ -299,16 +299,16 @@ export default function Chatbot({ bills }: ChatbotProps) {
               >
                 {/* Bot avatar for bot messages */}
                 {message.sender === "bot" && (
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mr-2 shadow-md">
-                    <span className="text-white text-xs font-bold">A</span>
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center mr-2 shadow-glow-sm">
+                    <span className="text-primary text-xs font-bold">A</span>
                   </div>
                 )}
                 
                 <div
                   className={`p-3 rounded-lg max-w-sm ${
                     message.sender === "user"
-                      ? "bg-gradient-to-r from-blue-900/90 to-cyan-900/90 text-cyan-50 rounded-tr-none shadow-md border border-cyan-800/50"
-                      : "bg-gradient-to-r from-gray-700 to-gray-800 text-gray-100 rounded-tl-none shadow-md border-l-2 border-cyan-500"
+                      ? "bg-primary/20 text-foreground rounded-tr-none shadow-md border border-primary/40"
+                      : "bg-background/60 backdrop-blur-sm text-foreground rounded-tl-none shadow-md border-l-2 border-primary/40"
                   }`}
                 >
                   <p className={`${message.sender === "bot" ? "text-sm leading-relaxed" : "text-sm"}`}>
@@ -335,7 +335,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 
                 {/* User avatar for user messages */}
                 {message.sender === "user" && (
-                  <div className="flex-shrink-0 h-8 w-8 rounded-md bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center ml-2 shadow-md text-cyan-50">
+                  <div className="flex-shrink-0 h-8 w-8 rounded-md bg-primary/30 border border-primary/40 flex items-center justify-center ml-2 shadow-glow-sm text-foreground">
                     <span className="text-xs font-medium">You</span>
                   </div>
                 )}
@@ -344,24 +344,24 @@ export default function Chatbot({ bills }: ChatbotProps) {
           ))}
         </ScrollArea>
 
-        <div className="p-4 rounded-md bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700 shadow-md">
+        <div className="p-4 rounded-md bg-background/60 backdrop-blur-sm border border-border/30 shadow-glow-sm shadow-primary/5">
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
             {isCustomAmount ? (
               <div className="flex w-full sm:flex-1">
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-500 font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-medium">$</span>
                   <input
                     type="number"
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
                     placeholder="Enter amount"
-                    className="w-full pl-8 pr-4 py-2.5 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-1 focus:ring-cyan-500 shadow-md transition-all duration-150"
+                    className="w-full pl-8 pr-4 py-2.5 border border-border/50 bg-background/60 text-foreground rounded-md focus:outline-none focus:ring-1 focus:ring-primary/50 shadow-glow-sm backdrop-blur-sm transition-all duration-150"
                   />
                 </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="ml-2 bg-gray-700 border-gray-600 text-cyan-300 shadow-md hover:bg-gray-600 hover:text-cyan-200 transition-all duration-150"
+                  className="ml-2 bg-background/60 border-border/50 text-primary shadow-glow-sm hover:bg-primary/10 hover:text-primary/90 transition-all duration-150"
                   onClick={() => {
                     setIsCustomAmount(false);
                     setCustomAmount("");
@@ -372,25 +372,25 @@ export default function Chatbot({ bills }: ChatbotProps) {
               </div>
             ) : (
               <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-                <SelectTrigger className="flex-1 border-gray-600 bg-gray-700 text-gray-100 shadow-md hover:border-cyan-700 transition-colors duration-150">
+                <SelectTrigger className="flex-1 border-border/50 bg-background/60 text-foreground shadow-glow-sm hover:border-primary/40 backdrop-blur-sm transition-colors duration-150">
                   <SelectValue placeholder={t('chatbotPlaceholder')} />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-800 border border-gray-600 text-gray-100">
+                <SelectContent className="bg-background/95 backdrop-blur-lg border border-border/50 text-foreground">
                   <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
                   <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
                   <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
                   <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
-                  <SelectItem value="custom" className="text-cyan-300">{t('customSpend')}</SelectItem>
+                  <SelectItem value="custom" className="text-primary">{t('customSpend')}</SelectItem>
                 </SelectContent>
               </Select>
             )}
             <Button
               onClick={handleSubmitClick}
               disabled={(isCustomAmount ? !customAmount : !selectedAmount) || isPending}
-              className={`w-full sm:w-auto shadow-md transition-all duration-150 ${
+              className={`w-full sm:w-auto shadow-glow-sm transition-all duration-150 ${
                 isPending 
-                  ? 'bg-blue-600' 
-                  : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700'
+                  ? 'bg-primary/50' 
+                  : 'bg-primary/20 border border-primary/40 hover:bg-primary/30 text-primary'
               }`}
             >
               {isPending ? (
