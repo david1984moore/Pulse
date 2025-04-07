@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { 
+  ChevronLeft, ChevronRight, Plus, Home, Zap,
+  Wifi, Phone, Droplet, ShoppingCart, Car, CreditCard, Landmark
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import { useBillFormState } from "@/hooks/use-bill-form-state";
@@ -26,6 +29,23 @@ function getOrdinalSuffix(day: number): string {
     case 3: return "rd";
     default: return "th";
   }
+}
+
+// Helper function to get the appropriate icon for a bill type
+function getBillIcon(billName: string) {
+  const iconMap: Record<string, JSX.Element> = {
+    'Rent': <Home className="h-3.5 w-3.5 text-white" />,
+    'Electric': <Zap className="h-3.5 w-3.5 text-white" />,
+    'Water': <Droplet className="h-3.5 w-3.5 text-white" />,
+    'Internet': <Wifi className="h-3.5 w-3.5 text-white" />,
+    'Phone Service': <Phone className="h-3.5 w-3.5 text-white" />,
+    'Car Payment': <Car className="h-3.5 w-3.5 text-white" />,
+    'Credit Card': <CreditCard className="h-3.5 w-3.5 text-white" />,
+    'Insurance': <Landmark className="h-3.5 w-3.5 text-white" />,
+    'Groceries': <ShoppingCart className="h-3.5 w-3.5 text-white" />
+  };
+  
+  return iconMap[billName] || <CreditCard className="h-3.5 w-3.5 text-white" />;
 }
 
 interface CalendarViewProps {
@@ -196,12 +216,27 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                         {dayBills.slice(0, 3).map((bill) => (
                           <div 
                             key={bill.id}
-                            className="flex items-center justify-center w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
+                            className={`
+                              flex items-center justify-center w-5 h-5 rounded-full 
+                              ${bill.name === 'Rent' ? 'bg-gray-600' : 
+                                bill.name === 'Electric' ? 'bg-yellow-500' : 
+                                bill.name === 'Water' ? 'bg-blue-500' : 
+                                bill.name === 'Internet' ? 'bg-blue-400' : 
+                                bill.name === 'Phone Service' ? 'bg-slate-500' : 
+                                bill.name === 'Car Payment' ? 'bg-gray-600' :
+                                bill.name === 'Credit Card' ? 'bg-purple-500' :
+                                bill.name === 'Insurance' ? 'bg-indigo-500' :
+                                bill.name === 'Groceries' ? 'bg-green-500' :
+                                'bg-red-500'} 
+                              hover:opacity-90 transition-colors
+                            `}
                             title={`${bill.name}: $${Number(bill.amount).toFixed(2)} - Due on the ${bill.due_date}${getOrdinalSuffix(bill.due_date)}`}
                           >
                             {dayBills.length > 3 && bill === dayBills[2] ? (
                               <span className="text-[9px] font-bold text-white">+{dayBills.length - 2}</span>
-                            ) : null}
+                            ) : (
+                              getBillIcon(bill.name)
+                            )}
                           </div>
                         ))}
                       </div>
@@ -214,10 +249,40 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
             {/* Legend */}
             <div className="mt-6 bg-gray-50 rounded-lg border border-gray-200 p-4">
               <h4 className="text-sm font-semibold text-gray-800 mb-3">{t('calendarLegend')}</h4>
-              <div className="flex items-center">
-                <div className="flex items-center bg-white px-3 py-2 rounded-md border border-gray-200">
-                  <div className="w-5 h-5 bg-red-500 rounded-full mr-2"></div>
-                  <span className="text-sm text-gray-700">{t('billsDue')}</span>
+              <div className="flex flex-wrap gap-2">
+                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
+                  <div className="w-5 h-5 bg-gray-600 rounded-full mr-2 flex items-center justify-center">
+                    <Home className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <span className="text-xs text-gray-700">Rent</span>
+                </div>
+                
+                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
+                  <div className="w-5 h-5 bg-yellow-500 rounded-full mr-2 flex items-center justify-center">
+                    <Zap className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <span className="text-xs text-gray-700">Electric</span>
+                </div>
+                
+                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
+                  <div className="w-5 h-5 bg-blue-500 rounded-full mr-2 flex items-center justify-center">
+                    <Droplet className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <span className="text-xs text-gray-700">Water</span>
+                </div>
+                
+                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
+                  <div className="w-5 h-5 bg-blue-400 rounded-full mr-2 flex items-center justify-center">
+                    <Wifi className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <span className="text-xs text-gray-700">Internet</span>
+                </div>
+                
+                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
+                  <div className="w-5 h-5 bg-slate-500 rounded-full mr-2 flex items-center justify-center">
+                    <Phone className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <span className="text-xs text-gray-700">Phone</span>
                 </div>
               </div>
             </div>
