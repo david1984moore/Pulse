@@ -20,48 +20,49 @@ export function EkgAnimation({
   const animationFrameRef = useRef<number>(0);
   const offsetXRef = useRef<number>(0);
   const dataPointsRef = useRef<number[]>([]);
+  const trailPointsRef = useRef<{x: number, y: number}[]>([]);
   
-  // Initialize ECG data points for a hospital monitor style
+  // Initialize ECG data points for a sleek, sexy heart monitor trace
   useEffect(() => {
-    // Data pattern for a classic hospital ECG with flat line + heartbeat
+    // Generate the ECG pattern data points
     const generateEcgPattern = () => {
       const points: number[] = [];
       
-      // Hospital-style ECG pattern (values between -1 and 1)
-      // Flat line
-      for (let i = 0; i < 50; i++) {
+      // Flat baseline
+      for (let i = 0; i < 20; i++) {
         points.push(0);
       }
       
       // P-wave (small bump)
-      for (let i = 0; i < 10; i++) {
-        points.push(0.1 * Math.sin(i * Math.PI / 10));
+      for (let i = 0; i < 8; i++) {
+        points.push(0.08 * Math.sin(i * Math.PI / 8));
       }
       
-      // Slight pause
-      for (let i = 0; i < 5; i++) {
+      // Brief flat segment
+      for (let i = 0; i < 3; i++) {
         points.push(0);
       }
       
-      // QRS complex
-      points.push(-0.1); // Q
+      // QRS complex - sharper, sexier design
+      points.push(-0.05); // Q
+      points.push(-0.1);
+      points.push(0.8);  // R (tall spike)
+      points.push(-0.5); // S (deep drop)
       points.push(-0.2);
-      points.push(0.9);  // R (big spike up)
-      points.push(-0.4); // S (drop below baseline)
-      points.push(-0.2);
+      points.push(-0.05);
       
-      // Return to baseline
-      for (let i = 0; i < 5; i++) {
-        points.push(-0.1 + (i * 0.1 / 5));
+      // ST segment
+      for (let i = 0; i < 4; i++) {
+        points.push(0);
       }
       
-      // T-wave
+      // T-wave - smoother, more elegant
       for (let i = 0; i < 10; i++) {
         points.push(0.2 * Math.sin(i * Math.PI / 10));
       }
       
-      // Flat line to end
-      for (let i = 0; i < 50; i++) {
+      // Return to baseline
+      for (let i = 0; i < 20; i++) {
         points.push(0);
       }
       
@@ -71,7 +72,7 @@ export function EkgAnimation({
     dataPointsRef.current = generateEcgPattern();
   }, []);
   
-  // Draw the ECG waveform with hospital style
+  // Draw the ECG waveform with a sleek, sexy style
   const drawECG = () => {
     const canvas = canvasRef.current;
     if (!canvas || dataPointsRef.current.length === 0) return;
@@ -82,36 +83,19 @@ export function EkgAnimation({
     const w = canvas.width;
     const h = canvas.height;
     const centerY = h / 2;
-    const amplitudeScale = h / 3; // Scale to use 1/3 of the height
+    const amplitudeScale = h / 2.5; // Taller amplitude for more dramatic effect
     
-    // Hospital monitor background style
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
-    ctx.fillRect(0, 0, w, h);
+    // Clear with transparent background to blend with card header
+    ctx.clearRect(0, 0, w, h);
     
-    // Draw horizontal grid lines (faint)
-    ctx.strokeStyle = 'rgba(0, 50, 0, 0.2)';
-    ctx.lineWidth = 0.5;
-    const gridSize = 5;
-    for (let y = 0; y < h; y += gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
+    // Save current points for trail effect
+    const newPoints: {x: number, y: number}[] = [];
     
-    // Draw vertical grid lines (faint)
-    for (let x = 0; x < w; x += gridSize) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-    
-    // Draw ECG line
+    // Draw main ECG line
     ctx.strokeStyle = color;
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 2;
     ctx.shadowColor = color;
-    ctx.shadowBlur = 2;
+    ctx.shadowBlur = 4;
     ctx.beginPath();
     
     const dataPoints = dataPointsRef.current;
@@ -124,6 +108,9 @@ export function EkgAnimation({
       
       const y = centerY - (value * amplitudeScale);
       
+      // Save point for trail
+      newPoints.push({x: i, y});
+      
       if (i === 0) {
         ctx.moveTo(i, y);
       } else {
@@ -133,8 +120,48 @@ export function EkgAnimation({
     
     ctx.stroke();
     
-    // Update animation state for next frame
-    offsetXRef.current = (offsetXRef.current + 0.5) % totalPoints;
+    // Draw trail effect (follow-through)
+    if (trailPointsRef.current.length > 0) {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      
+      // Draw the trail slightly offset
+      const trailOffset = 2;
+      const trail = trailPointsRef.current;
+      
+      for (let i = 0; i < trail.length; i++) {
+        const point = trail[i];
+        if (i === 0) {
+          ctx.moveTo(point.x + trailOffset, point.y);
+        } else {
+          ctx.lineTo(point.x + trailOffset, point.y);
+        }
+      }
+      
+      ctx.stroke();
+      
+      // Draw a second, fainter trail
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.beginPath();
+      
+      for (let i = 0; i < trail.length; i++) {
+        const point = trail[i];
+        if (i === 0) {
+          ctx.moveTo(point.x + (trailOffset * 2), point.y);
+        } else {
+          ctx.lineTo(point.x + (trailOffset * 2), point.y);
+        }
+      }
+      
+      ctx.stroke();
+    }
+    
+    // Update trail points for next frame
+    trailPointsRef.current = newPoints;
+    
+    // Update animation state for next frame - slightly faster for sexier motion
+    offsetXRef.current = (offsetXRef.current + 1) % totalPoints;
     
     // Continue animation loop
     animationFrameRef.current = requestAnimationFrame(drawECG);
@@ -144,6 +171,12 @@ export function EkgAnimation({
   useEffect(() => {
     if (runAnimation) {
       setIsVisible(true);
+      
+      // Reset trail on new animation
+      trailPointsRef.current = [];
+      
+      // Reset offset for consistent starting position
+      offsetXRef.current = 0;
       
       // Start the animation loop
       animationFrameRef.current = requestAnimationFrame(drawECG);
@@ -176,7 +209,7 @@ export function EkgAnimation({
         display: 'inline-block', 
         verticalAlign: 'middle',
         margin: '0 0 0 8px',
-        borderRadius: '3px'
+        borderRadius: '4px'
       }} 
     />
   );

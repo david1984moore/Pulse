@@ -263,7 +263,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
   return (
     <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl">
       <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
-        <div className="flex flex-row items-start justify-between">
+        <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">
             <CardTitle className="flex items-center relative px-5 py-2.5">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
@@ -272,28 +272,25 @@ export default function Chatbot({ bills }: ChatbotProps) {
               <span className="text-xl font-bold tracking-wide text-primary-600">
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
+              
+              {/* ECG animation next to Alice's name */}
+              {isPending && (
+                <EkgAnimation 
+                  runAnimation={isPending} 
+                  width={120} 
+                  height={24} 
+                  color="#FFFFFF"
+                />
+              )}
             </CardTitle>
           </div>
           
-          <div className="flex flex-col items-end gap-2">
-            {isPending && (
-              <div className="px-3 py-1.5 bg-black rounded-md flex items-center">
-                <EkgAnimation 
-                  runAnimation={isPending} 
-                  width={80} 
-                  height={20} 
-                  color="#FFFFFF"
-                />
-              </div>
-            )}
-            
-            <CardDescription className="flex items-center px-4 py-2">
-              <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
-                <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
-                <span className="font-bold text-primary-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
-              </div>
-            </CardDescription>
-          </div>
+          <CardDescription className="flex items-center px-4 py-2">
+            <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
+              <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
+              <span className="font-bold text-primary-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+            </div>
+          </CardDescription>
         </div>
       </CardHeader>
       
