@@ -97,6 +97,17 @@ export default function Chatbot({ bills }: ChatbotProps) {
       }
     }
   }, [messages]);
+  
+  // Cleanup function to clear any lingering timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      // Clear animation timeout when component unmounts to prevent memory leaks
+      if (animationIdRef.current !== null) {
+        window.clearTimeout(animationIdRef.current);
+        animationIdRef.current = null;
+      }
+    };
+  }, []);
 
   const handleSubmit = async () => {
     const amountToUse = isCustomAmount ? customAmount : (selectedAmount || "");
@@ -224,25 +235,34 @@ export default function Chatbot({ bills }: ChatbotProps) {
     }
   };
 
-  // State to track when to show the EKG animation
+  // State to track when to show the EKG animation - completely independent of Alice's output
   const [showEkg, setShowEkg] = useState(false);
+  // Track animation ID to prevent multiple animations
+  const animationIdRef = useRef<number | null>(null);
   
   // Handler for submitting with EKG animation - guaranteed to run only ONCE per button click
   const handleSubmitWithEkg = async () => {
-    // Prevent duplicate animations if already running
+    // Don't allow new animations if one is in progress or if we're waiting for a response
     if (showEkg || isPending) return;
     
-    // First, trigger the animation
+    // Clear any existing animation timeout to prevent multiple animations
+    if (animationIdRef.current !== null) {
+      window.clearTimeout(animationIdRef.current);
+      animationIdRef.current = null;
+    }
+    
+    // Trigger the animation
     setShowEkg(true);
     
-    // Then process the submit request
-    handleSubmit();
-    
-    // Reset EKG state after the animation completes
-    // Duration matches the animation exactly with a small buffer
-    setTimeout(() => {
+    // Set up a one-time animation cycle - totally independent of Alice's text output
+    // This ensures the animation runs exactly once per button click
+    animationIdRef.current = window.setTimeout(() => {
       setShowEkg(false);
-    }, 2100);
+      animationIdRef.current = null;
+    }, 2100); // Duration matches animation length plus small buffer
+    
+    // Process the submit request separately - now decoupled from the animation
+    handleSubmit();
   };
   
   return (

@@ -99,6 +99,7 @@ export function EkgAnimation({
       fill: none;
       filter: drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6));
       animation: drawEkgTrace ${duration}ms ease-out forwards;
+      animation-iteration-count: 1; /* Explicitly set to run only once */
       will-change: stroke-dasharray, stroke-dashoffset;
     }
   `;
