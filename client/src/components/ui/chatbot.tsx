@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Send, Loader2, DollarSign } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
 import { secureApiRequest } from "@/lib/csrf";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/use-language";
@@ -51,11 +50,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const [isCustomAmount, setIsCustomAmount] = useState<boolean>(false);
   const [isPending, setIsPending] = useState(false);
   
-  // EKG animation trigger
-  const [runEkgAnimation, setRunEkgAnimation] = useState(false);
+  // Single EKG animation trigger that resets itself
+  const [ekgTrigger, setEkgTrigger] = useState(false);
   
-  // Button click protection
-  const clickBlockRef = useRef(false);
+  // Block multiple rapid clicks
+  const isProcessingRef = useRef(false);
   
   // Chat messages
   const [messages, setMessages] = useState<Message[]>([
@@ -238,22 +237,23 @@ export default function Chatbot({ bills }: ChatbotProps) {
   // Handler for the "Ask" button click with EKG animation
   const handleSubmitWithEkg = () => {
     // Prevent multiple rapid clicks
-    if (isPending || clickBlockRef.current) return;
+    if (isPending || isProcessingRef.current) return;
     
-    // Set click block flag to prevent multiple activations
-    clickBlockRef.current = true;
+    // Set processing flag to true to prevent double-clicks
+    isProcessingRef.current = true;
     
-    // Trigger the EKG animation first
-    setRunEkgAnimation(true);
+    // Simply toggle the trigger to true - the animation
+    // will control its own lifecycle thanks to the useEffect in EkgAnimation
+    setEkgTrigger(true);
     
     // Submit the request
     handleSubmit();
     
-    // Reset click block after animation completes
+    // Animation will automatically reset through the onComplete callback
+    // But we'll reset our isProcessing flag after a reasonable timeout
     setTimeout(() => {
-      clickBlockRef.current = false;
-      setRunEkgAnimation(false);
-    }, 2500); // Slightly longer than animation duration
+      isProcessingRef.current = false;
+    }, 2500);
   };
   
   return (
@@ -263,8 +263,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
           <CardTitle className="flex items-center">
             {language === 'es' ? 'Alicia' : 'Alice'}
             <EkgAnimation 
-              trigger={runEkgAnimation} 
-              duration={2000} 
+              runAnimation={ekgTrigger} 
+              onComplete={() => setEkgTrigger(false)}
               color="#3b82f6" 
               width={80} 
               height={25} 

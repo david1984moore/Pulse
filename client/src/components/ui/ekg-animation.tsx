@@ -1,59 +1,63 @@
+// Super simple EKG animation that runs exactly once when activated
 import { useState, useEffect } from 'react';
 
+// Interface for the component props
 interface EkgAnimationProps {
-  trigger: boolean;
-  duration?: number;
+  runAnimation: boolean;
+  onComplete?: () => void;
   color?: string;
   width?: number;
   height?: number;
 }
 
-export function EkgAnimation({ 
-  trigger,
-  duration = 2000,
+export function EkgAnimation({
+  runAnimation,
+  onComplete,
   color = '#3b82f6',
   width = 100,
   height = 25
 }: EkgAnimationProps) {
-  // Simple animation state
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [key, setKey] = useState(0);
-
-  // When trigger changes to true, start a new animation cycle
+  // Animation key to force new animation on each trigger
+  const [animationKey, setAnimationKey] = useState(0);
+  
+  // Visibility state
+  const [isVisible, setIsVisible] = useState(false);
+  
+  // When runAnimation changes to true, start a new animation cycle
   useEffect(() => {
-    if (trigger && !isAnimating) {
-      // Start animation
-      setIsAnimating(true);
-      // Force a new animation with key
-      setKey(prev => prev + 1);
+    if (runAnimation && !isVisible) {
+      // Show the animation
+      setIsVisible(true);
       
-      // Set timeout to end animation
+      // Increment key to force new animation
+      setAnimationKey(prev => prev + 1);
+      
+      // Set timeout to automatically hide and clean up after animation
       const timer = setTimeout(() => {
-        setIsAnimating(false);
-      }, duration);
+        setIsVisible(false);
+        if (onComplete) onComplete();
+      }, 2000); // Match duration of animation
       
-      // Clean up
       return () => clearTimeout(timer);
     }
-  }, [trigger, duration]);
-
-  // No animation = no display
-  if (!isAnimating) {
+  }, [runAnimation, onComplete]);
+  
+  // If not visible, render nothing
+  if (!isVisible) {
     return null;
   }
   
-  // Create a realistic hospital ECG waveform with proper cardiac features
+  // ECG trace points - creates a realistic heartbeat pattern
   const points = [
-    // Start flat baseline
-    [0, height/2],
-    [width*0.1, height/2],
+    [0, height/2],         // Start at baseline
+    [width*0.1, height/2], // Continue baseline
     
     // P wave (atrial depolarization)
     [width*0.15, height/2],
     [width*0.18, height/2 - height*0.1],
     [width*0.21, height/2],
     
-    // PR segment (conduction delay at AV node)
+    // PR segment
     [width*0.25, height/2],
     
     // QRS complex (ventricular depolarization)
@@ -61,61 +65,64 @@ export function EkgAnimation({
     [width*0.30, height/2 - height*0.6],  // R wave (tall spike)
     [width*0.33, height/2 + height*0.2],  // S wave
     
-    // ST segment (early ventricular repolarization)
+    // ST segment & T wave (ventricular repolarization)
     [width*0.36, height/2],
-    
-    // T wave (ventricular repolarization)
     [width*0.45, height/2 - height*0.15],
     [width*0.52, height/2],
     
-    // End with baseline
+    // Return to baseline
     [width*0.75, height/2],
     [width, height/2]
   ].map(point => point.join(',')).join(' ');
   
-  // CSS for the animation
+  // Create animation CSS for this specific instance
   const animationCSS = `
-    @keyframes drawEkg_${key} {
-      0% { stroke-dasharray: 1, ${width * 2}; stroke-dashoffset: ${width * 2}; }
-      100% { stroke-dasharray: ${width * 2}, 0; stroke-dashoffset: 0; }
-    }
-    
-    .ekg-line-${key} {
-      stroke: ${color};
-      stroke-width: 2.5px;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      fill: none;
-      filter: drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6));
-      animation: drawEkg_${key} ${duration}ms ease-out forwards;
-      animation-iteration-count: 1;
+    @keyframes drawEkg_${animationKey} {
+      0% { 
+        stroke-dasharray: 0, ${width * 2}; 
+        stroke-dashoffset: ${width * 2}; 
+      }
+      100% { 
+        stroke-dasharray: ${width * 2}, 0; 
+        stroke-dashoffset: 0; 
+      }
     }
   `;
   
   return (
-    <div className="ekg-animation" style={{
-      width: `${width}px`,
-      height: `${height}px`,
-      display: 'inline-block',
-      position: 'relative',
-      marginLeft: '8px',
-      marginTop: '2px'
-    }}>
-      {/* SVG for the heartbeat line */}
+    <div 
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        display: 'inline-block',
+        position: 'relative',
+        marginLeft: '8px',
+        marginTop: '2px'
+      }}
+    >
+      {/* Inject animation keyframes */}
+      <style>{animationCSS}</style>
+      
+      {/* SVG for the EKG line */}
       <svg
-        key={key}
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
       >
         <polyline
-          className={`ekg-line-${key}`}
           points={points}
+          stroke={color}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+          style={{
+            filter: 'drop-shadow(0 0 1.5px rgba(59, 130, 246, 0.6))',
+            animation: `drawEkg_${animationKey} 2s ease-out forwards`,
+            animationIterationCount: '1'
+          }}
         />
       </svg>
-      
-      {/* Inject animation CSS */}
-      <style dangerouslySetInnerHTML={{ __html: animationCSS }} />
     </div>
   );
 }
