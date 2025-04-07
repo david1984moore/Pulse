@@ -46,7 +46,7 @@
 .ekg-dot-to-line {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: dot-to-line 1.3s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  animation: dot-to-line 2.2s cubic-bezier(0.4, 0, 0.6, 1) forwards;
   filter: drop-shadow(0 0 1px rgba(59, 130, 246, 0.5));
 }
 
@@ -54,6 +54,6 @@
 .ekg-follow-through {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: follow-through 1.4s ease-out forwards 1s;
+  animation: follow-through 2s ease-out forwards 1.8s;
   filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.7));
 }
