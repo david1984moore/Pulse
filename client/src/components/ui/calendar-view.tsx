@@ -140,13 +140,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                     {format(currentDate, "yyyy")}
                   </div>
                 </div>
-                <div className="hidden sm:block">
-                  <h2 className="text-gray-800 font-semibold text-sm uppercase tracking-wide flex items-center">
-                    <span className="inline-block w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                    {t('paymentCalendar')}
-                  </h2>
-                  <p className="text-xs text-gray-500 mt-1">{t('calendarLegend')}</p>
-                </div>
+                {/* Calendar title removed as requested */}
               </div>
               
               <div className="flex space-x-2">

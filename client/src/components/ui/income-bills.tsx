@@ -163,38 +163,28 @@ export default function IncomeBills({
       
       <Card className="h-full backdrop-blur-md bg-white/90 shadow-xl border border-white/20 overflow-hidden rounded-2xl">
         <CardContent className="space-y-6 pt-6">
-        {/* Account Balance has been moved to the top dashboard area, so we can make this smaller */}
-        <div className="bg-gradient-to-r from-primary/20 to-primary/10 p-5 rounded-xl backdrop-blur-sm border border-primary/30 shadow-glow-sm">
-          <div className="flex justify-between items-center">
-            <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-wide flex items-center">
-              <span className="inline-block w-2 h-2 bg-primary rounded-full mr-2 animate-pulse"></span>
-              {t('calculatedBalance')}
+        {/* Recent Deductions section */}
+        {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-5 rounded-xl backdrop-blur-sm border border-primary/20 shadow-sm">
+            <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-wide flex items-center mb-3">
+              <span className="inline-block w-2 h-2 bg-primary rounded-full mr-2"></span>
+              {t('recentDeductions')}
             </h3>
-          </div>
-          <div className="mt-3">
-            <p className="text-3xl font-bold text-primary glow-text">
-              ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
-            </p>
-          </div>
-          {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
-            <div className="mt-3 text-xs text-gray-700 bg-white/50 p-3 rounded-lg backdrop-blur-sm border border-primary/10">
-              <p className="font-semibold text-gray-800">{t('recentDeductions')}:</p>
-              <ul className="mt-2 space-y-2">
-                {balanceData.deductedBills.map((bill) => (
-                  <li key={bill.id} className="flex items-center justify-between p-1.5 hover:bg-white/50 rounded-md transition-all">
-                    <div className="flex items-center">
-                      <div className="bg-gradient-to-br from-red-400 to-red-600 w-6 h-6 rounded-full flex items-center justify-center mr-2 shadow-sm">
-                        {getBillIcon(bill.name)}
-                      </div>
-                      <span className="font-medium text-gray-800">{translateBillName(bill.name)}</span>
+            <ul className="space-y-2">
+              {balanceData.deductedBills.map((bill) => (
+                <li key={bill.id} className="flex items-center justify-between p-2 bg-white/70 hover:bg-white rounded-lg transition-all border border-gray-100 shadow-sm">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mr-3 shadow-sm">
+                      {getBillIcon(bill.name)}
                     </div>
-                    <span className="text-red-500 font-bold">-${bill.amount}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+                    <span className="font-medium text-gray-800">{translateBillName(bill.name)}</span>
+                  </div>
+                  <span className="text-red-500 font-bold">-${bill.amount}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         
         {/* Financial Summary - Enhanced with gradient backgrounds and animations */}
         <div className="bg-gradient-to-br from-white/80 to-white/60 p-5 rounded-xl backdrop-blur-sm border border-white/40 shadow-sm">
@@ -272,8 +262,8 @@ export default function IncomeBills({
                   
                   <div className="flex-1 flex p-3">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center mr-3 shadow-sm group-hover:scale-110 transition-transform">
-                        {getBillIcon(bill.name)}
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center mr-3 shadow-sm group-hover:scale-110 transition-transform">
+                        <span className="text-gray-600">{getBillIcon(bill.name)}</span>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-800 group-hover:text-gray-900">{translateBillName(bill.name)}</p>

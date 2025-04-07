@@ -270,17 +270,15 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
             </CardTitle>
-            {/* EKG trace with enhanced visuals */}
+            {/* EKG trace only displays when processing */}
             <div className="ml-3 h-6 min-w-[100px]">
-              {isPending ? (
+              {isPending && (
                 <EkgAnimation 
                   runAnimation={isPending} 
                   width={100} 
                   height={24} 
                   color="hsl(192 91% 55%)"
                 />
-              ) : (
-                <div className="text-xs text-gray-500 italic mt-1">Your spending assistant</div>
               )}
             </div>
           </div>
