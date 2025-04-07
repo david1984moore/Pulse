@@ -262,11 +262,14 @@ export default function Chatbot({ bills }: ChatbotProps) {
   
   return (
     <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl">
-      <CardHeader className="pb-4 border-b border-gray-50 bg-gradient-to-r from-primary/5 to-primary/10">
+      <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center">
-            <CardTitle className="flex items-center relative px-5 py-2.5 text-primary-700">
-              <span className="flex items-center justify-center font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-600">
+            <CardTitle className="flex items-center relative px-5 py-2.5">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
+                <span className="text-white font-bold text-lg">A</span>
+              </div>
+              <span className="text-xl font-bold tracking-wide text-primary-600">
                 {language === 'es' ? 'Alicia' : 'Alice'}
               </span>
             </CardTitle>
@@ -283,9 +286,9 @@ export default function Chatbot({ bills }: ChatbotProps) {
             </div>
           </div>
           <CardDescription className="flex items-center px-4 py-2">
-            <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary/10 to-primary/20 shadow-sm">
+            <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
               <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
-              <span className="font-bold text-primary-600">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
+              <span className="font-bold text-primary-700">${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}</span>
             </div>
           </CardDescription>
         </div>
@@ -299,10 +302,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
         >
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6">
-              <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center mb-4 shadow-glow-sm">
-                <span className="text-primary text-xl font-bold">A</span>
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mb-4 shadow-md">
+                <span className="text-white text-xl font-bold">A</span>
               </div>
-              <p className="text-gray-500 text-sm max-w-xs">
+              <h3 className="text-primary-600 font-bold text-lg mb-2">Your Financial Companion</h3>
+              <p className="text-gray-600 text-sm max-w-xs">
                 Ask Alice if you can spend a specific amount and she'll analyze your financial situation.
               </p>
             </div>
@@ -314,10 +318,10 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     message.sender === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {/* Bot avatar with minimal sleek styling */}
+                  {/* Bot avatar with attractive styling */}
                   {message.sender === "bot" && (
-                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mr-3">
-                      <span className="text-primary-600 font-bold text-sm">A</span>
+                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-sm">
+                      <span className="text-white font-bold text-sm">A</span>
                     </div>
                   )}
                   
