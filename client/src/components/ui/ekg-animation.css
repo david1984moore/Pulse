@@ -1,46 +1,51 @@
 
-/* Continuous EKG Animation Styles */
+/* Real-time Medical Monitor EKG Animation Styles */
 
-.ekg-wrapper {
-  transition: opacity 0.3s ease;
+/* Main container with black background and subtle glow */
+.ekg-container {
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+  border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
-.ekg-svg {
-  overflow: visible; /* Allow elements to render outside SVG bounds */
+/* Canvas element for drawing */
+.ekg-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-/* The continuous moving EKG line */
-.ekg-line {
-  filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.7));
-}
-
-/* Grid lines for medical device look */
-.ekg-grid line {
-  animation: fadeGrid 1s ease-in-out;
-}
-
-@keyframes fadeGrid {
+/* Pulse animation for subtle glow effect */
+@keyframes pulse {
   0% {
+    box-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
+  }
+}
+
+/* Additional subtle animations */
+.ekg-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0), rgba(99, 102, 241, 0.5), rgba(99, 102, 241, 0));
+  animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(100%);
     opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Moving dot with pulse effect */
-.ekg-dot {
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
-  animation: pulseDot 0.8s infinite alternate ease-in-out;
-}
-
-@keyframes pulseDot {
-  0% {
-    r: 1.5;
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.7));
-  }
-  100% {
-    r: 2.5;
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
   }
 }
