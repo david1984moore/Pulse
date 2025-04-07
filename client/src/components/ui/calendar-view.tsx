@@ -149,16 +149,6 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
-              {onAddBill && (
-                <Button
-                  variant="default"
-                  size="icon"
-                  onClick={onAddBill}
-                  className="rounded-md h-8 w-8 p-0 bg-red-500 hover:bg-red-600 shadow"
-                >
-                  <Plus className="h-4 w-4 text-white" />
-                </Button>
-              )}
             </div>
           </div>
         </CardHeader>

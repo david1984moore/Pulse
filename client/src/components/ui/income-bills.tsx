@@ -246,7 +246,14 @@ export default function IncomeBills({
           {bills.length > 0 ? (
             <ul className="space-y-2">
               {bills.map((bill) => (
-                <li key={bill.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow">
+                <li 
+                  key={bill.id} 
+                  className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow hover:bg-gray-50 cursor-pointer transition-colors"
+                  onClick={() => {
+                    setSelectedBill(bill);
+                    setIsEditBillModalOpen(true);
+                  }}
+                >
                   <div className="flex items-center">
                     {getBillIcon(bill.name)}
                     <div>
@@ -265,19 +272,11 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="outline"
-                      className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-blue-600 hover:border-blue-300 transition-colors"
-                      onClick={() => {
-                        setSelectedBill(bill);
-                        setIsEditBillModalOpen(true);
-                      }}
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="outline"
                       className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors"
-                      onClick={() => onDeleteBill(bill.id)}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the parent's onClick
+                        onDeleteBill(bill.id);
+                      }}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -308,7 +307,14 @@ export default function IncomeBills({
           {income.length > 0 ? (
             <ul className="space-y-2">
               {income.map((inc) => (
-                <li key={inc.id} className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow">
+                <li 
+                  key={inc.id} 
+                  className="p-3 flex justify-between items-center bg-white rounded-lg border border-gray-200 shadow hover:bg-gray-50 cursor-pointer transition-colors"
+                  onClick={() => {
+                    setSelectedIncome(inc);
+                    setIsEditIncomeModalOpen(true);
+                  }}
+                >
                   <div className="flex items-center">
                     <DollarSign className="h-4 w-4 mr-2 text-green-600" />
                     <div>
@@ -327,19 +333,11 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="outline"
-                      className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-blue-600 hover:border-blue-300 transition-colors"
-                      onClick={() => {
-                        setSelectedIncome(inc);
-                        setIsEditIncomeModalOpen(true);
-                      }}
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="outline"
                       className="h-8 w-8 border border-gray-300 text-gray-600 hover:text-red-600 hover:border-red-300 transition-colors"
-                      onClick={() => onDeleteIncome(inc.id)}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the parent's onClick
+                        onDeleteIncome(inc.id);
+                      }}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
