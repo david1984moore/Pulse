@@ -127,38 +127,30 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
       />
 
       <Card className="border border-gray-200 shadow-md">
-        <CardHeader className="pb-3 border-b border-gray-200 bg-gray-100">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-bold text-gray-800">
-              {t('calendar')}
-            </CardTitle>
-            <div className="flex space-x-2">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={previousMonth}
-                className="rounded-md h-8 w-8 p-0 border border-gray-300 shadow-sm"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={nextMonth}
-                className="rounded-md h-8 w-8 p-0 border border-gray-300 shadow-sm"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
         <CardContent>
           <div className="bg-white rounded-lg">
-            <div className="mb-4">
-              <h3 className="text-xl font-bold text-gray-800 capitalize pb-2">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-800 capitalize">
                 {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
               </h3>
-              <div className="h-0.5 w-32 bg-primary/30 rounded-full"></div>
+              <div className="flex space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={previousMonth}
+                  className="rounded-md h-8 w-8 p-0 border border-gray-300 shadow-sm"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={nextMonth}
+                  className="rounded-md h-8 w-8 p-0 border border-gray-300 shadow-sm"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Day headers in a more cohesive row */}
