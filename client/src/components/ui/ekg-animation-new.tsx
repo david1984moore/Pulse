@@ -41,17 +41,16 @@ export function EkgAnimation({
   // Don't render anything if not animating
   if (!runAnimation) return null;
   
-  // Path definition for the EKG trace
+  // Simplified path definition for a cleaner EKG trace
   const ekgPathData = `
     M 0,${height/2}
     L ${width*0.2},${height/2}
     L ${width*0.3},${height/2}
-    L ${width*0.38},${height/2}
-    L ${width*0.42},${height/2+3}
+    L ${width*0.4},${height/2}
     L ${width*0.45},${height/2-height*0.6}
-    L ${width*0.5},${height/2+height*0.2}
+    L ${width*0.5},${height/2+height*0.3}
     L ${width*0.55},${height/2}
-    L ${width*0.75},${height/2}
+    L ${width*0.7},${height/2}
     L ${width},${height/2}
   `;
 
@@ -73,7 +72,7 @@ export function EkgAnimation({
         viewBox={`0 0 ${width} ${height}`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Simple, clean trace line with a single effect */}
+        {/* A single, simple EKG line with follow-through effect */}
         <path
           d={ekgPathData}
           fill="none"
@@ -81,7 +80,7 @@ export function EkgAnimation({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="ekg-path ekg-line"
+          className="ekg-line"
         />
       </svg>
     </div>

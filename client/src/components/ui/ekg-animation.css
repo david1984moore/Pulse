@@ -1,21 +1,23 @@
-/* Simple trace animation - just draw the line */
-@keyframes trace {
+/* This animation draws the EKG line */
+@keyframes draw-ekg {
   0% {
     stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
   }
   100% {
     stroke-dashoffset: 0;
+    opacity: 1;
   }
 }
 
-/* Simple follow-through that fades out the line after it's drawn */
-@keyframes followthrough {
-  0%, 10% {
+/* This animation creates the follow-through effect */
+@keyframes fade-away {
+  0% {
     opacity: 1;
     transform: translateX(0);
-  }
-  30% {
-    opacity: 0.7;
   }
   100% {
     opacity: 0;
@@ -23,15 +25,9 @@
   }
 }
 
-/* Basic line that appears out of thin air */
-.ekg-path {
+/* The SVG path for the EKG line */
+.ekg-line {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
-  animation: trace 1s ease-out forwards;
-}
-
-/* Once the line is drawn, it fades away */
-.ekg-line {
-  animation: followthrough 0.8s ease-out forwards;
-  animation-delay: 1s; /* Start after the line is fully drawn */
+  animation: draw-ekg 1s ease-out forwards, fade-away 0.7s ease-out forwards 1s;
 }
