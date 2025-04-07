@@ -129,7 +129,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
       <Card className="border border-gray-200 shadow-md">
         <CardContent>
           <div className="bg-white rounded-lg">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between px-2 py-4 mb-2">
               <h3 className="text-xl font-bold text-gray-800 capitalize">
                 {t(format(currentDate, "MMMM").toLowerCase())} {format(currentDate, "yyyy")}
               </h3>
