@@ -19,6 +19,7 @@ import {
   addMonths,
   subMonths
 } from "date-fns";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Helper function to get the ordinal suffix for a date number
 function getOrdinalSuffix(day: number): string {
@@ -230,7 +231,7 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                                 'bg-red-500'} 
                               hover:opacity-90 transition-colors
                             `}
-                            title={`${bill.name}: $${Number(bill.amount).toFixed(2)} - Due on the ${bill.due_date}${getOrdinalSuffix(bill.due_date)}`}
+                            data-tooltip-id={`bill-tooltip-${bill.id}`}
                           >
                             {dayBills.length > 3 && bill === dayBills[2] ? (
                               <span className="text-[9px] font-bold text-white">+{dayBills.length - 2}</span>
@@ -241,50 +242,49 @@ export default function CalendarView({ bills, onAddBill }: CalendarViewProps) {
                         ))}
                       </div>
                     )}
+                    
+                    {/* Tooltips for bills */}
+                    {dayBills.map((bill) => (
+                      <TooltipProvider key={`tooltip-${bill.id}`}>
+                        <Tooltip id={`bill-tooltip-${bill.id}`} delayDuration={100}>
+                          <TooltipContent side="top" className="bg-slate-900 text-white border-0 shadow-lg p-3 rounded-lg max-w-[200px]">
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center gap-2">
+                                <div className={`
+                                  w-4 h-4 rounded-full flex items-center justify-center
+                                  ${bill.name === 'Rent' ? 'bg-gray-600' : 
+                                    bill.name === 'Electric' ? 'bg-yellow-500' : 
+                                    bill.name === 'Water' ? 'bg-blue-500' : 
+                                    bill.name === 'Internet' ? 'bg-blue-400' : 
+                                    bill.name === 'Phone Service' ? 'bg-slate-500' : 
+                                    bill.name === 'Car Payment' ? 'bg-gray-600' :
+                                    bill.name === 'Credit Card' ? 'bg-purple-500' :
+                                    bill.name === 'Insurance' ? 'bg-indigo-500' :
+                                    bill.name === 'Groceries' ? 'bg-green-500' :
+                                    'bg-red-500'}
+                                `}>
+                                  {getBillIcon(bill.name)}
+                                </div>
+                                <span className="font-semibold">{bill.name}</span>
+                              </div>
+                              <div className="text-sm text-slate-200 flex flex-col gap-1">
+                                <div className="flex justify-between">
+                                  <span>{t('amount')}:</span>
+                                  <span className="font-medium">${Number(bill.amount).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>{t('dueDate')}:</span>
+                                  <span className="font-medium">{bill.due_date}<sup>{getOrdinalSuffix(bill.due_date)}</sup></span>
+                                </div>
+                              </div>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ))}
                   </div>
                 );
               })}
-            </div>
-            
-            {/* Legend */}
-            <div className="mt-6 bg-gray-50 rounded-lg border border-gray-200 p-4">
-              <h4 className="text-sm font-semibold text-gray-800 mb-3">{t('calendarLegend')}</h4>
-              <div className="flex flex-wrap gap-2">
-                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
-                  <div className="w-5 h-5 bg-gray-600 rounded-full mr-2 flex items-center justify-center">
-                    <Home className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <span className="text-xs text-gray-700">Rent</span>
-                </div>
-                
-                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
-                  <div className="w-5 h-5 bg-yellow-500 rounded-full mr-2 flex items-center justify-center">
-                    <Zap className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <span className="text-xs text-gray-700">Electric</span>
-                </div>
-                
-                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
-                  <div className="w-5 h-5 bg-blue-500 rounded-full mr-2 flex items-center justify-center">
-                    <Droplet className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <span className="text-xs text-gray-700">Water</span>
-                </div>
-                
-                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
-                  <div className="w-5 h-5 bg-blue-400 rounded-full mr-2 flex items-center justify-center">
-                    <Wifi className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <span className="text-xs text-gray-700">Internet</span>
-                </div>
-                
-                <div className="flex items-center bg-white px-3 py-1.5 rounded-md border border-gray-200">
-                  <div className="w-5 h-5 bg-slate-500 rounded-full mr-2 flex items-center justify-center">
-                    <Phone className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <span className="text-xs text-gray-700">Phone</span>
-                </div>
-              </div>
             </div>
           </div>
         </CardContent>
