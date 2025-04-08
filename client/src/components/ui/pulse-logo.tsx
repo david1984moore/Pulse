@@ -140,14 +140,16 @@ export function PulseLogo({
         </div>
       </div>
       
-      {/* Clean modern text treatment - matched to design */}
+      {/* Eye-catching modern text treatment with unique styling */}
       {showText && (
         <span className={cn(
-          "pulse-text font-sans", 
+          "pulse-text relative", 
           textSizeClasses[size],
           textClassName
         )}>
           pulse
+          {/* Add a subtle dot accent that complements the pulse icon */}
+          <span className="absolute -right-1 top-0 w-1.5 h-1.5 bg-purple-400 rounded-full"></span>
         </span>
       )}
     </div>

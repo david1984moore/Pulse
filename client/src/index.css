@@ -209,21 +209,35 @@
   transform: scale(1.05);
 }
 
-/* Modern, sleek styling for the pulse logo - matching the screenshot */
+/* Bold, eye-catching styling for the pulse logo - distinctive yet modern */
 .pulse-text {
-  /* Modern, geometric font stack used by top tech brands */
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Space Grotesk has a distinct tech-forward character set */
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   
-  /* Match the color from the screenshot */
-  color: #9333ea;
+  /* Dramatic gradient text that captures attention */
+  background: linear-gradient(135deg, #7928ca 0%, #9333ea 40%, #c026d3 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   
-  /* Typography matched to the screenshot */
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  /* Bold weight balanced with character spacing */
+  font-weight: 700;
+  letter-spacing: 0;
   
   /* Clean edges for perfect rendering */
   -webkit-font-smoothing: antialiased;
   
-  /* Modern lowercase for tech brands */
+  /* Modern lowercase with slight character adjustments */
   text-transform: lowercase;
+  
+  /* Very subtle text shadow for depth */
+  text-shadow: 0px 2px 4px rgba(147, 51, 234, 0.15);
+  
+  /* Add distinctive modern tech branding elements */
+  position: relative;
+  padding-right: 0.1em;
+  
+  /* Create subtle angled cuts on certain letters */
+  font-feature-settings: "ss01", "ss03";
+  font-variant-numeric: tabular-nums;
 }
