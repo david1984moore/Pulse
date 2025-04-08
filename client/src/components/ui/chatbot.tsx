@@ -56,8 +56,9 @@ export default function Chatbot({ bills }: ChatbotProps) {
   // Prevent multiple rapid/duplicate clicks
   const isSubmittingRef = useRef(false);
   
-  // Use a unique key to force complete remount of animation component
+  // For controlling the animation state and component remounting
   const [animationKey, setAnimationKey] = useState(1);
+  const [showAnimation, setShowAnimation] = useState(false);
   
   // Chat messages
   const [messages, setMessages] = useState<Message[]>([
@@ -238,7 +239,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
 
   /**
-   * Guaranteed reliable handler that forces a complete remount of the animation
+   * Guaranteed reliable handler that starts the animation independently from API response
    */
   const handleSubmitClick = () => {
     // Prevent rapid clicks
@@ -247,27 +248,29 @@ export default function Chatbot({ bills }: ChatbotProps) {
     // Lock the button immediately
     isSubmittingRef.current = true;
     
-    // Force animation to stop
-    setIsPending(false);
+    // Force animation state reset
+    setShowAnimation(false);
     
     // Generate a new animation key to force complete component remount
     setAnimationKey(prevKey => prevKey + 1);
     
     // Wait for DOM to update and previous animation to be removed
     setTimeout(() => {
-      // Start completely fresh animation
+      // Set states to control animation
       setIsPending(true);
+      setShowAnimation(true);
       
-      // Submit the request after a small delay to let animation start
+      // Submit the request after the animation has started
+      // Animation runs independently from API response
+      handleSubmit();
+      
+      // Set a timer to end the animation after the main animation has completed
       setTimeout(() => {
-        handleSubmit();
-        
-        // Allow a full 7 seconds for animation to complete (safety margin on 5 second duration)
-        setTimeout(() => {
-          isSubmittingRef.current = false;
-        }, 7000);
-      }, 300);
-    }, 200);
+        setShowAnimation(false);
+        setIsPending(false);
+        isSubmittingRef.current = false;
+      }, 5500); // Slightly longer than the 5s animation to ensure completion
+    }, 50);
   };
   
   return (
@@ -277,6 +280,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
           <EkgCssAnimation 
             key={`ekg-fullwidth-${animationKey}`}
+            active={showAnimation}
             lineColor="rgba(255, 255, 255, 0.9)"
             width={600} 
             height={300}
@@ -299,7 +303,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   </div>
                   
                   {/* Sexy ECG heartbeat animation next to Alice's name - also with unique key */}
-                  <AliceCssEcg key={`alice-ecg-${animationKey}`} color="#FFFFFF" />
+                  <AliceCssEcg key={`alice-ecg-${animationKey}`} active={showAnimation} color="#FFFFFF" />
                 </div>
               </div>
             </div>

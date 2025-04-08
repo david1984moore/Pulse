@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 /**
- * EkgCssAnimation - A simple, CSS-based ECG animation guaranteed to run once per mount
+ * EkgCssAnimation - A simple, CSS-based ECG animation guaranteed to run once
+ * when the active prop changes to true
  * 
  * This component uses CSS animations rather than JS to ensure reliable completion
  * and prevent issues with animation cycles being cut short or never running.
@@ -10,7 +11,8 @@ export default function EkgCssAnimation({
   lineColor = "rgba(255, 255, 255, 0.9)",
   width = 500,
   height = 200,
-  strokeWidth = 2
+  strokeWidth = 2,
+  active = false
 }) {
   // Keep track if animation has started
   const [isAnimating, setIsAnimating] = useState(false);
@@ -42,15 +44,18 @@ export default function EkgCssAnimation({
     H ${width}
   `;
   
-  // Start animation once on mount
+  // Start animation when active prop changes to true
   useEffect(() => {
-    // Small delay to ensure DOM is fully ready
-    const timer = setTimeout(() => {
-      setIsAnimating(true);
-    }, 50);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    if (active) {
+      // Small delay to ensure DOM is fully ready
+      const timer = setTimeout(() => {
+        setIsAnimating(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    } else {
+      setIsAnimating(false);
+    }
+  }, [active]);
   
   // Calculate the path length for stroke-dasharray/offset
   const mainPathRef = useRef<SVGPathElement>(null);

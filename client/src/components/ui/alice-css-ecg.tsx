@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 
 /**
  * AliceCssEcg - A smaller CSS-based ECG animation next to Alice's name
- * Guaranteed to run once per mount for reliable animation
+ * Guaranteed to run once per active prop change
  */
 export default function AliceCssEcg({
   color = "#FFFFFF",
+  active = false,
 }) {
   // Keep track if animation has started
   const [isAnimating, setIsAnimating] = useState(false);
@@ -35,14 +36,17 @@ export default function AliceCssEcg({
   const mainPathRef = useRef<SVGPathElement>(null);
   const [pathLength, setPathLength] = useState(300); // Default estimate
   
-  // Start animation once on mount with a tiny delay
+  // Start animation when active prop changes to true
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnimating(true);
-    }, 50);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    if (active) {
+      const timer = setTimeout(() => {
+        setIsAnimating(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    } else {
+      setIsAnimating(false);
+    }
+  }, [active]);
   
   // Measure the actual path length
   useEffect(() => {
