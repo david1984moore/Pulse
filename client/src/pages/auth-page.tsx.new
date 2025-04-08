@@ -1,168 +1,149 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useLocation } from "wouter";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useLocation, useRoute, Link, Redirect } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
-import { Loader2 } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import LanguageToggle from "@/components/ui/language-toggle";
+import { PulseLogo } from "@/components/ui/pulse-logo";
+import { userAuthSchema } from "@shared/schema";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  rememberMe: z.boolean().optional(),
-});
+type LoginFormValues = {
+  email: string;
+  password: string;
+  rememberMe?: boolean;
+};
 
-const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[0-9]/, "Password must include at least one number")
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must include a special character"),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
-type SignupFormValues = z.infer<typeof signupSchema>;
+type RegisterFormValues = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 
 export default function AuthPage() {
-  const { user, loginMutation, registerMutation } = useAuth();
+  const [, setLocation] = useLocation();
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get("mode") || "login";
+  const { loginMutation, registerMutation, user } = useAuth();
   const { t } = useLanguage();
-  const [, params] = useLocation();
-  const [isLoginRoute] = useRoute("/login");
-  const [isSignupRoute] = useRoute("/signup");
-  
-  const isLogin = isLoginRoute || (!isSignupRoute);
-  
+  const [activeTab, setActiveTab] = useState(mode);
+
+  useEffect(() => {
+    if (user) {
+      setLocation("/dashboard");
+    }
+  }, [user, setLocation]);
+
   const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(
+      z.object({
+        email: z.string().email(t("emailLabel")),
+        password: z.string().min(1, t("passwordLabel")),
+        rememberMe: z.boolean().optional(),
+      })
+    ),
     defaultValues: {
       email: "",
       password: "",
       rememberMe: false,
     },
   });
-  
-  const signupForm = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
+
+  const registerForm = useForm<RegisterFormValues>({
+    resolver: zodResolver(
+      userAuthSchema
+        .extend({
+          confirmPassword: z.string().min(1, t("confirmPasswordLabel")),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+          message: t("passwordsDontMatch"),
+          path: ["confirmPassword"],
+        })
+    ),
     defaultValues: {
       name: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
-    mode: "onChange", // Enable real-time validation
   });
-  
-  function onLoginSubmit(data: LoginFormValues) {
-    console.log("Login form submitted:", data);
+
+  const onLoginSubmit = (data: LoginFormValues) => {
     loginMutation.mutate({
       email: data.email,
       password: data.password,
     });
-  }
-  
-  function onSignupSubmit(data: SignupFormValues) {
-    console.log("Signup form submitted:", data);
+  };
+
+  const onRegisterSubmit = (data: RegisterFormValues) => {
     registerMutation.mutate({
       name: data.name,
       email: data.email,
       password: data.password,
     });
-  }
-  
-  // Redirect to dashboard if already logged in
-  if (user) {
-    return <Redirect to="/dashboard" />;
-  }
-  
-  // Welcome message
-  const welcomeContent = isLogin ? (
-    <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-md text-sm">
-      <p className="font-medium">{t('welcome')} {t('to')} Pulse Finance!</p>
-      <p>{t('loginDescription')}</p>
-      <p className="mt-1">{t('dontHaveAccount')}</p>
-    </div>
-  ) : null;
-  
-  // Helper function to check if password requirements are met
-  const passwordRequirementsMet = () => {
-    const password = signupForm.getValues('password');
-    const confirmPassword = signupForm.getValues('confirmPassword');
-    
-    const hasMinLength = password.length >= 8;
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const passwordsMatch = password === confirmPassword && confirmPassword !== '';
-    
-    return hasMinLength && hasSpecialChar && hasNumber && passwordsMatch;
   };
-  
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setLocation(`/auth?mode=${value}`);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
-      {/* Home button with pulse text */}
-      <div className="absolute top-4 left-4 flex items-center space-x-2">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-white to-gray-50 p-4">
+      <div className="mb-8">
         <Link href="/">
-          <span className="text-primary font-bold text-2xl cursor-pointer">pulse</span>
+          <div className="cursor-pointer">
+            <PulseLogo size="lg" />
+          </div>
         </Link>
       </div>
       
-      {/* Language toggle in top right */}
-      <div className="absolute top-4 right-4">
-        <LanguageToggle />
-      </div>
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          {isLogin ? t('login') : t('signup')}
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          {t('or')} 
-          <Link href={isLogin ? "/signup" : "/login"}>
-            <span className="font-medium text-primary hover:text-primary-dark cursor-pointer">
-              {isLogin ? t('dontHaveAccount') : t('alreadyHaveAccount')}
-            </span>
-          </Link>
-        </p>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        {welcomeContent}
-        <Card className="mt-4">
-          <CardContent className="pt-6">
-            {isLogin ? (
-              <Form {...loginForm}>
-                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+      <Card className="max-w-md w-full">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl text-center">{t(activeTab === "login" ? "login" : "signup")}</CardTitle>
+          <CardDescription className="text-center">
+            {t(activeTab === "login" ? "loginDescription" : "signupDescription")}
+          </CardDescription>
+        </CardHeader>
+        
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+          <div className="px-6">
+            <TabsList className="grid grid-cols-2 w-full">
+              <TabsTrigger value="login">{t("login")}</TabsTrigger>
+              <TabsTrigger value="register">{t("signup")}</TabsTrigger>
+            </TabsList>
+          </div>
+          
+          <TabsContent value="login" className="p-0">
+            <Form {...loginForm}>
+              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)}>
+                <CardContent className="pt-4 space-y-4">
                   <FormField
                     control={loginForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('emailLabel')}</FormLabel>
+                        <FormLabel>{t("emailLabel")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="your@email.com" {...field} />
+                          <Input placeholder="email@example.com" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  
                   <FormField
                     control={loginForm.control}
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('passwordLabel')}</FormLabel>
+                        <FormLabel>{t("passwordLabel")}</FormLabel>
                         <FormControl>
                           <Input type="password" {...field} />
                         </FormControl>
@@ -170,60 +151,58 @@ export default function AuthPage() {
                       </FormItem>
                     )}
                   />
-                  
                   <div className="flex items-center justify-between">
                     <FormField
                       control={loginForm.control}
                       name="rememberMe"
                       render={({ field }) => (
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="rememberMe"
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                          <label
-                            htmlFor="rememberMe"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            {t('rememberMe')}
-                          </label>
-                        </div>
+                        <FormItem className="flex items-center space-x-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel className="!mt-0 text-sm font-normal cursor-pointer">
+                            {t("rememberMe")}
+                          </FormLabel>
+                        </FormItem>
                       )}
                     />
-                    
-                    <div className="text-sm">
-                      <a href="#" className="font-medium text-primary hover:text-primary-dark">
-                        {t('forgotPassword')}
-                      </a>
-                    </div>
+                    <Link href="#" className="text-sm text-primary hover:underline">
+                      {t("forgotPassword")}
+                    </Link>
                   </div>
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
+                </CardContent>
+                <CardFooter className="flex flex-col space-y-4">
+                  <Button
+                    type="submit"
+                    className="w-full"
                     disabled={loginMutation.isPending}
                   >
-                    {loginMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('signingIn')}
-                      </>
-                    ) : (
-                      t('login')
-                    )}
+                    {loginMutation.isPending ? t("signingIn") : t("login")}
                   </Button>
-                </form>
-              </Form>
-            ) : (
-              <Form {...signupForm}>
-                <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
+                  <p className="text-sm text-gray-500 text-center">
+                    {t("dontHaveAccount")}{" "}
+                    <Link href="/auth?mode=register" className="text-primary hover:underline">
+                      {t("signup")}
+                    </Link>
+                  </p>
+                </CardFooter>
+              </form>
+            </Form>
+          </TabsContent>
+          
+          <TabsContent value="register" className="p-0">
+            <Form {...registerForm}>
+              <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)}>
+                <CardContent className="pt-4 space-y-4">
                   <FormField
-                    control={signupForm.control}
+                    control={registerForm.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('nameLabel')}</FormLabel>
+                        <FormLabel>{t("nameLabel")}</FormLabel>
                         <FormControl>
                           <Input placeholder="John Doe" {...field} />
                         </FormControl>
@@ -231,183 +210,76 @@ export default function AuthPage() {
                       </FormItem>
                     )}
                   />
-                  
                   <FormField
-                    control={signupForm.control}
+                    control={registerForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('emailLabel')}</FormLabel>
+                        <FormLabel>{t("emailLabel")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="your@email.com" {...field} />
+                          <Input placeholder="email@example.com" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  
                   <FormField
-                    control={signupForm.control}
+                    control={registerForm.control}
                     name="password"
-                    render={({ field }) => {
-                      // Check password rules
-                      const password = field.value;
-                      const hasMinLength = password.length >= 8;
-                      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-                      const hasNumber = /[0-9]/.test(password);
-                      
-                      return (
-                        <FormItem>
-                          <FormLabel>{t('passwordLabel')}</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                          <div className="mt-2 space-y-1 text-xs">
-                            <div className="flex items-center space-x-2">
-                              <span className={hasMinLength ? "text-green-500" : "text-red-500"}>
-                                {t('passwordMinLength')}
-                              </span>
-                              {hasMinLength && (
-                                <svg 
-                                  xmlns="http://www.w3.org/2000/svg" 
-                                  className="h-4 w-4 text-green-500" 
-                                  viewBox="0 0 20 20" 
-                                  fill="currentColor"
-                                >
-                                  <path 
-                                    fillRule="evenodd" 
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
-                                    clipRule="evenodd" 
-                                  />
-                                </svg>
-                              )}
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <span className={hasSpecialChar ? "text-green-500" : "text-red-500"}>
-                                {t('passwordSpecialChar')}
-                              </span>
-                              {hasSpecialChar && (
-                                <svg 
-                                  xmlns="http://www.w3.org/2000/svg" 
-                                  className="h-4 w-4 text-green-500" 
-                                  viewBox="0 0 20 20" 
-                                  fill="currentColor"
-                                >
-                                  <path 
-                                    fillRule="evenodd" 
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
-                                    clipRule="evenodd" 
-                                  />
-                                </svg>
-                              )}
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <span className={hasNumber ? "text-green-500" : "text-red-500"}>
-                                {t('passwordNumber')}
-                              </span>
-                              {hasNumber && (
-                                <svg 
-                                  xmlns="http://www.w3.org/2000/svg" 
-                                  className="h-4 w-4 text-green-500" 
-                                  viewBox="0 0 20 20" 
-                                  fill="currentColor"
-                                >
-                                  <path 
-                                    fillRule="evenodd" 
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
-                                    clipRule="evenodd" 
-                                  />
-                                </svg>
-                              )}
-                            </div>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
-                  />
-
-                  <FormField
-                    control={signupForm.control}
-                    name="confirmPassword"
-                    render={({ field }) => {
-                      const password = signupForm.getValues('password');
-                      const confirmPassword = field.value;
-                      const passwordsMatch = password === confirmPassword && confirmPassword !== '';
-                      const passwordsMismatch = confirmPassword !== '' && password !== confirmPassword;
-                      
-                      return (
-                        <FormItem className="space-y-1">
-                          <FormLabel>{t('confirmPasswordLabel')}</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input 
-                                type="password" 
-                                {...field} 
-                                className={passwordsMismatch ? "border-red-500 pr-10" : "pr-10"}
-                              />
-                            </FormControl>
-                            {passwordsMatch && (
-                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                                <svg 
-                                  xmlns="http://www.w3.org/2000/svg" 
-                                  className="h-5 w-5 text-green-500" 
-                                  viewBox="0 0 20 20" 
-                                  fill="currentColor"
-                                >
-                                  <path 
-                                    fillRule="evenodd" 
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
-                                    clipRule="evenodd" 
-                                  />
-                                </svg>
-                              </div>
-                            )}
-                            {passwordsMismatch && (
-                              <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                                <svg 
-                                  xmlns="http://www.w3.org/2000/svg" 
-                                  className="h-5 w-5 text-red-500" 
-                                  viewBox="0 0 20 20" 
-                                  fill="currentColor"
-                                >
-                                  <path 
-                                    fillRule="evenodd" 
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
-                                    clipRule="evenodd" 
-                                  />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                          {passwordsMismatch && (
-                            <p className="text-sm text-red-500">{t('passwordsDontMatch')}</p>
-                          )}
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
-                  />
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
-                    disabled={registerMutation.isPending || !passwordRequirementsMet()}
-                  >
-                    {registerMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('creatingAccount')}
-                      </>
-                    ) : (
-                      t('signup')
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("passwordLabel")}</FormLabel>
+                        <FormControl>
+                          <Input type="password" {...field} />
+                        </FormControl>
+                        <div className="space-y-1 text-xs text-gray-500 mt-1">
+                          <p>{t("passwordMinLength")}</p>
+                          <p>{t("passwordSpecialChar")}</p>
+                          <p>{t("passwordNumber")}</p>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
                     )}
+                  />
+                  <FormField
+                    control={registerForm.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("confirmPasswordLabel")}</FormLabel>
+                        <FormControl>
+                          <Input type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+                <CardFooter className="flex flex-col space-y-4">
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={registerMutation.isPending}
+                  >
+                    {registerMutation.isPending ? t("creatingAccount") : t("signup")}
                   </Button>
-                </form>
-              </Form>
-            )}
-          </CardContent>
-        </Card>
+                  <p className="text-sm text-gray-500 text-center">
+                    {t("alreadyHaveAccount")}{" "}
+                    <Link href="/auth?mode=login" className="text-primary hover:underline">
+                      {t("login")}
+                    </Link>
+                  </p>
+                </CardFooter>
+              </form>
+            </Form>
+          </TabsContent>
+        </Tabs>
+      </Card>
+      
+      <div className="mt-8 text-center">
+        <p className="text-sm text-gray-500">
+          {t("copyright")} © 2023 Alice. {t("to")} <Link href="#" className="text-primary hover:underline">Terms of Service</Link> {t("or")} <Link href="#" className="text-primary hover:underline">Privacy Policy</Link>.
+        </p>
       </div>
     </div>
   );
