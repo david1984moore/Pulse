@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
 import LanguageToggle from "@/components/ui/language-toggle";
 import { useState } from "react";
+import { PulseLogo } from "@/components/ui/pulse-logo";
 
 export default function LandingPage() {
   const { user, logoutMutation } = useAuth();
@@ -20,10 +21,9 @@ export default function LandingPage() {
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <Link href="/">
-                  <span className="font-bold text-2xl cursor-pointer text-gray-800">
-                    pulse
-                    <span className="text-primary">.</span>
-                  </span>
+                  <div className="cursor-pointer">
+                    <PulseLogo size="md" animated={true} />
+                  </div>
                 </Link>
               </div>
             </div>
@@ -249,9 +249,7 @@ export default function LandingPage() {
       <footer className="bg-white border-t border-gray-100 mt-auto py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
           <div className="flex items-center mb-4">
-            <span className="font-bold text-xl text-gray-800">
-              pulse<span className="text-primary">.</span>
-            </span>
+            <PulseLogo size="md" animated={true} />
           </div>
           <p className="text-gray-500 text-sm">{t('copyright')}</p>
         </div>

@@ -9,6 +9,7 @@ import { Bill, Income } from "@shared/schema";
 import { Trash } from "lucide-react"; // Import trash icon
 import { useToast } from "@/hooks/use-toast";
 import LanguageToggle from "@/components/ui/language-toggle";
+import { PulseLogo } from "@/components/ui/pulse-logo";
 
 
 interface AccountBalanceData {
@@ -105,7 +106,9 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-              <span className="font-bold text-3xl mr-8 cursor-pointer bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent tracking-tight">pulse</span>
+              <div className="mr-8 cursor-pointer">
+                <PulseLogo size="lg" animated={true} />
+              </div>
             </Link>
             <h1 className="text-lg font-medium text-gray-700">{t('dashboard')}</h1>
           </div>
