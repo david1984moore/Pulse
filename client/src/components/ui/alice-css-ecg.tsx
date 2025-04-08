@@ -155,21 +155,17 @@ export default function AliceCssEcg({
           </circle>
         )}
         
-        {/* Special eraser circle that follows the line and erases it */}
+        {/* Eraser dot - identical to the lead dot but with delayed start */}
         {isAnimating && (
           <circle
-            r={4}
-            fill="none"
-            stroke="white"
-            strokeWidth={5}
+            r={2.5}
+            fill="white"
             style={{
-              filter: 'blur(1px)',
-              mixBlendMode: 'difference',
-              position: 'relative'
+              filter: 'drop-shadow(0 0 3px white)',
+              position: 'relative' // Ensure proper positioning
             }}
             opacity="0" // Start invisible
           >
-            {/* Start this eraser when the first dot is almost done */}
             <animateMotion
               dur="1s"
               path={ekgPath}
@@ -179,40 +175,10 @@ export default function AliceCssEcg({
             />
             <animate 
               attributeName="opacity"
-              values="0;0.9;0.9;0"
-              keyTimes="0;0.1;0.9;1"
-              dur="1s"
-              begin="0.7s"
-              repeatCount="1"
-              fill="freeze"
-            />
-          </circle>
-        )}
-        
-        {/* Identical lead dot that follows after the eraser to "redraw" */}
-        {isAnimating && (
-          <circle
-            r={2.5}
-            fill="white"
-            style={{
-              filter: 'drop-shadow(0 0 3px white)',
-              position: 'relative'
-            }}
-            opacity="0" // Start invisible
-          >
-            <animateMotion
-              dur="1s"
-              path={ekgPath}
-              begin="0.75s" // Slightly after eraser
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate 
-              attributeName="opacity"
               values="0;0.8;0.8;0"
               keyTimes="0;0.1;0.9;1"
               dur="1s"
-              begin="0.75s"
+              begin="0.7s"
               repeatCount="1"
               fill="freeze"
             />
@@ -221,7 +187,7 @@ export default function AliceCssEcg({
               values="2.5;2.5;3.5;2.5"
               keyTimes="0;0.4;0.5;1"
               dur="1s"
-              begin="0.75s"
+              begin="0.7s"
               repeatCount="1"
               fill="freeze"
             />
