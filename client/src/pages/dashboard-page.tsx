@@ -101,14 +101,14 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-[#f8f7ff] to-[#f5f3ff]">
-      {/* Header - Enhanced modern design with glass effect */}
-      <header className="backdrop-blur-lg bg-white/70 sticky top-0 z-10 border-b border-gray-100 shadow-md">
+      {/* Header - Enhanced modern design with glass effect - increased z-index to prevent overlapping */}
+      <header className="backdrop-blur-lg bg-white/90 sticky top-0 z-50 border-b border-gray-100 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
               <div className="mr-8 cursor-pointer relative group">
                 <div className="absolute inset-0 bg-primary/10 rounded-full filter blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <PulseLogo size="lg" animated={true} />
+                <PulseLogo size="lg" animated={true} showText={true} />
               </div>
             </Link>
             <h1 className="text-lg font-medium text-gray-700 glow-text">{t('dashboard')}</h1>

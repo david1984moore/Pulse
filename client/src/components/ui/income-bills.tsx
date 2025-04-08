@@ -25,18 +25,18 @@ function getOrdinalSuffix(day: number): string {
 // Helper function to get the appropriate icon for a bill type
 function getBillIcon(billName: string) {
   const iconMap: Record<string, JSX.Element> = {
-    'Rent': <Home className="h-4 w-4 mr-2 text-white/90" />,
-    'Electric': <Zap className="h-4 w-4 mr-2 text-white/90" />,
-    'Water': <Droplet className="h-4 w-4 mr-2 text-white/90" />,
-    'Internet': <Wifi className="h-4 w-4 mr-2 text-white/90" />,
-    'Phone Service': <Phone className="h-4 w-4 mr-2 text-white/90" />,
-    'Car Payment': <Car className="h-4 w-4 mr-2 text-white/90" />,
-    'Credit Card': <CreditCard className="h-4 w-4 mr-2 text-white/90" />,
-    'Insurance': <Landmark className="h-4 w-4 mr-2 text-white/90" />,
-    'Groceries': <ShoppingCart className="h-4 w-4 mr-2 text-white/90" />
+    'Rent': <Home className="h-5 w-5 text-white" />,
+    'Electric': <Zap className="h-5 w-5 text-white" />,
+    'Water': <Droplet className="h-5 w-5 text-white" />,
+    'Internet': <Wifi className="h-5 w-5 text-white" />,
+    'Phone Service': <Phone className="h-5 w-5 text-white" />,
+    'Car Payment': <Car className="h-5 w-5 text-white" />,
+    'Credit Card': <CreditCard className="h-5 w-5 text-white" />,
+    'Insurance': <Landmark className="h-5 w-5 text-white" />,
+    'Groceries': <ShoppingCart className="h-5 w-5 text-white" />
   };
   
-  return iconMap[billName] || <CreditCard className="h-4 w-4 mr-2 text-gray-700" />;
+  return iconMap[billName] || <CreditCard className="h-5 w-5 text-white" />;
 }
 
 interface BillDeduction {
@@ -177,7 +177,7 @@ export default function IncomeBills({
               {balanceData.deductedBills.map((bill) => (
                 <li key={bill.id} className="flex items-center justify-between p-2 bg-background/20 hover:bg-primary/10 rounded-lg transition-all border border-primary/10 shadow-sm backdrop-blur-md">
                   <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center mr-3 shadow-sm">
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-3 shadow-sm">
                       {getBillIcon(bill.name)}
                     </div>
                     <span className="font-medium text-gray-200">{translateBillName(bill.name)}</span>
@@ -282,8 +282,12 @@ export default function IncomeBills({
                   
                   <div className="flex-1 flex p-4 z-10">
                     <div className="flex items-center">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-50 to-white flex items-center justify-center mr-4 shadow-md group-hover:scale-110 transition-transform border border-red-100">
-                        <span className="text-red-500">{getBillIcon(bill.name)}</span>
+                      {/* Removed the box around the icon and made the icon more visible */}
+                      <div className="w-10 h-10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                        <div className="w-9 h-9 rounded-full bg-red-500 flex items-center justify-center shadow-md">
+                          {/* Increased icon size and adjusted margins */}
+                          <span className="text-white">{getBillIcon(bill.name)}</span>
+                        </div>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">{translateBillName(bill.name)}</p>
@@ -323,8 +327,8 @@ export default function IncomeBills({
               </div>
               
               <div className="relative z-10">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-50 to-white border border-red-100 flex items-center justify-center shadow-md">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500 flex items-center justify-center shadow-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
                     <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
                   </svg>
@@ -385,8 +389,11 @@ export default function IncomeBills({
                   
                   <div className="flex-1 flex p-4 z-10">
                     <div className="flex items-center">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-50 to-white flex items-center justify-center mr-4 shadow-md group-hover:scale-110 transition-transform border border-emerald-100">
-                        <DollarSign className="h-5 w-5 text-emerald-500" />
+                      {/* Matching the bill icon style */}
+                      <div className="w-10 h-10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                        <div className="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center shadow-md">
+                          <DollarSign className="h-5 w-5 text-white" />
+                        </div>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">{inc.source || t('job')}</p>
@@ -428,8 +435,8 @@ export default function IncomeBills({
               </div>
               
               <div className="relative z-10">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 flex items-center justify-center shadow-md">
-                  <DollarSign className="h-7 w-7 text-emerald-500" />
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500 flex items-center justify-center shadow-md">
+                  <DollarSign className="h-7 w-7 text-white" />
                 </div>
                 <p className="text-sm text-gray-600 mb-5">{t('noIncomeAddedYet')}</p>
                 <Button
