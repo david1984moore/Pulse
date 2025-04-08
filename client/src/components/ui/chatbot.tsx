@@ -295,101 +295,157 @@ export default function Chatbot({ bills }: ChatbotProps) {
         </div>
       )}
 
-      <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl relative z-10">
-        <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
+      <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl relative z-10 border-t border-l border-white/40">
+        <CardHeader className="pb-4 border-b border-primary-100/30 bg-gradient-to-r from-primary/20 to-primary/10">
           <div className="flex flex-row items-center justify-between">
             <div className="flex items-center">
               <div className="flex items-center px-5 py-2.5">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
-                  <span className="text-white font-bold text-lg">A</span>
+                {/* Futuristic hexagonal avatar instead of circle */}
+                <div className="relative h-12 w-12 mr-3">
+                  {/* Hexagon shape with gradient and glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary to-primary-600 shadow-[0_0_15px_rgba(59,130,246,0.5)] animate-pulse rounded-xl overflow-hidden" 
+                       style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                  </div>
+                  {/* Inner content */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">A</span>
+                  </div>
+                  {/* Decorative tech lines */}
+                  <div className="absolute inset-0 opacity-30 pointer-events-none" 
+                       style={{ 
+                         background: "radial-gradient(circle at center, transparent 30%, rgba(255,255,255,0.05) 70%)",
+                         clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" 
+                       }}>
+                  </div>
                 </div>
                 <div className="flex items-center">
-                  <div className="text-xl font-bold tracking-wide text-primary-600">
-                    {language === 'es' ? 'Alicia' : 'Alice'}
+                  <div className="text-xl font-bold tracking-wide text-primary-600 relative">
+                    <span className="relative">
+                      {/* Subtle holographic effect */}
+                      <span className="absolute -inset-1 bg-gradient-to-r from-primary/5 to-transparent rounded-lg blur-sm opacity-70"></span>
+                      <span className="relative">{language === 'es' ? 'Alicia' : 'Alice'}</span>
+                      {/* Tech version indicator */}
+                      <span className="ml-1.5 text-xs font-medium text-primary-500 opacity-70 tracking-wider">v3.0</span>
+                    </span>
                   </div>
 
-                  {/* Sexy ECG heartbeat animation next to Alice's name - also with unique key */}
+                  {/* ECG heartbeat animation - preserved as requested */}
                   <AliceCssEcg key={`alice-ecg-${animationKey}`} active={showAnimation} color="#FFFFFF" />
                 </div>
               </div>
             </div>
 
             <div className="flex items-center px-4 py-2">
-              <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
+              <div className="flex items-center justify-center px-4 py-1.5 rounded-xl bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md border border-white/20 backdrop-filter backdrop-blur-sm">
                 <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
                 <span className="font-bold text-primary-700">
                   {balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
                 </span>
+                {/* Add futuristic mini-indicator */}
+                <span className="ml-1.5 h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse"></span>
               </div>
             </div>
           </div>
         </CardHeader>
 
         <CardContent className="pt-5">
-          {/* Chat message area with improved styling */}
+          {/* Chat message area with futuristic styling */}
           <ScrollArea 
             ref={scrollAreaRef} 
-            className="bg-white/50 backdrop-blur-sm rounded-xl p-4 mb-5 h-72 border border-gray-100"
+            className="bg-gradient-to-b from-white/70 to-white/40 backdrop-blur-lg rounded-xl p-4 mb-5 h-72 border border-primary-100/30 shadow-inner relative overflow-hidden"
+            style={{ 
+              backgroundImage: `radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.07) 0%, transparent 70%)`
+            }}
           >
+            {/* Decorative tech grid lines in background */}
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-10"
+                 style={{ 
+                  backgroundImage: `linear-gradient(0deg, transparent 24%, var(--primary) 25%, var(--primary) 26%, transparent 27%, transparent 74%, var(--primary) 75%, var(--primary) 76%, transparent 77%, transparent), 
+                                    linear-gradient(90deg, transparent 24%, var(--primary) 25%, var(--primary) 26%, transparent 27%, transparent 74%, var(--primary) 75%, var(--primary) 76%, transparent 77%, transparent)`,
+                  backgroundSize: '40px 40px',
+                  backgroundPosition: 'center center'
+                }}>
+            </div>
+            
             {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mb-4 shadow-md">
-                  <span className="text-white text-xl font-bold">A</span>
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 relative z-10">
+                {/* Hexagonal avatar matching the header */}
+                <div className="relative w-16 h-16 mb-4">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary to-primary-600 shadow-lg animate-pulse" 
+                       style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-white text-xl font-bold">A</span>
+                  </div>
                 </div>
-                <h3 className="text-primary-600 font-bold text-lg mb-2">Your Financial Companion</h3>
+                <h3 className="text-primary-600 font-bold text-lg mb-2 relative">
+                  <span className="relative">AI Financial Assistant</span>
+                </h3>
                 <p className="text-gray-600 text-sm max-w-xs">
-                  Ask Alice if you can spend a specific amount and she'll analyze your financial situation.
+                  Ask Alice if you can spend a specific amount and she'll analyze your financial situation in real-time.
                 </p>
               </div>
             ) : (
               messages.map((message, index) => (
-                <div key={index} className="mb-6">
+                <div key={index} className="mb-6 relative z-10">
                   <div
                     className={`flex ${
                       message.sender === "user" ? "justify-end" : "justify-start"
                     }`}
                   >
-                    {/* Bot avatar with attractive styling */}
+                    {/* Bot avatar with futuristic styling */}
                     {message.sender === "bot" && (
-                      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-sm">
-                        <span className="text-white font-bold text-sm">A</span>
+                      <div className="relative flex-shrink-0 h-8 w-8 mr-3">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary to-primary-600" 
+                             style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-white font-bold text-xs">A</span>
+                        </div>
                       </div>
                     )}
 
                     <div
-                      className={`max-w-sm ${
+                      className={`max-w-sm relative ${
                         message.sender === "user"
                           ? "text-right"
                           : ""
                       }`}
                     >
-                      <p className={`${
-                        message.sender === "user" 
-                          ? "text-sm text-primary-600 font-medium pb-1" 
-                          : "text-sm leading-relaxed text-gray-700 pb-1"
-                      }`}>
-                        {message.sender === "bot" && message.isAnimating ? (
-                          <TypeAnimation 
-                            text={message.text} 
-                            speed={12}
-                            onComplete={() => handleAnimationComplete(index)}
-                            onCharacterTyped={() => {
-                              // Scroll to bottom on each character typed
-                              if (scrollAreaRef.current) {
-                                const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-                                if (scrollContainer) {
-                                  scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                      {/* Message content with futuristic styling based on sender */}
+                      <div 
+                        className={`${
+                          message.sender === "user" 
+                            ? "bg-primary-100/60 text-primary-800 border border-primary-200/50 rounded-tl-xl rounded-tr-xl rounded-bl-xl" 
+                            : "bg-white/70 border border-primary-100/30 text-gray-700 rounded-tr-xl rounded-bl-xl rounded-br-xl"
+                        } px-4 py-2.5 shadow-sm relative z-10 backdrop-blur-sm`}
+                      >
+                        <p className={`text-sm leading-relaxed relative z-10 ${message.sender === "user" ? "text-primary-700" : "text-gray-700"}`}>
+                          {message.sender === "bot" && message.isAnimating ? (
+                            <TypeAnimation 
+                              text={message.text} 
+                              speed={12}
+                              onComplete={() => handleAnimationComplete(index)}
+                              onCharacterTyped={() => {
+                                // Scroll to bottom on each character typed
+                                if (scrollAreaRef.current) {
+                                  const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+                                  if (scrollContainer) {
+                                    scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                                  }
                                 }
-                              }
-                            }}
-                          />
-                        ) : (
-                          message.text
-                        )}
-                      </p>
-                      {/* Add subtle timestamp */}
-                      <div className={`text-[10px] text-gray-400 ${message.sender === "user" ? "text-right" : ""}`}>
-                        {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                              }}
+                            />
+                          ) : (
+                            message.text
+                          )}
+                        </p>
+                      </div>
+                      
+                      {/* Futuristic timestamp with data ID */}
+                      <div className={`text-[10px] mt-1 ${message.sender === "user" ? "text-right text-primary-500" : "text-primary-400"}`}>
+                        <span className="font-mono tracking-wider">{new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span className="ml-1.5 opacity-70">ID:{Math.floor(Math.random() * 10000).toString().padStart(4, '0')}</span>
                       </div>
                     </div>
                   </div>
@@ -398,25 +454,53 @@ export default function Chatbot({ bills }: ChatbotProps) {
             )}
           </ScrollArea>
 
-          {/* Input area with sleek modern styling */}
-          <div className="p-4 rounded-xl bg-white/80 border border-gray-100 shadow-sm">
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
+          {/* Input area with futuristic styling */}
+          <div className="p-5 rounded-xl bg-gradient-to-b from-white/90 to-white/70 backdrop-blur-lg border border-primary-50 shadow-sm relative">
+            {/* Decorative tech dots in background */}
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-5" 
+                 style={{ 
+                   backgroundImage: `radial-gradient(var(--primary) 1px, transparent 1px)`,
+                   backgroundSize: '20px 20px'
+                 }}>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 relative z-10">
               {isCustomAmount ? (
                 <div className="flex w-full sm:flex-1">
                   <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
+                    {/* Futuristic $ icon with glow */}
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
+                      <span className="text-primary-600 font-bold filter drop-shadow-sm">$</span>
+                      <span className="absolute h-6 w-6 bg-blue-400/10 rounded-full -z-10 animate-pulse"></span>
+                    </div>
+                    
+                    {/* Stylized input field */}
                     <input
                       type="number"
                       value={customAmount}
                       onChange={(e) => setCustomAmount(e.target.value)}
                       placeholder="Enter amount"
-                      className="w-full pl-8 pr-4 py-2.5 border border-gray-200 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 shadow-sm transition-all duration-150"
+                      className="w-full pl-8 pr-4 py-2.5 border-0 bg-primary-50/30 text-primary-900 rounded-lg 
+                                 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:bg-white/80 
+                                 shadow-inner transition-all duration-150 backdrop-blur-sm"
+                      style={{ boxShadow: 'inset 0 1px 2px rgba(59, 130, 246, 0.1)' }}
                     />
+                    
+                    {/* Help ghost lines */}
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1 pointer-events-none opacity-30">
+                      <div className="h-3 w-0.5 bg-primary-300 rounded-full"></div>
+                      <div className="h-2 w-0.5 bg-primary-300 rounded-full"></div>
+                      <div className="h-4 w-0.5 bg-primary-300 rounded-full"></div>
+                    </div>
                   </div>
+                  
+                  {/* Cancel button with slight future style */}
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="ml-2 bg-white border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all duration-150"
+                    className="ml-2 bg-white/80 backdrop-blur-sm border border-primary-100 text-primary-600 
+                               hover:bg-primary-50 hover:text-primary-700 hover:border-primary-200
+                               transition-all duration-150"
                     onClick={() => {
                       setIsCustomAmount(false);
                       setCustomAmount("");
@@ -427,34 +511,72 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 </div>
               ) : (
                 <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-                  <SelectTrigger className="flex-1 border-gray-200 bg-white text-gray-800 shadow-sm hover:border-primary/40 transition-colors duration-150">
+                  <SelectTrigger className="flex-1 border-0 bg-primary-50/30 text-primary-800 backdrop-blur-sm 
+                                            shadow-inner hover:bg-white/80 hover:border-primary/40 transition-all duration-200"
+                                style={{ boxShadow: 'inset 0 1px 2px rgba(59, 130, 246, 0.1)' }}>
                     <SelectValue placeholder={t('chatbotPlaceholder')} />
+                    
+                    {/* Decorative elements inside select */}
+                    <div className="absolute right-8 top-1/2 -translate-y-1/2 flex items-center space-x-1 pointer-events-none opacity-30">
+                      <div className="h-3 w-0.5 bg-primary-300 rounded-full"></div>
+                      <div className="h-2 w-0.5 bg-primary-300 rounded-full"></div>
+                      <div className="h-4 w-0.5 bg-primary-300 rounded-full"></div>
+                    </div>
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 text-gray-800">
-                    <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
-                    <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
-                    <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
-                    <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
-                    <SelectItem value="custom" className="text-primary font-medium">{t('customSpend')}</SelectItem>
+                  <SelectContent className="bg-white/95 backdrop-blur-md border border-primary-100 text-primary-800 shadow-lg">
+                    <div className="py-1 px-1 text-xs text-primary-400 border-b border-primary-50 mb-1 font-medium tracking-wide">QUICK AMOUNTS</div>
+                    <SelectItem value="10" className="hover:bg-primary-50/50">{t('canISpend')} $10?</SelectItem>
+                    <SelectItem value="20" className="hover:bg-primary-50/50">{t('canISpend')} $20?</SelectItem>
+                    <SelectItem value="50" className="hover:bg-primary-50/50">{t('canISpend')} $50?</SelectItem>
+                    <SelectItem value="100" className="hover:bg-primary-50/50">{t('canISpend')} $100?</SelectItem>
+                    <div className="h-px bg-primary-50 my-1"></div>
+                    <SelectItem value="custom" className="text-primary-600 font-medium hover:bg-primary-50/50">{t('customSpend')}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
+              
               {isPending ? (
-                // Show custom processing button when pending
-                <div className="w-full sm:w-auto px-4 py-2 rounded-md bg-primary/50 text-white flex items-center justify-center">
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  <span>{t('thinking')}</span>
+                // Futuristic processing button when pending
+                <div className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-primary-600/90 text-white 
+                                flex items-center justify-center relative overflow-hidden group">
+                  {/* Animated pulse background */}
+                  <div className="absolute inset-0 bg-primary-500 opacity-30 z-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-400/0 via-primary-400/70 to-primary-400/0 
+                                    animate-pulse" style={{ animationDuration: '1.5s' }}></div>
+                  </div>
+                  
+                  {/* Loading spinner with enhanced glow */}
+                  <div className="relative z-10 flex items-center justify-center">
+                    <Loader2 className="h-4 w-4 animate-spin mr-2 drop-shadow-glow" />
+                    <span className="font-medium tracking-wide">{t('thinking')}</span>
+                  </div>
                 </div>
               ) : (
-                // Standard button when not pending
+                // Futuristic button when not pending
                 <Button
                   onClick={handleSubmitClick}
                   disabled={isCustomAmount ? !customAmount : !selectedAmount}
-                  className="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary text-white shadow-glow-sm transition-all duration-200"
+                  className={`
+                    w-full sm:w-auto bg-gradient-to-br from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-600 
+                    text-white relative overflow-hidden transition-all duration-200
+                    shadow-[0_4px_16px_rgba(59,130,246,0.3)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.5)]
+                    rounded-lg py-2.5 px-5 border border-primary-400/30
+                    ${isCustomAmount && !customAmount || !isCustomAmount && !selectedAmount ? 'opacity-50' : 'opacity-100'}
+                  `}
                 >
-                  <div className="flex items-center justify-center group">
+                  {/* Tech background effect */}
+                  <div className="absolute inset-0 overflow-hidden opacity-20">
+                    <div className="absolute inset-0" 
+                         style={{ 
+                           backgroundImage: `radial-gradient(circle at 30% 107%, rgba(255, 255, 255, 0.3) 5%, rgba(255, 255, 255, 0.05) 15%, transparent 30%)`,
+                           backgroundSize: '100% 100%'
+                         }}>
+                    </div>
+                  </div>
+                
+                  <div className="flex items-center justify-center group relative z-10">
                     <Send className="mr-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-                    <span>{t('ask')}</span>
+                    <span className="font-medium tracking-wide">{t('ask')}</span>
                   </div>
                 </Button>
               )}
