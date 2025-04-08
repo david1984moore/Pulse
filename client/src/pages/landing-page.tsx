@@ -260,14 +260,18 @@ export default function LandingPage() {
                   {/* Calendar Preview - Using dedicated mockup component */}
                   <div className="mt-4">
                     <div className="p-4 bg-white rounded-xl shadow-sm mb-4">
-                      {/* Header text */}
-                      <p className="text-sm text-gray-600 mb-2">
+                      {/* Header text exactly as in screenshot */}
+                      <p className="text-sm text-gray-600">
                         See all your bills on a monthly calendar to plan ahead and never miss a payment.
                       </p>
                     </div>
                     
-                    {/* Using our dedicated calendar mockup component */}
-                    <CalendarMockup />
+                    {/* Wrapper to size and center the calendar */}
+                    <div className="flex justify-center">
+                      <div className="max-w-[300px]">
+                        <CalendarMockup />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -288,14 +292,18 @@ export default function LandingPage() {
                   {/* Alice Preview - Using dedicated mockup component */}
                   <div className="mt-4">
                     <div className="p-4 bg-white rounded-xl shadow-sm mb-4">
-                      {/* Info text */}
-                      <p className="text-sm text-gray-600 mb-2">
+                      {/* Info text exactly as in screenshot */}
+                      <p className="text-sm text-gray-600">
                         Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.
                       </p>
                     </div>
                     
-                    {/* Using our dedicated Alice mockup component */}
-                    <AliceMockup />
+                    {/* Wrapper to size and center the Alice mockup */}
+                    <div className="flex justify-center">
+                      <div className="w-full max-w-[320px]">
+                        <AliceMockup />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
