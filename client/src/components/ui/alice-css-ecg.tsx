@@ -42,7 +42,16 @@ export default function AliceCssEcg({
       const timer = setTimeout(() => {
         setIsAnimating(true);
       }, 50);
-      return () => clearTimeout(timer);
+      
+      // Ensure animation state is properly cleaned up
+      const cleanupTimer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 1500); // Give enough time for all animations to finish
+      
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(cleanupTimer);
+      };
     } else {
       setIsAnimating(false);
     }
@@ -146,31 +155,39 @@ export default function AliceCssEcg({
           </circle>
         )}
         
-        {/* Eraser dot that follows and erases the trace */}
+        {/* Eraser dot - identical to the lead dot but with delayed start */}
         {isAnimating && (
           <circle
-            r={4}
-            fill="transparent"
+            r={2.5}
+            fill="white"
             style={{
-              stroke: 'white',
-              strokeWidth: 1,
-              filter: 'blur(3px)',
-              mixBlendMode: 'difference'
+              filter: 'drop-shadow(0 0 3px white)',
+              position: 'relative' // Ensure proper positioning
             }}
+            opacity="0" // Start invisible
           >
             <animateMotion
               dur="1s"
               path={ekgPath}
-              begin="0.3s"
+              begin="0.7s" // Start when lead dot is almost done
               repeatCount="1"
               fill="freeze"
             />
             <animate 
               attributeName="opacity"
-              values="0;0.9;0.9;0"
+              values="0;0.8;0.8;0"
               keyTimes="0;0.1;0.9;1"
               dur="1s"
-              begin="0.3s"
+              begin="0.7s"
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate
+              attributeName="r"
+              values="2.5;2.5;3.5;2.5"
+              keyTimes="0;0.4;0.5;1"
+              dur="1s"
+              begin="0.7s"
               repeatCount="1"
               fill="freeze"
             />

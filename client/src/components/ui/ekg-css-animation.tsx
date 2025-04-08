@@ -51,7 +51,16 @@ export default function EkgCssAnimation({
       const timer = setTimeout(() => {
         setIsAnimating(true);
       }, 50);
-      return () => clearTimeout(timer);
+      
+      // Ensure animation state is cleaned up completely
+      const cleanupTimer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 4000); // Give enough time for all animations to finish
+      
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(cleanupTimer);
+      };
     } else {
       setIsAnimating(false);
     }
@@ -152,60 +161,40 @@ export default function EkgCssAnimation({
           </circle>
         )}
         
-        {/* Eraser dot that follows and cleans up the trace */}
+        {/* Eraser dot - identical to the lead dot but with delayed start */}
         {isAnimating && (
           <circle
-            r={strokeWidth * 4.5}
-            fill="transparent"
+            r={strokeWidth * 1.5}
+            fill="white"
             style={{
-              stroke: 'white',
-              strokeWidth: 2,
-              filter: 'blur(4px)',
-              mixBlendMode: 'difference'
+              filter: `drop-shadow(0 0 ${strokeWidth * 2}px ${lineColor})`,
+              position: 'relative' // Ensure proper positioning
             }}
+            opacity="0" // Start invisible
           >
+            {/* Start this dot when the first one is almost done */}
             <animateMotion
               dur="3.5s"
               path={ekgPath}
-              begin="0.7s"
+              begin="2.5s" // Start when lead dot is almost done
               repeatCount="1"
               fill="freeze"
             />
             <animate 
               attributeName="opacity"
-              values="0;0.95;0.95;0"
+              values="0;0.9;0.9;0"
               keyTimes="0;0.1;0.9;1"
               dur="3.5s"
-              begin="0.7s"
+              begin="2.5s"
               repeatCount="1"
               fill="freeze"
             />
-          </circle>
-        )}
-        
-        {/* Second "cleanup" dot with different effect */}
-        {isAnimating && (
-          <circle
-            r={strokeWidth * 3}
-            fill="#ffffff"
-            style={{
-              filter: 'blur(3px)',
-              opacity: 0.7
-            }}
-          >
-            <animateMotion
+            <animate
+              attributeName="r"
+              values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2};${strokeWidth * 1.5}`}
+              keyTimes="0;0.4;0.5;1"
               dur="3.5s"
-              path={ekgPath}
-              begin="0.85s"
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate 
-              attributeName="opacity"
-              values="0;0.7;0.7;0"
-              keyTimes="0;0.1;0.9;1"
-              dur="3.5s"
-              begin="0.85s"
+              begin="2.5s"
               repeatCount="1"
               fill="freeze"
             />

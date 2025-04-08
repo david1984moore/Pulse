@@ -266,10 +266,16 @@ export default function Chatbot({ bills }: ChatbotProps) {
       
       // Set a timer to end the animation after the eraser dots have completed
       setTimeout(() => {
+        // Order matters - first set animation false THEN isPending
         setShowAnimation(false);
-        setIsPending(false);
-        isSubmittingRef.current = false;
-      }, 4500); // Extend to allow for trailing dots to complete their cycle
+        
+        // Add very small delay to ensure React removes the animation component
+        // before updating isPending and triggering component state changes
+        setTimeout(() => {
+          setIsPending(false);
+          isSubmittingRef.current = false;
+        }, 50);
+      }, 4000); // Allow animation to fully complete with all dots
     }, 50);
   };
   
