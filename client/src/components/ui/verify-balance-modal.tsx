@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, DollarSign } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
@@ -126,9 +126,15 @@ export default function VerifyBalanceModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="bg-gradient-to-b from-white to-gray-50 border border-gray-100 shadow-lg rounded-xl">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-lg font-semibold text-gray-700 flex items-center">
+            <span className="w-6 h-6 bg-primary rounded-full mr-2 flex items-center justify-center shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </span>
             {verifyMode 
               ? "Verify Your Account Balance" 
               : "Set Your Account Balance"}
@@ -137,14 +143,24 @@ export default function VerifyBalanceModal({
         
         {verifyMode ? (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">
-              Is ${Number(currentBalance).toFixed(2)} your current account balance?
-            </p>
-            <div className="flex space-x-2 justify-end">
-              <Button variant="outline" onClick={handleReject}>
+            <div className="p-4 bg-gradient-to-r from-primary/5 to-transparent rounded-lg border border-primary/10 shadow-sm">
+              <p className="text-sm text-gray-600">
+                Is <span className="font-bold text-primary">${Number(currentBalance).toFixed(2)}</span> your current account balance?
+              </p>
+            </div>
+            <div className="flex space-x-3 justify-end">
+              <Button 
+                variant="outline" 
+                onClick={handleReject}
+                className="border-gray-200 bg-gradient-to-r from-gray-50 to-white text-gray-700 hover:bg-gray-100 hover:shadow-sm rounded-lg transition-all"
+              >
                 Reject
               </Button>
-              <Button onClick={handleVerify} disabled={isSubmitting}>
+              <Button 
+                onClick={handleVerify} 
+                disabled={isSubmitting}
+                className="bg-gradient-to-r from-primary to-primary/90 text-white shadow-md hover:shadow-lg rounded-lg transition-all"
+              >
                 {isSubmitting ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : null}
@@ -167,7 +183,7 @@ export default function VerifyBalanceModal({
                         <Input
                           {...field}
                           placeholder="0.00"
-                          className="pl-7"
+                          className="pl-7 shadow-sm border border-gray-200 focus:border-primary/30 focus:ring-2 focus:ring-primary/20 rounded-lg transition-all"
                         />
                       </div>
                     </FormControl>
@@ -177,7 +193,11 @@ export default function VerifyBalanceModal({
               />
               
               <div className="flex justify-end">
-                <Button type="submit" disabled={isSubmitting}>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="bg-gradient-to-r from-primary to-primary/90 text-white shadow-md hover:shadow-lg rounded-lg transition-all"
+                >
                   {isSubmitting ? (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   ) : null}

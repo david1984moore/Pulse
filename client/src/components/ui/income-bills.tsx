@@ -161,8 +161,11 @@ export default function IncomeBills({
         income={selectedIncome}
       />
       
-      <Card className="h-full bg-white shadow-sm border border-gray-100 overflow-hidden rounded-2xl">
-        <CardContent className="space-y-6 pt-6">
+      <Card className="h-full bg-gradient-to-br from-white to-gray-50 shadow-md border border-gray-100 overflow-hidden rounded-2xl relative">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -mt-20 -mr-20 z-0"></div>
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-50 rounded-full -mb-16 -ml-16 z-0"></div>
+        <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-teal-50 rounded-full z-0"></div>
+        <CardContent className="space-y-6 pt-6 relative z-10">
         {/* Recent Deductions section */}
         {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
           <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-5 rounded-lg backdrop-blur-lg border border-primary/20 shadow-sm">
@@ -186,42 +189,53 @@ export default function IncomeBills({
           </div>
         )}
         
-        {/* Financial Summary - Enhanced with new bright modern design */}
-        <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3 flex items-center">
-            <span className="inline-block w-2 h-2 bg-primary rounded-full mr-2"></span>
+        {/* Financial Summary - Enhanced with more visual elements */}
+        <div className="bg-gradient-to-b from-white to-slate-50 p-5 rounded-xl shadow-sm border border-gray-100 relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-full -mr-8 -mt-8 opacity-60"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 bg-emerald-50 rounded-full -ml-8 -mb-8 opacity-60"></div>
+          
+          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4 flex items-center relative z-10">
+            <span className="inline-block w-3 h-3 bg-primary rounded-full mr-2"></span>
             {t('financialSummary')}
           </h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-emerald-50 to-white rounded-lg border border-emerald-100 shadow-sm">
+          
+          <div className="space-y-4 relative z-10">
+            <div className="flex justify-between items-center p-4 bg-gradient-to-r from-emerald-50 to-white rounded-lg border border-emerald-100 shadow-md hover:shadow-lg transition-shadow">
               <span className="text-sm font-semibold text-gray-700 flex items-center">
-                <span className="w-4 h-4 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full mr-2 flex items-center justify-center shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-2.5 w-2.5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                <span className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full mr-3 flex items-center justify-center shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
                 </span>
                 {t('monthlyIncome')}
               </span>
-              <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">
+              <span className="text-base font-bold text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-lg border border-emerald-100 shadow-inner">
                 +${totalIncome.toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-gradient-to-r from-red-50 to-white rounded-lg border border-red-100 shadow-sm">
+            
+            <div className="flex justify-between items-center p-4 bg-gradient-to-r from-red-50 to-white rounded-lg border border-red-100 shadow-md hover:shadow-lg transition-shadow">
               <span className="text-sm font-semibold text-gray-700 flex items-center">
-                <span className="w-4 h-4 bg-gradient-to-br from-red-400 to-red-500 rounded-full mr-2 flex items-center justify-center shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-2.5 w-2.5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                <span className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-500 rounded-full mr-3 flex items-center justify-center shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </span>
                 {t('monthlyBills')}
               </span>
-              <span className="text-sm font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg border border-red-100">
+              <span className="text-base font-bold text-red-600 bg-red-50 px-4 py-1.5 rounded-lg border border-red-100 shadow-inner">
                 -${totalBills.toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 mt-1 bg-gradient-to-r from-primary-50 to-white rounded-lg border border-primary-100 shadow-sm">
-              <span className="text-sm font-semibold text-gray-700">{t('availableToSpend')}</span>
-              <span className="text-sm font-bold text-white bg-primary px-3 py-1 rounded-lg shadow-sm">
+            
+            <div className="flex justify-between items-center p-4 mt-2 bg-gradient-to-r from-primary/10 to-white rounded-lg border border-primary/20 shadow-lg hover:shadow-xl transition-shadow">
+              <span className="text-sm font-semibold text-gray-700 flex items-center">
+                <span className="w-8 h-8 bg-primary rounded-full mr-3 flex items-center justify-center shadow-sm">
+                  <DollarSign className="h-4 w-4 text-white" />
+                </span>
+                {t('availableToSpend')}
+              </span>
+              <span className="text-base font-bold text-white bg-gradient-to-r from-primary to-primary/80 px-4 py-1.5 rounded-lg shadow-md">
                 ${availableToSpend.toFixed(2)}
               </span>
             </div>
@@ -237,48 +251,51 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-white hover:bg-gray-50 h-8 px-3 rounded-full shadow-sm border border-gray-200 text-gray-700 transition-all duration-200 group"
+              className="bg-gradient-to-r from-red-50 to-white hover:shadow-md h-8 px-4 rounded-full shadow-sm border border-red-100 text-gray-700 transition-all duration-200 group"
               size="sm"
               variant="outline"
             >
-              <span className="w-4 h-4 bg-red-500 text-white rounded-full mr-1.5 flex items-center justify-center">
+              <span className="w-5 h-5 bg-red-500 text-white rounded-full mr-2 flex items-center justify-center shadow-sm">
                 <Plus className="h-3 w-3" />
               </span>
               <span className="text-xs font-medium">{t('addBill')}</span>
             </Button>
           </div>
           {bills.length > 0 ? (
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {bills.map((bill) => (
                 <li 
                   key={bill.id} 
-                  className="flex justify-between items-center bg-white border border-gray-100 rounded-lg 
-                             overflow-hidden shadow-sm hover:shadow-md hover:border-primary/20 cursor-pointer
+                  className="relative flex justify-between items-center bg-gradient-to-r from-white to-gray-50 border border-gray-100 rounded-xl 
+                             overflow-hidden shadow-sm hover:shadow-lg hover:border-red-100 cursor-pointer
                              transition-all duration-300 group"
                   onClick={() => {
                     setSelectedBill(bill);
                     setIsEditBillModalOpen(true);
                   }}
                 >
-                  {/* Colored side indicator */}
-                  <div className="w-1.5 self-stretch bg-gradient-to-b from-red-400 to-red-500"></div>
+                  {/* Background decoration */}
+                  <div className="absolute right-0 top-0 w-20 h-20 bg-red-50 rounded-full -mr-10 -mt-10 opacity-30"></div>
                   
-                  <div className="flex-1 flex p-3">
+                  {/* Colored side indicator */}
+                  <div className="w-2 self-stretch bg-gradient-to-b from-red-400 to-red-500"></div>
+                  
+                  <div className="flex-1 flex p-4 z-10">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center mr-3 shadow-sm group-hover:scale-110 transition-transform">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-50 to-white flex items-center justify-center mr-4 shadow-md group-hover:scale-110 transition-transform border border-red-100">
                         <span className="text-red-500">{getBillIcon(bill.name)}</span>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">{translateBillName(bill.name)}</p>
                         <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                          {t('dueOnThe')} {bill.due_date}<sup>{getOrdinalSuffix(bill.due_date)}</sup>
+                          {t('dueOnThe')} <span className="font-bold text-red-500">{bill.due_date}<sup>{getOrdinalSuffix(bill.due_date)}</sup></span>
                         </p>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center">
-                    <div className="px-3 py-2 rounded-lg bg-red-50 text-red-600 mr-2 border border-red-100">
+                  <div className="flex items-center z-10 pr-3">
+                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-50 to-white text-red-600 mr-3 border border-red-100 shadow-md">
                       <p className="text-sm font-bold">
                         -${Number(bill.amount).toFixed(2)}
                       </p>
@@ -286,37 +303,44 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 mr-2 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors rounded-full opacity-0 group-hover:opacity-100"
+                      className="h-9 w-9 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors rounded-full opacity-0 group-hover:opacity-100 shadow-sm"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick
                         onDeleteBill(bill.id);
                       }}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <div className="p-8 bg-white rounded-lg text-center border border-dashed border-gray-200">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-red-50 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                  <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
-                </svg>
+            <div className="p-8 bg-gradient-to-br from-white to-gray-50 rounded-xl text-center border border-dashed border-red-100 relative overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-red-50 rounded-full opacity-30"></div>
+                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-red-50 rounded-full opacity-30"></div>
               </div>
-              <p className="text-sm text-gray-600">{t('noBillsAddedYet')}</p>
-              <Button
-                onClick={onAddBill}
-                className="mt-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 rounded-full text-xs px-4 py-2 shadow-sm"
-                variant="outline"
-              >
-                <span className="w-4 h-4 bg-red-500 text-white rounded-full mr-1.5 flex items-center justify-center">
-                  <Plus className="h-3 w-3" />
-                </span>
-                <span className="font-medium">{t('addBill')}</span>
-              </Button>
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-50 to-white border border-red-100 flex items-center justify-center shadow-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                    <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <p className="text-sm text-gray-600 mb-5">{t('noBillsAddedYet')}</p>
+                <Button
+                  onClick={onAddBill}
+                  className="mt-3 bg-gradient-to-r from-red-50 to-white text-gray-700 border border-red-100 hover:shadow-md rounded-full text-xs px-5 py-2.5 shadow-sm transition-all"
+                  variant="outline"
+                >
+                  <span className="w-5 h-5 bg-red-500 text-white rounded-full mr-2 flex items-center justify-center shadow-sm">
+                    <Plus className="h-3 w-3" />
+                  </span>
+                  <span className="font-medium">{t('addBill')}</span>
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -330,41 +354,44 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddIncome}
-              className="bg-white hover:bg-gray-50 h-8 px-3 rounded-full shadow-sm border border-gray-200 text-gray-700 transition-all duration-200 group"
+              className="bg-gradient-to-r from-emerald-50 to-white hover:shadow-md h-8 px-4 rounded-full shadow-sm border border-emerald-100 text-gray-700 transition-all duration-200 group"
               size="sm"
               variant="outline"
             >
-              <span className="w-4 h-4 bg-emerald-500 text-white rounded-full mr-1.5 flex items-center justify-center">
+              <span className="w-5 h-5 bg-emerald-500 text-white rounded-full mr-2 flex items-center justify-center shadow-sm">
                 <Plus className="h-3 w-3" />
               </span>
               <span className="text-xs font-medium">{t('addIncome')}</span>
             </Button>
           </div>
           {income.length > 0 ? (
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {income.map((inc) => (
                 <li 
                   key={inc.id} 
-                  className="flex justify-between items-center bg-white border border-gray-100 rounded-lg 
-                             overflow-hidden shadow-sm hover:shadow-md hover:border-primary/20 cursor-pointer
+                  className="relative flex justify-between items-center bg-gradient-to-r from-white to-gray-50 border border-gray-100 rounded-xl 
+                             overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-100 cursor-pointer
                              transition-all duration-300 group"
                   onClick={() => {
                     setSelectedIncome(inc);
                     setIsEditIncomeModalOpen(true);
                   }}
                 >
-                  {/* Colored side indicator */}
-                  <div className="w-1.5 self-stretch bg-gradient-to-b from-emerald-400 to-emerald-500"></div>
+                  {/* Background decoration */}
+                  <div className="absolute right-0 top-0 w-20 h-20 bg-emerald-50 rounded-full -mr-10 -mt-10 opacity-30"></div>
                   
-                  <div className="flex-1 flex p-3">
+                  {/* Colored side indicator */}
+                  <div className="w-2 self-stretch bg-gradient-to-b from-emerald-400 to-emerald-500"></div>
+                  
+                  <div className="flex-1 flex p-4 z-10">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center mr-3 shadow-sm group-hover:scale-110 transition-transform">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-50 to-white flex items-center justify-center mr-4 shadow-md group-hover:scale-110 transition-transform border border-emerald-100">
                         <DollarSign className="h-5 w-5 text-emerald-500" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">{inc.source || t('job')}</p>
                         <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                          {t(inc.frequency.toLowerCase())}
+                          <span className="font-bold text-emerald-500">{t(inc.frequency.toLowerCase())}</span>
                           {inc.frequency === "Weekly" && ` (${(Number(inc.amount) * 4).toFixed(2)}/${t('mo')})`}
                           {inc.frequency === "Bi-weekly" && ` (${(Number(inc.amount) * 2).toFixed(2)}/${t('mo')})`}
                         </p>
@@ -372,8 +399,8 @@ export default function IncomeBills({
                     </div>
                   </div>
                   
-                  <div className="flex items-center">
-                    <div className="px-3 py-2 rounded-lg bg-emerald-50 text-emerald-600 mr-2 border border-emerald-100">
+                  <div className="flex items-center z-10 pr-3">
+                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-50 to-white text-emerald-600 mr-3 border border-emerald-100 shadow-md">
                       <p className="text-sm font-bold">
                         +${Number(inc.amount).toFixed(2)}
                       </p>
@@ -381,34 +408,41 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 mr-2 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors rounded-full opacity-0 group-hover:opacity-100"
+                      className="h-9 w-9 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors rounded-full opacity-0 group-hover:opacity-100 shadow-sm"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick
                         onDeleteIncome(inc.id);
                       }}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <div className="p-8 bg-white rounded-lg text-center border border-dashed border-gray-200">
-              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-emerald-50 flex items-center justify-center">
-                <DollarSign className="h-5 w-5 text-emerald-500" />
+            <div className="p-8 bg-gradient-to-br from-white to-gray-50 rounded-xl text-center border border-dashed border-emerald-100 relative overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-50 rounded-full opacity-30"></div>
+                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-emerald-50 rounded-full opacity-30"></div>
               </div>
-              <p className="text-sm text-gray-600">{t('noIncomeAddedYet')}</p>
-              <Button
-                onClick={onAddIncome}
-                className="mt-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 rounded-full text-xs px-4 py-2 shadow-sm"
-                variant="outline"
-              >
-                <span className="w-4 h-4 bg-emerald-500 text-white rounded-full mr-1.5 flex items-center justify-center">
-                  <Plus className="h-3 w-3" />
-                </span>
-                <span className="font-medium">{t('addIncome')}</span>
-              </Button>
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 flex items-center justify-center shadow-md">
+                  <DollarSign className="h-7 w-7 text-emerald-500" />
+                </div>
+                <p className="text-sm text-gray-600 mb-5">{t('noIncomeAddedYet')}</p>
+                <Button
+                  onClick={onAddIncome}
+                  className="mt-3 bg-gradient-to-r from-emerald-50 to-white text-gray-700 border border-emerald-100 hover:shadow-md rounded-full text-xs px-5 py-2.5 shadow-sm transition-all"
+                  variant="outline"
+                >
+                  <span className="w-5 h-5 bg-emerald-500 text-white rounded-full mr-2 flex items-center justify-center shadow-sm">
+                    <Plus className="h-3 w-3" />
+                  </span>
+                  <span className="font-medium">{t('addIncome')}</span>
+                </Button>
+              </div>
             </div>
           )}
         </div>
