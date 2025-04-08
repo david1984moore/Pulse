@@ -311,7 +311,7 @@ export default function IncomeBills({
                   </div>
                   
                   <div className="flex items-center z-10 pr-3">
-                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-primary/10 to-white text-primary mr-3 border border-primary/20 shadow-md">
+                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-50 to-white text-red-600 mr-3 border border-red-100 shadow-md">
                       <p className="text-sm font-bold">
                         -${Number(bill.amount).toFixed(2)}
                       </p>
