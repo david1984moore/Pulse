@@ -254,94 +254,75 @@ export default function LandingPage() {
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{t('calendarViewTitle')}</h3>
                     <p className="text-base text-gray-600">{t('calendarViewDescription')}</p>
                   </div>
-                  <div className="rounded-xl bg-white shadow-md border border-gray-100 overflow-hidden">
-                    <div className="pt-6">
-                      <div className="rounded-xl p-4 mb-4">
-                        {/* Calendar header with modern styling */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center">
-                            <div className="mr-3">
-                              <h3 className="text-lg font-bold text-gray-800 capitalize flex items-center">
-                                April
-                                <span className="ml-2 text-sm font-normal text-gray-500">
-                                  2025
-                                </span>
-                              </h3>
-                            </div>
-                          </div>
-                          
-                          <div className="flex space-x-2">
-                            <div className="rounded-full h-8 w-8 p-0 hover:bg-gray-50 text-gray-600 border border-gray-200 transition-all flex items-center justify-center">
-                              <ChevronLeft className="h-4 w-4" />
-                            </div>
-                            <div className="rounded-full h-8 w-8 p-0 hover:bg-gray-50 text-gray-600 border border-gray-200 transition-all flex items-center justify-center">
-                              <ChevronRight className="h-4 w-4" />
-                            </div>
-                          </div>
+                  <div className="p-4 bg-white shadow-sm rounded-xl">
+                    <p className="text-sm text-gray-600 mb-4">
+                      See all your bills on a monthly calendar to plan ahead and never miss a payment.
+                    </p>
+                    
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            April <span className="text-gray-500 font-normal">2025</span>
+                          </h3>
                         </div>
+                        
+                        <div className="flex space-x-2">
+                          <button className="rounded-full h-8 w-8 p-0 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center">
+                            <ChevronLeft className="h-4 w-4" />
+                          </button>
+                          <button className="rounded-full h-8 w-8 p-0 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center">
+                            <ChevronRight className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
 
-                        {/* Day headers with clean styling */}
-                        <div className="flex w-full rounded-xl mb-3 border-b border-gray-200 pb-2">
-                          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+                      {/* Day headers with exact styling from screenshot */}
+                      <div className="grid grid-cols-7 text-center">
+                        {['S', 'T', 'S', 'M', 'T', 'W', 'T', 'F', 'S'].slice(0, 7).map((day, index) => (
+                          <div 
+                            key={`day-header-${index}`} 
+                            className="text-xs text-gray-500 font-medium py-2"
+                          >
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Calendar grid matching screenshot */}
+                      <div className="grid grid-cols-7 gap-1 mt-1">
+                        {/* Render calendar days from 1-30 */}
+                        {Array.from({ length: 30 }, (_, i) => i + 1).map(day => {
+                          const isHighlighted = day === 15 || day === 28;
+                          const isToday = day === 15;
+                          
+                          return (
                             <div 
-                              key={`day-header-${index}`} 
-                              className={`flex-1 text-xs uppercase font-medium text-gray-500 text-center py-2
-                                ${index === 0 || index === 6 ? 'text-gray-400' : ''}
+                              key={`day-${day}`} 
+                              className={`h-10 w-full flex items-center justify-center relative
+                                ${isToday ? 'text-primary' : ''}
                               `}
                             >
-                              {day.charAt(0)}
+                              <span className={`
+                                text-base ${isToday ? 'font-bold' : 'font-normal'} 
+                              `}>
+                                {day}
+                              </span>
+                              
+                              {/* Bill indicators */}
+                              {day === 15 && (
+                                <div className="absolute bottom-0 right-0 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center transform translate-x-1 translate-y-1">
+                                  <Home className="h-3 w-3 text-white" />
+                                </div>
+                              )}
+                              {day === 28 && (
+                                <div className="absolute bottom-0 right-0 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center transform translate-x-1 translate-y-1">
+                                  <Wifi className="h-3 w-3 text-white" />
+                                </div>
+                              )}
                             </div>
-                          ))}
-                        </div>
-
-                        <div className="grid grid-cols-7 gap-2 p-1">
-                          {/* Day 1-30 with similar styling to actual dashboard */}
-                          {[...Array(30)].map((_, i) => {
-                            const day = i + 1;
-                            const isToday = day === 15; // Simulate today
-                            const hasBills = day === 15 || day === 28; // Bills on these days
-                            
-                            return (
-                              <div 
-                                key={day}
-                                className={`
-                                  relative h-12 rounded-lg cursor-pointer transition-all
-                                  duration-200 overflow-hidden
-                                  ${isToday 
-                                    ? "bg-white ring-2 ring-primary text-primary shadow-sm" 
-                                    : hasBills
-                                      ? "bg-white border border-gray-100 shadow-sm hover:shadow hover:border-gray-200"
-                                      : "bg-white hover:shadow-sm"
-                                  }
-                                `}
-                              >
-                                <span className={`
-                                  text-sm absolute top-2 left-2 
-                                  ${isToday ? "font-bold text-primary" : ""} 
-                                  ${hasBills ? "font-semibold text-gray-800" : "font-medium text-gray-600"}
-                                `}>
-                                  {day}
-                                </span>
-                                
-                                {/* Bill indicators */}
-                                {hasBills && (
-                                  <div className="absolute bottom-1.5 right-1.5 flex flex-wrap justify-end gap-1">
-                                    {day === 15 && (
-                                      <div className="flex items-center justify-center w-5 h-5 rounded-full bg-red-500">
-                                        <Home className="h-3 w-3 text-white" />
-                                      </div>
-                                    )}
-                                    {day === 28 && (
-                                      <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary">
-                                        <Wifi className="h-3 w-3 text-white" />
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
@@ -360,106 +341,76 @@ export default function LandingPage() {
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{t('spendingAssistantTitle')}</h3>
                     <p className="text-base text-gray-600">{t('spendingAssistantDescription')}</p>
                   </div>
-                  <div className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl relative z-10 border-t border-l border-white/40">
-                    <div className="pb-4 border-b border-primary-100/30 bg-gradient-to-r from-primary/20 to-primary/10 p-4">
-                      <div className="flex flex-row items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="flex items-center">
-                            {/* Futuristic hexagonal avatar */}
-                            <div className="relative h-12 w-12 mr-3">
-                              {/* Hexagon shape with gradient */}
-                              <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary to-primary-600 rounded-xl overflow-hidden" 
-                                  style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
-                              </div>
-                              {/* Inner content */}
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">A</span>
-                              </div>
-                            </div>
-                            <div className="flex items-center">
-                              <div className="text-xl font-bold tracking-wide text-primary-600 relative">
-                                <span className="relative">Alice</span>
-                                <span className="ml-1.5 text-xs font-medium text-primary-500 opacity-70 tracking-wider">v1.0</span>
-                              </div>
-                            </div>
-                          </div>
+                  <div className="p-4 bg-white shadow-sm rounded-xl">
+                    <p className="text-sm text-gray-600 mb-4">
+                      Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.
+                    </p>
+                    
+                    {/* Alice header with blue background */}
+                    <div className="bg-blue-100 p-4 rounded-t-xl flex items-center justify-between">
+                      <div className="flex items-center">
+                        {/* Blue hexagon logo from screenshot */}
+                        <div className="bg-blue-500 h-10 w-10 rounded-md flex items-center justify-center mr-2" style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                          <span className="text-white font-bold text-lg">A</span>
                         </div>
-
-                        <div className="flex items-center">
-                          <div className="flex items-center justify-center px-4 py-1.5 rounded-xl bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md border border-white/20">
-                            <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
-                            <span className="font-bold text-primary-700">$800.00</span>
-                            <span className="ml-1.5 h-1.5 w-1.5 rounded-full bg-green-400"></span>
-                          </div>
+                        <div>
+                          <span className="font-bold text-black text-xl">Alice</span>
+                          <span className="text-xs text-gray-600 ml-1">v1.0</span>
+                        </div>
+                      </div>
+                      
+                      {/* Balance display */}
+                      <div className="bg-blue-200 rounded-full px-4 py-1 flex items-center">
+                        <DollarSign className="h-4 w-4 mr-1 text-blue-700" />
+                        <span className="font-semibold text-blue-800">$800.00</span>
+                        <span className="ml-1 h-2 w-2 rounded-full bg-green-400"></span>
+                      </div>
+                    </div>
+                    
+                    {/* Chat area with white background */}
+                    <div className="bg-white p-4 border-l border-r border-gray-200">
+                      {/* First message from Alice */}
+                      <div className="mb-4 flex">
+                        <div className="bg-blue-500 h-8 w-8 rounded-md flex items-center justify-center mr-2" style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                          <span className="text-white font-bold text-sm">A</span>
+                        </div>
+                        <div className="max-w-xs bg-gray-100 p-3 rounded-lg">
+                          <p className="text-gray-800">
+                            Hello! I'm Alice. Ask me what you can spend.
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* User's message */}
+                      <div className="mb-4 flex justify-end">
+                        <div className="max-w-xs bg-blue-600 p-3 rounded-lg">
+                          <p className="text-white text-right">
+                            Can I spend $75 on dining out this month?
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Alice's response */}
+                      <div className="mb-4 flex">
+                        <div className="bg-blue-500 h-8 w-8 rounded-md flex items-center justify-center mr-2" style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                          <span className="text-white font-bold text-sm">A</span>
+                        </div>
+                        <div className="max-w-xs bg-gray-100 p-3 rounded-lg">
+                          <p className="text-gray-800">
+                            Yes, you can spend $75 on dining. Your balance after this purchase will be $725, which is enough to cover your upcoming bills.
+                          </p>
                         </div>
                       </div>
                     </div>
-
-                    <div className="pt-5 p-4">
-                      {/* Chat message area */}
-                      <div className="bg-gradient-to-b from-white/70 to-white/40 backdrop-blur-lg rounded-xl p-4 mb-5 h-48 border border-primary-100/30 shadow-inner">
-                        {/* Message from bot */}
-                        <div className="mb-4">
-                          <div className="flex">
-                            {/* Bot avatar with hexagonal styling */}
-                            <div className="relative flex-shrink-0 h-8 w-8 mr-3">
-                              <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary to-primary-600" 
-                                  style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
-                              </div>
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-white font-bold text-xs">A</span>
-                              </div>
-                            </div>
-
-                            <div className="max-w-sm">
-                              <p className="text-base leading-relaxed text-gray-700">
-                                Hello! I'm Alice. Ask me what you can spend.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Message from user */}
-                        <div className="mb-4">
-                          <div className="flex justify-end">
-                            <div className="max-w-sm text-right">
-                              <p className="text-base leading-relaxed text-primary-600 font-medium">
-                                Can I spend $75 on dining out this month?
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Response from bot */}
-                        <div className="mb-4">
-                          <div className="flex">
-                            <div className="relative flex-shrink-0 h-8 w-8 mr-3">
-                              <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary to-primary-600" 
-                                  style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
-                              </div>
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-white font-bold text-xs">A</span>
-                              </div>
-                            </div>
-
-                            <div className="max-w-sm">
-                              <p className="text-base leading-relaxed text-gray-700">
-                                Yes, you can spend $75 on dining. Your balance after this purchase will be $725, which is enough to cover your upcoming bills.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                    
+                    {/* Input area */}
+                    <div className="bg-white border border-gray-200 p-2 rounded-b-xl flex items-center">
+                      <div className="flex-1 px-4 py-2 text-gray-500 bg-gray-50 rounded-md">
+                        Ask Alice...
                       </div>
-
-                      {/* Action buttons and input simulated */}
-                      <div className="flex space-x-2">
-                        <div className="rounded-xl border border-gray-200 bg-gray-50 py-2 px-4 text-sm text-gray-800 flex-1">
-                          Ask Alice...
-                        </div>
-                        <button className="bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium">
-                          Send
-                        </button>
-                      </div>
+                      <button className="ml-2 bg-blue-600 text-white px-4 py-2 rounded-md font-medium">
+                        Send
+                      </button>
                     </div>
                   </div>
                 </div>
