@@ -111,11 +111,11 @@ export default function DashboardPage() {
                 <PulseLogo size="lg" showText={true} />
               </div>
             </Link>
-            <h1 className="text-lg font-medium text-gray-700 glow-text">{t('dashboard')}</h1>
+            <h1 className="text-lg font-medium text-gray-700">{t('dashboard')}</h1>
           </div>
           <div className="flex items-center space-x-4">
             <LanguageToggle />
-            <div className="bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 px-4 py-1.5 rounded-full shadow-glow-sm">
+            <div className="px-4 py-1.5 rounded-full">
               <span className="text-sm font-medium text-gray-700 flex items-center">
                 <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-ping-slow"></span>
                 {t('welcome')} {user?.name?.split(' ')[0]}

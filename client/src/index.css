@@ -234,14 +234,4 @@
   margin-right: 0.1em;
 }
 
-/* The distinctive slash element that gives the brand identity a unique touch */
-.pulse-text::after {
-  content: "";
-  position: absolute;
-  right: -4px;
-  top: 50%;
-  height: 14px;
-  width: 1px;
-  background: #0070f3;
-  transform: translateY(-50%) rotate(15deg);
-}
+/* Removed the slash element per user request */
