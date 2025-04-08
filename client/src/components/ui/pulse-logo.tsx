@@ -106,8 +106,9 @@ export function PulseLogo({
     <div className={cn('flex items-center gap-2', className)}>
       {/* Elegant icon with subtle shadow */}
       <div className={cn('relative flex-shrink-0', sizeClasses[size])}>
-        <div className="w-full h-full rounded-xl bg-primary flex items-center justify-center relative overflow-hidden">
-          {/* Clean, flat appearance to match the screenshot */}
+        <div className="w-full h-full rounded-lg bg-[#0070f3] flex items-center justify-center relative overflow-hidden shadow-sm">
+          {/* Modern blue with subtle depth */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0091ff] to-[#0057cc] opacity-70"></div>
           
           <svg 
             viewBox="0 0 24 24" 
@@ -140,16 +141,14 @@ export function PulseLogo({
         </div>
       </div>
       
-      {/* Eye-catching modern text treatment with unique styling */}
+      {/* Distinctive modern text treatment with advanced styling */}
       {showText && (
         <span className={cn(
           "pulse-text relative", 
           textSizeClasses[size],
           textClassName
         )}>
-          pulse
-          {/* Add a subtle dot accent that complements the pulse icon */}
-          <span className="absolute -right-1 top-0 w-1.5 h-1.5 bg-purple-400 rounded-full"></span>
+          <span className="tracking-normal">pul</span><span className="tracking-tighter">se</span>
         </span>
       )}
     </div>
@@ -159,7 +158,10 @@ export function PulseLogo({
 // Export a standalone icon version
 export function PulseIcon({ className }: { className?: string }) {
   return (
-    <div className={cn("rounded-xl bg-primary relative overflow-hidden", className)}>
+    <div className={cn("rounded-lg bg-[#0070f3] relative overflow-hidden shadow-sm", className)}>
+      {/* Modern blue with subtle depth gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0091ff] to-[#0057cc] opacity-70"></div>
+      
       <svg 
         viewBox="0 0 24 24" 
         className="w-full h-full text-white p-1.5 relative z-10"

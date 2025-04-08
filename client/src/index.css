@@ -4,67 +4,67 @@
  
 @layer base {
   :root {
-    /* Enhanced vibrant light mode color scheme */
-    --background: 240 20% 99%; /* Subtle off-white background */
-    --foreground: 224 71% 4%;
+    /* Modern professional light mode color scheme - Y-Combinator worthy */
+    --background: 210 50% 98%; /* Subtle blue-tinted background */
+    --foreground: 210 50% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card-foreground: 210 50% 10%;
  
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
+    --popover-foreground: 210 50% 10%;
  
-    --primary: 262 83% 58%; /* Vibrant purple */
+    --primary: 210 100% 50%; /* Professional blue */
     --primary-foreground: 0 0% 100%;
  
-    --secondary: 250 20% 96%;
-    --secondary-foreground: 224 71% 4%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 210 50% 10%;
  
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 8% 46%;
+    --muted: 210 20% 95%;
+    --muted-foreground: 210 30% 40%;
  
-    --accent: 265 95% 60%; /* Bold accent purple */
+    --accent: 210 90% 45%; /* Deeper blue accent */
     --accent-foreground: 0 0% 100%;
  
-    --destructive: 0 85% 65%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 259 94% 60%;
+    --border: 210 20% 91%;
+    --input: 210 20% 91%;
+    --ring: 210 100% 50%;
  
     --radius: 0.75rem;
   }
  
   .dark {
-    /* Modern sleek dark mode color scheme */
-    --background: 224 71% 4%; /* Nearly black, slightly blue background */
+    /* Modern sleek dark mode color scheme - professional blue theme */
+    --background: 210 50% 5%; /* Deep blue-black background */
     --foreground: 210 20% 98%;
  
-    --card: 224 71% 6%; /* Slightly lighter than background */
+    --card: 210 50% 8%; /* Slightly lighter than background */
     --card-foreground: 210 20% 98%;
  
-    --popover: 224 71% 6%;
+    --popover: 210 50% 8%;
     --popover-foreground: 210 20% 98%;
  
-    --primary: 259 94% 51%; /* Rich purple */
+    --primary: 210 100% 50%; /* Vibrant blue, same as light mode */
     --primary-foreground: 210 20% 98%;
  
-    --secondary: 215 27% 16%;
+    --secondary: 210 40% 16%;
     --secondary-foreground: 210 20% 98%;
  
-    --muted: 215 27% 16%;
-    --muted-foreground: 217 10% 64%;
+    --muted: 210 40% 16%;
+    --muted-foreground: 210 20% 64%;
  
-    --accent: 262 83% 58%; /* Complementary purple accent */
+    --accent: 210 90% 45%; /* Deeper blue accent */
     --accent-foreground: 210 20% 98%;
  
     --destructive: 0 62% 50%;
     --destructive-foreground: 210 20% 98%;
  
-    --border: 215 27% 14%;
-    --input: 215 27% 14%;
-    --ring: 259 94% 60%;
+    --border: 210 40% 14%;
+    --input: 210 40% 14%;
+    --ring: 210 100% 50%;
   }
 }
  
@@ -79,16 +79,16 @@
 
 /* Add glow effect to primary text elements */
 .glow-text {
-  text-shadow: 0 0 10px rgba(133, 56, 255, 0.5);
+  text-shadow: 0 0 10px rgba(0, 112, 243, 0.5);
 }
 
 /* Shadow for buttons and cards with subtle glow */
 .shadow-glow-sm {
-  box-shadow: 0 0 10px rgba(133, 56, 255, 0.15);
+  box-shadow: 0 0 10px rgba(0, 112, 243, 0.15);
 }
 
 .shadow-glow-md {
-  box-shadow: 0 0 15px rgba(133, 56, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 112, 243, 0.2);
 }
 
 /* Add subtle background blur to certain elements */
@@ -209,35 +209,39 @@
   transform: scale(1.05);
 }
 
-/* Bold, eye-catching styling for the pulse logo - distinctive yet modern */
+/* Y-Combinator worthy, sophisticated styling for the pulse logo */
 .pulse-text {
-  /* Space Grotesk has a distinct tech-forward character set */
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  /* Modern, geometric sans-serif - precisely what top YC startups use */
+  font-family: 'Manrope', system-ui, sans-serif;
   
-  /* Dramatic gradient text that captures attention */
-  background: linear-gradient(135deg, #7928ca 0%, #9333ea 40%, #c026d3 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  /* Clean, solid color with perfect contrast - matching top tech brands */
+  color: #0070f3;
   
-  /* Bold weight balanced with character spacing */
-  font-weight: 700;
-  letter-spacing: 0;
+  /* Bold but sophisticated weight with negative tracking */
+  font-weight: 800;
+  letter-spacing: -0.03em;
   
   /* Clean edges for perfect rendering */
   -webkit-font-smoothing: antialiased;
   
-  /* Modern lowercase with slight character adjustments */
+  /* Modern lowercase */
   text-transform: lowercase;
   
-  /* Very subtle text shadow for depth */
-  text-shadow: 0px 2px 4px rgba(147, 51, 234, 0.15);
-  
-  /* Add distinctive modern tech branding elements */
+  /* Position relative for pseudo elements */
   position: relative;
-  padding-right: 0.1em;
   
-  /* Create subtle angled cuts on certain letters */
-  font-feature-settings: "ss01", "ss03";
-  font-variant-numeric: tabular-nums;
+  /* Add a distinctive, modern slashed element that breaks convention */
+  margin-right: 0.1em;
+}
+
+/* The distinctive slash element that gives the brand identity a unique touch */
+.pulse-text::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  height: 14px;
+  width: 1px;
+  background: #0070f3;
+  transform: translateY(-50%) rotate(15deg);
 }
