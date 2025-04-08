@@ -449,10 +449,9 @@ export default function Chatbot({ bills }: ChatbotProps) {
                         </p>
                       </div>
                       
-                      {/* Futuristic timestamp with data ID */}
+                      {/* Futuristic timestamp without ID */}
                       <div className={`text-[10px] mt-1 ${message.sender === "user" ? "text-right text-primary-500" : "text-primary-400"}`}>
                         <span className="font-mono tracking-wider">{new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                        <span className="ml-1.5 opacity-70">ID:{Math.floor(Math.random() * 10000).toString().padStart(4, '0')}</span>
                       </div>
                     </div>
                   </div>
