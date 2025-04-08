@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 /**
- * EkgCssAnimation - A simple, CSS-based ECG animation guaranteed to run once
+ * EkgCssAnimation - A futuristic, advanced, CSS-based ECG animation guaranteed to run once
  * when the active prop changes to true
  * 
  * This component uses CSS animations rather than JS to ensure reliable completion
  * and prevent issues with animation cycles being cut short or never running.
  */
 export default function EkgCssAnimation({
-  lineColor = "rgba(255, 255, 255, 0.9)",
+  lineColor = "rgba(165, 180, 252, 0.9)", // Changed to indigo color
   width = 500,
   height = 200,
   strokeWidth = 2,
@@ -24,25 +24,39 @@ export default function EkgCssAnimation({
   // Calculate baseline Y position (horizontal line)
   const baselineY = height / 2;
   
-  // Define a classical ECG waveform path with proper P, QRS, and T waves
+  // Define a futuristic ECG waveform path with proper P, QRS, and T waves
   // Ensures all waves properly return to the horizontal baseline
+  // Added more complex waveform for futuristic look
   const ekgPath = `
     M 0,${baselineY}
     
-    H ${width * 0.1}
+    H ${width * 0.08}
     
-    C ${width * 0.12},${baselineY} ${width * 0.14},${baselineY - height * 0.05} ${width * 0.16},${baselineY}
+    C ${width * 0.10},${baselineY} ${width * 0.12},${baselineY - height * 0.06} ${width * 0.14},${baselineY}
     
-    H ${width * 0.24}
+    H ${width * 0.20}
     
-    L ${width * 0.26},${baselineY + height * 0.06}
-    L ${width * 0.28},${baselineY - height * 0.28}
-    L ${width * 0.3},${baselineY + height * 0.15}
-    L ${width * 0.32},${baselineY}
+    L ${width * 0.22},${baselineY + height * 0.05}
+    L ${width * 0.24},${baselineY - height * 0.2}
+    L ${width * 0.25},${baselineY - height * 0.3}
+    L ${width * 0.26},${baselineY + height * 0.18}
+    L ${width * 0.28},${baselineY - height * 0.1}
+    L ${width * 0.30},${baselineY}
     
-    H ${width * 0.38}
+    H ${width * 0.35}
     
-    C ${width * 0.42},${baselineY - height * 0.12} ${width * 0.46},${baselineY - height * 0.15} ${width * 0.5},${baselineY}
+    C ${width * 0.38},${baselineY - height * 0.08} ${width * 0.40},${baselineY - height * 0.15} ${width * 0.42},${baselineY}
+    
+    H ${width * 0.48}
+    
+    L ${width * 0.50},${baselineY + height * 0.04}
+    L ${width * 0.52},${baselineY - height * 0.24}
+    L ${width * 0.54},${baselineY + height * 0.12}
+    L ${width * 0.56},${baselineY}
+    
+    H ${width * 0.65}
+    
+    C ${width * 0.70},${baselineY - height * 0.1} ${width * 0.75},${baselineY - height * 0.14} ${width * 0.8},${baselineY}
     
     H ${width}
   `;

@@ -295,29 +295,30 @@ export default function Chatbot({ bills }: ChatbotProps) {
         </div>
       )}
 
-      <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl relative z-10">
-        <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
+      <Card className="backdrop-blur-xl bg-black/80 shadow-2xl border border-indigo-500/30 overflow-hidden rounded-2xl relative z-10">
+        <CardHeader className="pb-4 border-b border-indigo-600/20 bg-gradient-to-r from-indigo-900/20 via-slate-900/50 to-black/80">
           <div className="flex flex-row items-center justify-between">
             <div className="flex items-center">
               <div className="flex items-center px-5 py-2.5">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-md">
-                  <span className="text-white font-bold text-lg">A</span>
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-600/70 to-blue-800/90 flex items-center justify-center mr-3 shadow-lg border border-indigo-400/30 backdrop-blur-xl">
+                  <span className="text-white font-bold text-lg bg-clip-text text-transparent bg-gradient-to-br from-white to-indigo-200">A</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="text-xl font-bold tracking-wide text-primary-600">
+                  <div className="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-br from-indigo-100 to-blue-200">
                     {language === 'es' ? 'Alicia' : 'Alice'}
+                    <div className="mt-0.5 h-[2px] w-full bg-gradient-to-r from-indigo-500/90 via-indigo-400/70 to-transparent rounded-full"></div>
                   </div>
 
                   {/* Sexy ECG heartbeat animation next to Alice's name - also with unique key */}
-                  <AliceCssEcg key={`alice-ecg-${animationKey}`} active={showAnimation} color="#FFFFFF" />
+                  <AliceCssEcg key={`alice-ecg-${animationKey}`} active={showAnimation} color="#a5b4fc" />
                 </div>
               </div>
             </div>
 
             <div className="flex items-center px-4 py-2">
-              <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
-                <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
-                <span className="font-bold text-primary-700">
+              <div className="flex items-center justify-center px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-900/40 to-indigo-800/30 border border-indigo-500/20 shadow-lg backdrop-blur-md">
+                <DollarSign className="h-4 w-4 mr-1.5 text-indigo-300" />
+                <span className="font-bold text-indigo-100">
                   {balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
                 </span>
               </div>
@@ -325,20 +326,20 @@ export default function Chatbot({ bills }: ChatbotProps) {
           </div>
         </CardHeader>
 
-        <CardContent className="pt-5">
+        <CardContent className="pt-5 bg-gradient-to-b from-slate-900/80 to-black/90">
           {/* Chat message area with improved styling */}
           <ScrollArea 
             ref={scrollAreaRef} 
-            className="bg-white/50 backdrop-blur-sm rounded-xl p-4 mb-5 h-72 border border-gray-100"
+            className="bg-gradient-to-b from-slate-900/70 to-black/70 backdrop-blur-md rounded-xl p-4 mb-5 h-72 border border-indigo-500/20 shadow-inner"
           >
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mb-4 shadow-md">
-                  <span className="text-white text-xl font-bold">A</span>
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-600/70 to-blue-800/90 flex items-center justify-center mb-4 shadow-lg border border-indigo-400/30">
+                  <span className="text-white text-xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-white to-indigo-200">A</span>
                 </div>
-                <h3 className="text-primary-600 font-bold text-lg mb-2">Your Financial Companion</h3>
-                <p className="text-gray-600 text-sm max-w-xs">
-                  Ask Alice if you can spend a specific amount and she'll analyze your financial situation.
+                <h3 className="bg-clip-text text-transparent bg-gradient-to-br from-indigo-100 to-blue-200 font-bold text-lg mb-2">Your Financial AI</h3>
+                <p className="text-indigo-200/80 text-sm max-w-xs">
+                  Ask Alice if you can spend a specific amount and she'll analyze your financial situation using advanced algorithms.
                 </p>
               </div>
             ) : (
@@ -349,10 +350,10 @@ export default function Chatbot({ bills }: ChatbotProps) {
                       message.sender === "user" ? "justify-end" : "justify-start"
                     }`}
                   >
-                    {/* Bot avatar with attractive styling */}
+                    {/* Bot avatar with futuristic styling */}
                     {message.sender === "bot" && (
-                      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center mr-3 shadow-sm">
-                        <span className="text-white font-bold text-sm">A</span>
+                      <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-600/70 to-blue-800/90 flex items-center justify-center mr-3 shadow-lg border border-indigo-400/30">
+                        <span className="text-white font-bold text-sm bg-clip-text text-transparent bg-gradient-to-br from-white to-indigo-200">A</span>
                       </div>
                     )}
 
@@ -363,32 +364,38 @@ export default function Chatbot({ bills }: ChatbotProps) {
                           : ""
                       }`}
                     >
-                      <p className={`${
+                      <div className={`p-3 rounded-lg ${
                         message.sender === "user" 
-                          ? "text-sm text-primary-600 font-medium pb-1" 
-                          : "text-sm leading-relaxed text-gray-700 pb-1"
+                          ? "bg-indigo-600/30 border border-indigo-500/30 shadow-lg" 
+                          : "bg-slate-800/50 border border-indigo-500/20 shadow-lg"
                       }`}>
-                        {message.sender === "bot" && message.isAnimating ? (
-                          <TypeAnimation 
-                            text={message.text} 
-                            speed={12}
-                            onComplete={() => handleAnimationComplete(index)}
-                            onCharacterTyped={() => {
-                              // Scroll to bottom on each character typed
-                              if (scrollAreaRef.current) {
-                                const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-                                if (scrollContainer) {
-                                  scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                        <p className={`${
+                          message.sender === "user" 
+                            ? "text-sm text-indigo-100 font-medium" 
+                            : "text-sm leading-relaxed text-gray-100"
+                        }`}>
+                          {message.sender === "bot" && message.isAnimating ? (
+                            <TypeAnimation 
+                              text={message.text} 
+                              speed={12}
+                              onComplete={() => handleAnimationComplete(index)}
+                              onCharacterTyped={() => {
+                                // Scroll to bottom on each character typed
+                                if (scrollAreaRef.current) {
+                                  const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+                                  if (scrollContainer) {
+                                    scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                                  }
                                 }
-                              }
-                            }}
-                          />
-                        ) : (
-                          message.text
-                        )}
-                      </p>
-                      {/* Add subtle timestamp */}
-                      <div className={`text-[10px] text-gray-400 ${message.sender === "user" ? "text-right" : ""}`}>
+                              }}
+                            />
+                          ) : (
+                            message.text
+                          )}
+                        </p>
+                      </div>
+                      {/* Add subtle timestamp with futuristic styling */}
+                      <div className={`text-[10px] text-indigo-300/70 mt-1 ${message.sender === "user" ? "text-right" : ""}`}>
                         {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                       </div>
                     </div>
@@ -398,25 +405,25 @@ export default function Chatbot({ bills }: ChatbotProps) {
             )}
           </ScrollArea>
 
-          {/* Input area with sleek modern styling */}
-          <div className="p-4 rounded-xl bg-white/80 border border-gray-100 shadow-sm">
+          {/* Input area with futuristic styling */}
+          <div className="p-4 rounded-xl bg-gradient-to-r from-slate-800/90 to-indigo-900/50 border border-indigo-500/30 shadow-md backdrop-blur-xl">
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3">
               {isCustomAmount ? (
                 <div className="flex w-full sm:flex-1">
                   <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-bold">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-300 font-bold">$</span>
                     <input
                       type="number"
                       value={customAmount}
                       onChange={(e) => setCustomAmount(e.target.value)}
                       placeholder="Enter amount"
-                      className="w-full pl-8 pr-4 py-2.5 border border-gray-200 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 shadow-sm transition-all duration-150"
+                      className="w-full pl-8 pr-4 py-2.5 border border-indigo-500/40 bg-slate-800/80 text-indigo-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400/60 shadow-inner transition-all duration-150"
                     />
                   </div>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="ml-2 bg-white border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all duration-150"
+                    className="ml-2 bg-slate-800/80 border-indigo-500/30 text-indigo-200 hover:bg-indigo-900/60 hover:text-indigo-100 transition-all duration-150"
                     onClick={() => {
                       setIsCustomAmount(false);
                       setCustomAmount("");
@@ -427,21 +434,21 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 </div>
               ) : (
                 <Select value={selectedAmount || ""} onValueChange={setSelectedAmount}>
-                  <SelectTrigger className="flex-1 border-gray-200 bg-white text-gray-800 shadow-sm hover:border-primary/40 transition-colors duration-150">
+                  <SelectTrigger className="flex-1 border-indigo-500/40 bg-slate-800/80 text-indigo-100 shadow-inner hover:border-indigo-400/60 transition-colors duration-150">
                     <SelectValue placeholder={t('chatbotPlaceholder')} />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 text-gray-800">
+                  <SelectContent className="bg-slate-800 border border-indigo-500/30 text-indigo-100">
                     <SelectItem value="10">{t('canISpend')} $10?</SelectItem>
                     <SelectItem value="20">{t('canISpend')} $20?</SelectItem>
                     <SelectItem value="50">{t('canISpend')} $50?</SelectItem>
                     <SelectItem value="100">{t('canISpend')} $100?</SelectItem>
-                    <SelectItem value="custom" className="text-primary font-medium">{t('customSpend')}</SelectItem>
+                    <SelectItem value="custom" className="text-indigo-300 font-medium">{t('customSpend')}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
               {isPending ? (
                 // Show custom processing button when pending
-                <div className="w-full sm:w-auto px-4 py-2 rounded-md bg-primary/50 text-white flex items-center justify-center">
+                <div className="w-full sm:w-auto px-4 py-2 rounded-md bg-indigo-600/50 text-white flex items-center justify-center border border-indigo-500/40 shadow-lg">
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   <span>{t('thinking')}</span>
                 </div>
@@ -450,7 +457,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 <Button
                   onClick={handleSubmitClick}
                   disabled={isCustomAmount ? !customAmount : !selectedAmount}
-                  className="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary text-white shadow-glow-sm transition-all duration-200"
+                  className="w-full sm:w-auto bg-gradient-to-br from-indigo-600 to-indigo-800 hover:from-indigo-500 hover:to-indigo-700 text-white shadow-[0_0_15px_rgba(165,180,252,0.5)] border border-indigo-400/30 transition-all duration-200"
                 >
                   <div className="flex items-center justify-center group">
                     <Send className="mr-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
