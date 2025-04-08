@@ -261,12 +261,12 @@ export default function Chatbot({ bills }: ChatbotProps) {
       setTimeout(() => {
         handleSubmit();
         
-        // Allow a full 5 seconds for animation to complete
+        // Allow a full 7 seconds for animation to complete (safety margin on 5 second duration)
         setTimeout(() => {
           isSubmittingRef.current = false;
-        }, 5000);
-      }, 200);
-    }, 100);
+        }, 7000);
+      }, 300);
+    }, 200);
   };
   
   return (
@@ -275,8 +275,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
       {isPending && (
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
           <SimpleEkg 
-            key={`ekg-${animationKey}`}
-            active={isPending} 
+            key={`ekg-fullwidth-${animationKey}`}
+            active={true} 
             lineColor="rgba(255, 255, 255, 0.9)"
             width={600} 
             height={300}
@@ -299,7 +299,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   </div>
                   
                   {/* Sexy ECG heartbeat animation next to Alice's name - also with unique key */}
-                  <AliceEcg key={`alice-ecg-${animationKey}`} active={isPending} color="#FFFFFF" />
+                  <AliceEcg key={`alice-ecg-${animationKey}`} active={true} color="#FFFFFF" />
                 </div>
               </div>
             </div>

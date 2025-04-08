@@ -39,7 +39,7 @@ export default function SimpleEkg({
   
   // Define a classical ECG waveform path with proper P, QRS, and T waves
   // This path stays on a horizontal baseline and only deflects up/down
-  // for the characteristic waves of a cardiac cycle
+  // for the characteristic waves of a cardiac cycle with a horizontal finish
   const ekgPath = `
     M 0,${baselineY}
     
@@ -52,6 +52,7 @@ export default function SimpleEkg({
     L ${width * 0.26},${baselineY + height * 0.06}
     L ${width * 0.28},${baselineY - height * 0.28}
     L ${width * 0.3},${baselineY + height * 0.15}
+    L ${width * 0.32},${baselineY}
     
     H ${width * 0.38}
     
