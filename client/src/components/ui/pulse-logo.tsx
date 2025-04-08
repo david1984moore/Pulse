@@ -32,18 +32,36 @@ export function PulseLogo({
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      {/* Static Logo Circle */}
+      {/* Enhanced Logo Circle with premium finish */}
       <div className={cn('relative flex-shrink-0', sizeClasses[size])}>
-        {/* Subtle glow effect */}
-        <div className="absolute inset-0 rounded-full bg-primary/30 blur-lg transform scale-125" />
+        {/* Outer glow effect - more pronounced for premium look */}
+        <div className="absolute inset-0 rounded-full bg-primary/40 blur-lg transform scale-130"></div>
         
-        {/* Purple circle background */}
-        <div className="absolute inset-0 rounded-full bg-primary shadow-md flex items-center justify-center p-1.5">
+        {/* Subtle highlight edge for depth */}
+        <div className="absolute inset-0 rounded-full bg-white/20 transform scale-105 backdrop-blur-sm"></div>
+        
+        {/* Main purple circle with gradient background for premium look */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary to-primary/90 shadow-md flex items-center justify-center p-1.5">
+          {/* Inner highlight for 3D effect */}
+          <div className="absolute top-0 left-0 w-full h-full rounded-full bg-gradient-to-br from-white/20 to-transparent opacity-60 pointer-events-none"></div>
+          
           <svg 
             viewBox="0 0 24 24" 
-            className="w-full h-full text-white"
+            className="w-full h-full text-white relative z-10"
             xmlns="http://www.w3.org/2000/svg"
           >
+            {/* Subtle glow effect under the main path */}
+            <path 
+              d="M2,12 L6,12 L8,8 L10,17 L12,10 L14,14 L16,7 L18,12 L22,12" 
+              fill="none" 
+              stroke="white"
+              strokeOpacity="0.3"
+              strokeWidth="4" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            />
+            
+            {/* Main path with better thickness for modern look */}
             <path 
               d="M2,12 L6,12 L8,8 L10,17 L12,10 L14,14 L16,7 L18,12 L22,12" 
               fill="none" 
@@ -58,7 +76,7 @@ export function PulseLogo({
       
       {showText && (
         <span className={cn(
-          "pulse-text text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/90 tracking-tight letter-spacing-tighter", 
+          "pulse-text text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary/95 to-primary/80 tracking-tight letter-spacing-tighter drop-shadow-sm", 
           textSizeClasses[size],
           textClassName
         )}>
@@ -69,20 +87,38 @@ export function PulseLogo({
   );
 }
 
-// Export a static icon version
+// Export a static icon version with enhanced premium look
 export function PulseIcon({ className }: { className?: string }) {
   return (
     <div className={cn("relative rounded-full shadow-md", className)}>
-      {/* Subtle glow */}
-      <div className="absolute inset-0 rounded-full bg-primary/30 blur-lg transform scale-125" />
+      {/* Enhanced outer glow */}
+      <div className="absolute inset-0 rounded-full bg-primary/40 blur-lg transform scale-130" />
       
-      {/* Purple circle with white EKG line */}
-      <div className="relative rounded-full bg-primary p-1.5">
+      {/* Subtle highlight edge for depth */}
+      <div className="absolute inset-0 rounded-full bg-white/20 transform scale-105 backdrop-blur-sm"></div>
+      
+      {/* Premium gradient background */}
+      <div className="relative rounded-full bg-gradient-to-br from-primary to-primary/90 p-1.5">
+        {/* Inner highlight for 3D effect */}
+        <div className="absolute top-0 left-0 w-full h-full rounded-full bg-gradient-to-br from-white/20 to-transparent opacity-60 pointer-events-none"></div>
+        
         <svg 
           viewBox="0 0 24 24" 
-          className="w-full h-full text-white"
+          className="w-full h-full text-white relative z-10"
           xmlns="http://www.w3.org/2000/svg"
         >
+          {/* Subtle glow effect under the main path */}
+          <path 
+            d="M2,12 L6,12 L8,8 L10,17 L12,10 L14,14 L16,7 L18,12 L22,12" 
+            fill="none" 
+            stroke="white"
+            strokeOpacity="0.3"
+            strokeWidth="4" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          />
+          
+          {/* Main path with better thickness for modern look */}
           <path 
             d="M2,12 L6,12 L8,8 L10,17 L12,10 L14,14 L16,7 L18,12 L22,12" 
             fill="none" 
