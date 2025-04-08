@@ -28,250 +28,360 @@ export default function LandingPage() {
               </div>
             </div>
             
-            {/* Desktop menu */}
-            <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-2">
+            <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
               <LanguageToggle />
               
               {user ? (
                 <>
                   <Link href="/dashboard">
-                    <Button 
-                      variant="ghost"
-                      className="text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-3 py-2 text-sm font-medium rounded-lg"
-                    >
-                      {t('dashboard')}
-                    </Button>
+                    <Button variant="ghost">{t('dashboard')}</Button>
                   </Link>
-                  <Button
-                    variant="outline"
+                  <Button 
+                    variant="outline" 
                     onClick={() => logoutMutation.mutate()}
-                    className="text-gray-600 border border-gray-200 hover:bg-gray-50 px-3 py-2 text-sm font-medium rounded-lg ml-2"
                   >
                     {t('logout')}
                   </Button>
                 </>
               ) : (
                 <>
-                  <Link href="/login">
-                    <Button 
-                      variant="ghost"
-                      className="text-gray-600 hover:text-gray-800 hover:bg-gray-50 px-3 py-2 text-sm font-medium rounded-lg"
-                    >
-                      {t('login')}
-                    </Button>
+                  <Link href="/auth?mode=login">
+                    <Button variant="ghost">{t('login')}</Button>
                   </Link>
-                  <Link href="/signup">
-                    <Button 
-                      variant="outline"
-                      className="text-primary border border-primary/20 hover:bg-primary/5 px-4 py-2 text-sm font-medium rounded-lg ml-2"
-                    >
-                      {t('signup')}
-                    </Button>
+                  <Link href="/auth?mode=register">
+                    <Button variant="primary">{t('signup')}</Button>
                   </Link>
                 </>
               )}
             </div>
             
-            {/* Mobile menu button */}
-            <div className="flex items-center sm:hidden">
+            <div className="flex items-center md:hidden">
               <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-full text-gray-500 hover:text-gray-800 hover:bg-gray-100 focus:outline-none"
+                className="bg-white p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+                onClick={() => setMobileMenuOpen(true)}
               >
                 <span className="sr-only">Open main menu</span>
-                {mobileMenuOpen ? (
-                  <X className="block h-5 w-5" aria-hidden="true" />
-                ) : (
-                  <Menu className="block h-5 w-5" aria-hidden="true" />
-                )}
+                <Menu className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
           </div>
-          
-          {/* Mobile menu, show/hide based on menu state */}
-          {mobileMenuOpen && (
-            <div className="sm:hidden bg-white border-t border-gray-100 shadow-sm">
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                <div className="block px-3 py-2">
-                  <LanguageToggle />
+        </div>
+        
+        {/* Mobile menu, show/hide based on menu state */}
+        {mobileMenuOpen && (
+          <div className="md:hidden">
+            <div className="fixed inset-0 z-40 flex">
+              <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setMobileMenuOpen(false)}></div>
+              <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+                <div className="absolute top-0 right-0 -mr-12 pt-2">
+                  <button
+                    className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span className="sr-only">Close sidebar</span>
+                    <X className="h-6 w-6 text-white" aria-hidden="true" />
+                  </button>
                 </div>
-                
-                {user ? (
-                  <>
-                    <Link href="/dashboard">
-                      <span className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">
-                        {t('dashboard')}
-                      </span>
-                    </Link>
-                    <button
-                      onClick={() => logoutMutation.mutate()}
-                      className="block w-full text-left px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50"
-                    >
-                      {t('logout')}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/login">
-                      <span className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">
-                        {t('login')}
-                      </span>
-                    </Link>
-                    <Link href="/signup">
-                      <span className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">
-                        {t('signup')}
-                      </span>
-                    </Link>
-                  </>
-                )}
+                <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+                  <div className="flex-shrink-0 flex items-center px-4">
+                    <PulseLogo size="md" />
+                  </div>
+                  <nav className="mt-5 px-2 space-y-1">
+                    <LanguageToggle />
+                    
+                    {user ? (
+                      <>
+                        <Link href="/dashboard">
+                          <Button variant="ghost" className="w-full justify-start">
+                            {t('dashboard')}
+                          </Button>
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start"
+                          onClick={() => logoutMutation.mutate()}
+                        >
+                          {t('logout')}
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Link href="/auth?mode=login">
+                          <Button variant="ghost" className="w-full justify-start">
+                            {t('login')}
+                          </Button>
+                        </Link>
+                        <Link href="/auth?mode=register">
+                          <Button variant="primary" className="w-full justify-start">
+                            {t('signup')}
+                          </Button>
+                        </Link>
+                      </>
+                    )}
+                  </nav>
+                </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </nav>
-
-      {/* Hero Section - Enhanced Modern */}
+      
+      {/* Hero section */}
       <div className="relative bg-white overflow-hidden">
-        {/* Improved gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-white to-blue-50/30"></div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
-          <div className="absolute top-10 right-10 w-72 h-72 bg-primary/5 rounded-full blur-xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-50 rounded-full blur-2xl opacity-70"></div>
-          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/10 rounded-full blur-xl"></div>
-          <svg className="absolute right-0 top-1/4 opacity-10 text-primary w-96 h-96" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="currentColor" d="M45.9,-51.2C59.5,-43.7,70.8,-29.7,74.5,-13.5C78.2,2.7,74.3,21.1,64.5,35.1C54.7,49.1,39.1,58.7,22.1,64.8C5.1,70.9,-13.3,73.5,-30.7,68.7C-48.1,63.9,-64.5,51.8,-72.8,35.2C-81.1,18.6,-81.2,-2.3,-75.4,-20.9C-69.5,-39.5,-57.5,-55.7,-42.6,-62.7C-27.7,-69.7,-9.8,-67.4,5.1,-73.1C20,-78.7,32.3,-58.6,45.9,-51.2Z" transform="translate(100 100)" />
-          </svg>
+        <div className="max-w-7xl mx-auto">
+          <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+            <svg
+              className="hidden lg:block absolute right-0 inset-y-0 h-full w-48 text-white transform translate-x-1/2"
+              fill="currentColor"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <polygon points="50,0 100,0 50,100 0,100" />
+            </svg>
+            
+            <main className="pt-10 mx-auto max-w-7xl px-4 sm:pt-12 sm:px-6 md:pt-16 lg:pt-20 lg:px-8 xl:pt-28">
+              <div className="sm:text-center lg:text-left">
+                <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                  <span className="block xl:inline">{t('heroTitle')}</span>{' '}
+                  <span className="block text-primary xl:inline">{t('welcome')}</span>
+                </h1>
+                <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                  {t('heroDescription')}
+                </p>
+                <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+                  {user ? (
+                    <div className="rounded-md shadow">
+                      <Link href="/dashboard">
+                        <Button className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10">
+                          {t('goToDashboard')}
+                        </Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="rounded-md shadow">
+                        <Link href="/auth?mode=register">
+                          <Button className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10">
+                            {t('getStarted')}
+                          </Button>
+                        </Link>
+                      </div>
+                      <div className="mt-3 sm:mt-0 sm:ml-3">
+                        <Link href="/auth?mode=login">
+                          <Button variant="outline" className="w-full flex items-center justify-center px-8 py-3 text-base font-medium rounded-md md:py-4 md:text-lg md:px-10">
+                            {t('signIn')}
+                          </Button>
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </main>
+          </div>
         </div>
-        
-        <div className="relative max-w-7xl mx-auto pt-20 pb-32 px-4 sm:pt-32 sm:pb-48 sm:px-6 lg:px-8">
-          {/* Decorative grid patterns for visual interest */}
-          <div className="absolute top-0 right-0 -mt-16 mr-16 hidden lg:block">
-            <div className="w-64 h-64 opacity-10">
-              <div className="w-full h-full bg-gradient-to-br from-primary to-blue-400 rounded-full blur-3xl"></div>
-            </div>
-          </div>
-          
-          <div className="absolute bottom-0 left-0 -mb-16 ml-16 hidden lg:block">
-            <div className="w-48 h-48 opacity-10">
-              <div className="w-full h-full bg-gradient-to-tr from-primary to-blue-400 rounded-full blur-3xl"></div>
-            </div>
-          </div>
-          
-          <div className="relative max-w-4xl z-10">
-            {/* Premium looking title with accent */}
-            <div className="mb-5">
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-semibold">
-                Take Control of Your Finances Today
+        <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+          <div className="h-56 w-full bg-primary/10 sm:h-72 md:h-96 lg:w-full lg:h-full p-4 lg:p-8 flex items-center justify-center">
+            <div className="max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+              <div className="p-1 bg-gradient-to-r from-primary/20 to-primary/5">
+                <div className="h-2 w-8 bg-primary/20 rounded-full mx-auto"></div>
               </div>
-            </div>
-            
-            <h1 className="text-4xl font-extrabold text-gray-800 sm:text-5xl lg:text-6xl mb-8 leading-tight">
-              {t('heroTitle')}
-            </h1>
-            
-            <p className="max-w-3xl text-lg text-gray-600 leading-relaxed">
-              Track your money, manage bills, and know exactly what you can spend with Alice - your personal financial assistant.
-            </p>
-            
-            {/* Enhanced CTA buttons with subtle animation */}
-            <div className="mt-12 flex flex-wrap gap-4">
-              {!user ? (
-                <>
-                  <Link href="/signup">
-                    <Button size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl rounded-lg px-8 py-6 transform hover:-translate-y-0.5 transition-all">
-                      {t('getStarted')} →
-                    </Button>
-                  </Link>
-                  <Link href="/login">
-                    <Button 
-                      size="lg" 
-                      variant="outline" 
-                      className="border-primary/20 text-primary-700 hover:bg-primary/5 hover:border-primary/30 rounded-lg px-8 py-6 transform hover:-translate-y-0.5 transition-all"
-                    >
-                      {t('signIn')}
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <Link href="/dashboard">
-                  <Button size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl rounded-lg px-8 py-6 transform hover:-translate-y-0.5 transition-all">
-                    {t('goToDashboard')} →
-                  </Button>
-                </Link>
-              )}
-            </div>
-            
-            {/* Enhanced stats cards */}
-            <div className="mt-16 grid grid-cols-2 sm:grid-cols-3 gap-5 max-w-lg">
-              <div className="flex flex-col items-center justify-center p-5 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md hover:shadow-lg transition-shadow">
-                <span className="text-3xl font-bold text-primary">100%</span>
-                <span className="text-xs font-medium text-gray-600 mt-2 text-center">Free to Use</span>
-              </div>
-              <div className="flex flex-col items-center justify-center p-5 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md hover:shadow-lg transition-shadow">
-                <span className="text-3xl font-bold text-primary">24/7</span>
-                <span className="text-xs font-medium text-gray-600 mt-2 text-center">Financial Insights</span>
-              </div>
-              <div className="flex flex-col items-center justify-center p-5 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md hover:shadow-lg transition-shadow sm:col-span-1 col-span-2">
-                <span className="text-3xl font-bold text-primary">AI</span>
-                <span className="text-xs font-medium text-gray-600 mt-2 text-center">Powered Assistant</span>
+              <div className="p-4 flex flex-col space-y-1">
+                <div className="bg-primary/5 h-6 w-36 rounded-md"></div>
+                <div className="bg-primary/10 h-10 w-full rounded-md mt-2"></div>
+                <div className="flex space-x-2 mt-3">
+                  <div className="bg-emerald-100 h-8 w-24 rounded-md"></div>
+                  <div className="bg-red-100 h-8 w-24 rounded-md"></div>
+                </div>
+                <div className="bg-gray-100 h-24 w-full rounded-md mt-3"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Features Section - Enhanced Design */}
-      <div className="py-24 bg-gradient-to-b from-white to-gray-50 border-t border-gray-100">
+      
+      {/* Features section - Enhanced with SVG decorations */}
+      <div className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-medium mb-6">
-              Powerful Features
-            </div>
-            <h2 className="text-3xl font-extrabold text-gray-800 sm:text-4xl lg:text-5xl tracking-tight">
-              Everything you need for financial clarity
-            </h2>
-            <p className="mt-6 text-lg text-gray-600 leading-relaxed">
-              Our intuitive tools give you the full picture of your finances, helping you make smarter decisions about your money.
+          <div className="lg:text-center">
+            <h2 className="text-base text-primary font-semibold tracking-wide uppercase">{t('featuresTagline')}</h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              {t('featuresTitle')}
+            </p>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+              {t('featuresDescription')}
             </p>
           </div>
-
-          {/* Dashboard Preview Section */}
-          <div className="mt-24 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-            <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-              <div className="p-8 lg:p-12">
-                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-sm font-medium mb-6">
-                  Real-time Dashboard
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-6">See your complete financial picture at a glance</h3>
-                <p className="text-gray-600 mb-8">Get an instant overview of your balance, upcoming bills, and spending insights, all in one beautifully designed dashboard.</p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-emerald-500" />
+          
+          <div className="mt-20">
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
+              {/* Income Management Feature */}
+              <div className="relative">
+                <div className="absolute -left-4 -top-4 w-16 h-16 bg-primary/10 rounded-full"></div>
+                <div className="relative rounded-2xl border border-gray-100 bg-white shadow-lg p-6 overflow-hidden">
+                  <div className="absolute right-0 bottom-0 w-20 h-20 bg-primary/5 rounded-full -mr-10 -mb-10"></div>
+                  <div>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary text-white mb-5">
+                      <CircleDollarSign className="h-6 w-6" />
                     </div>
-                    <p className="ml-3 text-gray-600">Interactive balance tracker with spending history</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t('incomeManagementTitle')}</h3>
+                    <p className="text-base text-gray-600">{t('incomeManagementDescription')}</p>
                   </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-emerald-500" />
+                  <div className="mt-6 bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-100">
+                    <div className="flex justify-between items-center p-2 bg-gradient-to-r from-emerald-50 to-white rounded-lg border border-emerald-100">
+                      <span className="text-sm font-semibold text-gray-700 flex items-center">
+                        <span className="w-6 h-6 bg-emerald-500 rounded-full mr-2 flex items-center justify-center">
+                          <Check className="h-3 w-3 text-white" />
+                        </span>
+                        Income
+                      </span>
+                      <span className="text-sm font-bold text-emerald-600">+$2,400</span>
                     </div>
-                    <p className="ml-3 text-gray-600">Visual payment calendar for due dates</p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-emerald-500" />
-                    </div>
-                    <p className="ml-3 text-gray-600">Income and bills management with simple controls</p>
                   </div>
                 </div>
               </div>
+              
+              {/* Calendar View Feature */}
+              <div className="relative">
+                <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-50 rounded-full"></div>
+                <div className="relative rounded-2xl border border-gray-100 bg-white shadow-lg p-6 overflow-hidden">
+                  <div className="absolute left-0 bottom-0 w-20 h-20 bg-blue-50 rounded-full -ml-10 -mb-10"></div>
+                  <div>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary text-white mb-5">
+                      <Calendar className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t('calendarViewTitle')}</h3>
+                    <p className="text-base text-gray-600">{t('calendarViewDescription')}</p>
+                  </div>
+                  <div className="mt-6 flex flex-col gap-1">
+                    <div className="grid grid-cols-7 gap-1 text-center mb-1">
+                      <div className="text-xs font-medium text-gray-400">S</div>
+                      <div className="text-xs font-medium text-gray-400">M</div>
+                      <div className="text-xs font-medium text-gray-400">T</div>
+                      <div className="text-xs font-medium text-gray-400">W</div>
+                      <div className="text-xs font-medium text-gray-400">T</div>
+                      <div className="text-xs font-medium text-gray-400">F</div>
+                      <div className="text-xs font-medium text-gray-400">S</div>
+                    </div>
+                    <div className="grid grid-cols-7 gap-1">
+                      {Array.from({ length: 30 }, (_, i) => (
+                        <div 
+                          key={i} 
+                          className={`h-8 w-8 flex items-center justify-center rounded-full text-xs ${
+                            i === 14 ? 'bg-red-500 text-white' : 
+                            i === 27 ? 'bg-primary text-white' : 
+                            'hover:bg-gray-100'
+                          }`}
+                        >
+                          {i + 1}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* AI Assistant Feature */}
+              <div className="relative">
+                <div className="absolute -left-4 -top-4 w-16 h-16 bg-purple-50 rounded-full"></div>
+                <div className="relative rounded-2xl border border-gray-100 bg-white shadow-lg p-6 overflow-hidden">
+                  <div className="absolute right-0 bottom-0 w-20 h-20 bg-purple-50 rounded-full -mr-10 -mb-10"></div>
+                  <div>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary text-white mb-5">
+                      <MessageSquare className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t('spendingAssistantTitle')}</h3>
+                    <p className="text-base text-gray-600">{t('spendingAssistantDescription')}</p>
+                  </div>
+                  <div className="mt-6 rounded-lg border border-gray-100 overflow-hidden">
+                    <div className="p-3 bg-primary/10 text-sm font-medium">Alice</div>
+                    <div className="p-3 text-sm text-gray-600">How much can I spend on dining out this month?</div>
+                    <div className="p-3 bg-primary/5 text-sm">Based on your budget, you can spend $350 on dining this month.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Dashboard Preview Section */}
+      <div className="py-12 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              Track Your Finances with Elegance
+            </h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+              Powerful tools that give you complete visibility and control over your financial life.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="flex flex-col space-y-4">
+              <div className="rounded-xl bg-white shadow-md p-6 border border-gray-100 relative overflow-hidden">
+                <div className="absolute right-0 top-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3 relative z-10">Financial Dashboard</h3>
+                <p className="text-gray-600 mb-6 relative z-10">
+                  See your complete financial picture at a glance with our intuitive dashboard.
+                </p>
+                <ul className="space-y-3 relative z-10">
+                  <li className="flex items-center">
+                    <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <span className="text-gray-700">Visual income and expense tracking</span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <span className="text-gray-700">Monthly bill calendar with alerts</span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <span className="text-gray-700">Customizable spending categories</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="rounded-xl bg-white shadow-md p-6 border border-gray-100 relative overflow-hidden">
+                <div className="absolute left-0 bottom-0 w-32 h-32 bg-blue-50 rounded-full -ml-16 -mb-16"></div>
+                <h3 className="text-lg font-bold text-gray-900 mb-3 relative z-10">AI-Powered Insights</h3>
+                <p className="text-gray-600 mb-6 relative z-10">
+                  Alice, your financial assistant, provides real-time spending recommendations.
+                </p>
+                <ul className="space-y-3 relative z-10">
+                  <li className="flex items-center">
+                    <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <span className="text-gray-700">Smart spending recommendations</span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <span className="text-gray-700">Natural language queries about your finances</span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <span className="text-gray-700">Personalized financial advice</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <div>
               <div className="relative h-96 lg:h-auto overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 p-8">
                 {/* Dashboard mockup - Updated to match actual dashboard */}
                 <div className="relative h-full w-full overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200">
-                  {/* Header */}
+                  {/* Header - Updated with gradient */}
                   <div className="bg-gradient-to-r from-white to-primary/5 backdrop-blur-md border-b border-primary/10 p-4 flex justify-between items-center">
                     <div className="flex items-center">
                       <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-violet-700 mr-3 flex items-center justify-center shadow-md">
@@ -321,186 +431,22 @@ export default function LandingPage() {
                             Monthly Bills
                           </span>
                           <span className="text-sm font-bold text-red-600 bg-red-50 px-2 py-1 rounded-lg border border-red-100">
-                            -$1,100.00
+                            -$1,600.00
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center p-2 bg-gradient-to-r from-primary/10 to-white rounded-lg border border-primary/20 shadow-md">
+                          <span className="text-sm font-semibold text-gray-700 flex items-center">
+                            <span className="w-6 h-6 bg-primary rounded-full mr-2 flex items-center justify-center shadow-sm">
+                              <CircleDollarSign className="h-3 w-3 text-white" />
+                            </span>
+                            Available to Spend
+                          </span>
+                          <span className="text-sm font-bold text-white bg-primary px-2 py-1 rounded-lg">
+                            $800.00
                           </span>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                    <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">Upcoming Bills</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600 text-xs">Rent</span>
-                          <span className="text-gray-800 text-sm font-medium">$800</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600 text-xs">Internet</span>
-                          <span className="text-gray-800 text-sm font-medium">$60</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">Recent Income</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600 text-xs">Amazon</span>
-                          <span className="text-emerald-500 text-sm font-medium">$1,200</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600 text-xs">Freelance</span>
-                          <span className="text-emerald-500 text-sm font-medium">$350</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Calendar Feature */}
-          <div className="mt-24 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-            <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-              <div className="relative h-96 lg:h-auto overflow-hidden bg-gradient-to-bl from-blue-50 to-gray-50 p-8 order-2 lg:order-1">
-                {/* Calendar mockup */}
-                <div className="relative h-full w-full overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200">
-                  <div className="bg-white border-b border-gray-100 p-4">
-                    <h4 className="text-lg font-medium text-gray-800">Payment Calendar</h4>
-                  </div>
-                  <div className="p-4">
-                    <div className="grid grid-cols-7 gap-1 text-center">
-                      {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                        <div key={i} className="text-xs font-medium text-gray-500 py-1">{day}</div>
-                      ))}
-                      {Array.from({ length: 31 }, (_, i) => {
-                        const isHighlighted = i === 4 || i === 14 || i === 25;
-                        return (
-                          <div 
-                            key={i} 
-                            className={`text-xs rounded-full w-8 h-8 mx-auto flex items-center justify-center ${
-                              isHighlighted 
-                                ? 'bg-primary text-white font-medium' 
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                          >
-                            {i + 1}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center p-2 bg-gray-50 rounded-lg">
-                        <div className="h-3 w-3 rounded-full bg-primary mr-2"></div>
-                        <span className="text-xs text-gray-600">Phone Bill - $45 (5th)</span>
-                      </div>
-                      <div className="flex items-center p-2 bg-gray-50 rounded-lg">
-                        <div className="h-3 w-3 rounded-full bg-primary mr-2"></div>
-                        <span className="text-xs text-gray-600">Rent - $800 (15th)</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="p-8 lg:p-12 order-1 lg:order-2">
-                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium mb-6">
-                  Visual Calendar
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-6">Never miss a payment date again</h3>
-                <p className="text-gray-600 mb-8">Our intuitive calendar view shows all your upcoming bills, helping you plan ahead and avoid late fees.</p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <p className="ml-3 text-gray-600">Color-coded dates for easy identification</p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <p className="ml-3 text-gray-600">Automatic bill reminders before due dates</p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <p className="ml-3 text-gray-600">Month-at-a-glance view of your financial obligations</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* AI Assistant Feature */}
-          <div className="mt-24 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-            <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-              <div className="p-8 lg:p-12">
-                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-medium mb-6">
-                  AI Assistant
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-6">Meet Alice, your personal financial advisor</h3>
-                <p className="text-gray-600 mb-8">Ask Alice about your spending, get instant insights, and make smarter financial decisions with AI-powered guidance.</p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-primary" />
-                    </div>
-                    <p className="ml-3 text-gray-600">Real-time spending recommendations based on your budget</p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-primary" />
-                    </div>
-                    <p className="ml-3 text-gray-600">Natural language queries about your financial status</p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Check className="h-5 w-5 text-primary" />
-                    </div>
-                    <p className="ml-3 text-gray-600">Intelligent forecasting to help you plan ahead</p>
-                  </div>
-                </div>
-                
-                <div className="mt-8">
-                  <Link href="/signup">
-                    <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl rounded-lg transform hover:-translate-y-0.5 transition-all">
-                      Try Alice Now →
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-              <div className="relative h-96 lg:h-auto overflow-hidden bg-gradient-to-br from-violet-50 to-primary/5 p-8">
-                {/* AI Assistant mockup */}
-                <div className="relative h-full w-full overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200">
-                  <div className="p-4 bg-primary text-white flex items-center">
-                    <span className="h-3 w-3 bg-white rounded-full mr-2"></span>
-                    <span className="text-sm font-medium">Alice</span>
-                  </div>
-                  <div className="h-full p-4 flex flex-col space-y-3 overflow-y-auto">
-                    <div className="bg-gray-100 rounded-lg p-3 text-sm text-gray-700 self-start max-w-xs">
-                      Can I spend $50 on dinner tonight?
-                    </div>
-                    <div className="bg-primary/10 rounded-lg p-3 text-sm text-gray-800 self-end max-w-xs">
-                      Yes, you can spend $50 on dinner. Your balance will be $350 after this purchase. Your next bill is due in 5 days.
-                    </div>
-                    <div className="bg-gray-100 rounded-lg p-3 text-sm text-gray-700 self-start max-w-xs">
-                      How much did I spend on groceries this month?
-                    </div>
-                    <div className="bg-primary/10 rounded-lg p-3 text-sm text-gray-800 self-end max-w-xs">
-                      You've spent $320 on groceries this month, which is about 15% of your monthly income.
-                    </div>
-                    <div className="mt-auto p-3 border-t border-gray-100 flex items-center">
-                      <input 
-                        type="text" 
-                        placeholder="Ask Alice about your finances..." 
-                        className="flex-1 text-sm bg-gray-50 rounded-lg px-3 py-2 border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary"
-                      />
-                      <button className="ml-2 bg-primary text-white rounded-lg p-2">
-                        <SendHorizontal className="h-4 w-4" />
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -509,7 +455,7 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-
+      
       {/* Footer - Enhanced Design */}
       <footer className="bg-gradient-to-b from-white to-gray-50 border-t border-gray-100 mt-auto py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -532,12 +478,12 @@ export default function LandingPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/login">
+                  <Link href="/auth?mode=login">
                     <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">Login</span>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/signup">
+                  <Link href="/auth?mode=register">
                     <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">Sign Up</span>
                   </Link>
                 </li>
