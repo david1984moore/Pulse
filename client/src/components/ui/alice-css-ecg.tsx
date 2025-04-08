@@ -11,10 +11,6 @@ export default function AliceCssEcg({
   // Keep track if animation has started
   const [isAnimating, setIsAnimating] = useState(false);
   
-  // Store animation state to control eraser position
-  const [eraserPosition, setEraserPosition] = useState(0);
-  const eraserRef = useRef<HTMLDivElement>(null);
-  
   // Generate unique mask ID to prevent conflicts with multiple animations
   const maskId = useRef(`alice-mask-${Math.random().toString(36).substr(2, 9)}`).current;
   
@@ -46,49 +42,23 @@ export default function AliceCssEcg({
   // Start animation when active prop changes to true
   useEffect(() => {
     if (active) {
-      // Reset eraser position
-      setEraserPosition(0);
-      
       const timer = setTimeout(() => {
         setIsAnimating(true);
       }, 50);
       
-      // Start eraser after drawing finishes
-      const startEraserTimer = setTimeout(() => {
-        // Start eraser animation
-        const startTime = Date.now();
-        const duration = 500; // 0.5 seconds for erasing
-        
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          
-          setEraserPosition(progress * width);
-          
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          }
-        };
-        
-        requestAnimationFrame(animate);
-      }, 700); // Start eraser after 0.7s (when main line is drawn)
-      
       // Ensure animation state is properly cleaned up
       const cleanupTimer = setTimeout(() => {
         setIsAnimating(false);
-        setEraserPosition(0);
       }, 1500); // Give enough time for all animations to finish
       
       return () => {
         clearTimeout(timer);
-        clearTimeout(startEraserTimer);
         clearTimeout(cleanupTimer);
       };
     } else {
       setIsAnimating(false);
-      setEraserPosition(0);
     }
-  }, [active, width]);
+  }, [active]);
   
   // Measure the actual path length
   useEffect(() => {
@@ -137,7 +107,41 @@ export default function AliceCssEcg({
           }}
         />
         
-        {/* Main ECG trace that gets drawn */}
+        {/* Main visible ECG line */}
+        <defs>
+          <mask id={`mask-${maskId}`}>
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            
+            {/* Moving eraser circle that creates a black (cut-out) area */}
+            {isAnimating && (
+              <circle
+                cx="0" cy={centerY} 
+                r={7} 
+                fill="black"
+                opacity="0"
+              >
+                <animateMotion
+                  dur="0.5s"
+                  path={ekgPath}
+                  begin="0.7s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+                <animate 
+                  attributeName="opacity"
+                  values="0;1;1;0"
+                  keyTimes="0;0.1;0.9;1"
+                  dur="0.5s"
+                  begin="0.7s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+              </circle>
+            )}
+          </mask>
+        </defs>
+        
+        {/* Main ECG trace that gets drawn and then masked (erased) */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -150,7 +154,8 @@ export default function AliceCssEcg({
             strokeDasharray: pathLength,
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
-            opacity: isAnimating ? 1 : 0
+            opacity: isAnimating ? 1 : 0,
+            mask: `url(#mask-${maskId})`
           }}
         />
         
@@ -227,42 +232,6 @@ export default function AliceCssEcg({
           </circle>
         )}
       </svg>
-      
-      {/* Physical eraser element that wipes the line */}
-      {isAnimating && eraserPosition > 0 && (
-        <div
-          ref={eraserRef}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: eraserPosition,
-            height: '100%',
-            background: '#000', // Solid black to cover completely
-            zIndex: 2,
-            pointerEvents: 'none',
-            borderRight: `3px solid rgba(255, 255, 255, 0.3)` // Light border at the eraser edge
-          }}
-        />
-      )}
-      
-      {/* Eraser dot that follows the erasing effect */}
-      {isAnimating && eraserPosition > 0 && (
-        <div
-          style={{
-            position: 'absolute',
-            top: centerY - 5,
-            left: eraserPosition - 5,
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            background: 'white',
-            filter: 'drop-shadow(0 0 5px white)',
-            zIndex: 3,
-            transition: 'all 0.05s linear'
-          }}
-        />
-      )}
     </div>
   );
 }

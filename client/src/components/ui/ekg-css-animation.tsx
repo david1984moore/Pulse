@@ -18,10 +18,6 @@ export default function EkgCssAnimation({
   const [isAnimating, setIsAnimating] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   
-  // Store animation state to control eraser position
-  const [eraserPosition, setEraserPosition] = useState(0);
-  const eraserRef = useRef<HTMLDivElement>(null);
-  
   // Generate unique mask ID to prevent conflicts with multiple animations
   const maskId = useRef(`trace-mask-${Math.random().toString(36).substr(2, 9)}`).current;
   
@@ -54,50 +50,24 @@ export default function EkgCssAnimation({
   // Start animation when active prop changes to true
   useEffect(() => {
     if (active) {
-      // Reset eraser position
-      setEraserPosition(0);
-      
       // Small delay to ensure DOM is fully ready
       const timer = setTimeout(() => {
         setIsAnimating(true);
       }, 50);
       
-      // Start eraser after drawing finishes
-      const startEraserTimer = setTimeout(() => {
-        // Start eraser animation
-        const startTime = Date.now();
-        const duration = 2000; // 2 seconds for erasing
-        
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          
-          setEraserPosition(progress * width);
-          
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          }
-        };
-        
-        requestAnimationFrame(animate);
-      }, 2500); // Start eraser after 2.5s
-      
       // Ensure animation state is cleaned up completely
       const cleanupTimer = setTimeout(() => {
         setIsAnimating(false);
-        setEraserPosition(0);
-      }, 4500); // Give enough time for all animations to finish
+      }, 4000); // Give enough time for all animations to finish
       
       return () => {
         clearTimeout(timer);
-        clearTimeout(startEraserTimer);
         clearTimeout(cleanupTimer);
       };
     } else {
       setIsAnimating(false);
-      setEraserPosition(0);
     }
-  }, [active, width]);
+  }, [active]);
   
   // Calculate the path length for stroke-dasharray/offset
   const mainPathRef = useRef<SVGPathElement>(null);
@@ -118,20 +88,13 @@ export default function EkgCssAnimation({
   }, []);
   
   return (
-    <div className="ekg-css-animation" style={{ width, height, position: 'relative', overflow: 'hidden' }}>
-      {/* This is the ECG trace */}
+    <div className="ekg-css-animation" style={{ width, height, position: 'relative' }}>
       <svg 
         ref={svgRef}
         width="100%" 
         height="100%" 
         viewBox={`0 0 ${width} ${height}`}
-        style={{ 
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          zIndex: 1,
-          overflow: 'visible' 
-        }}
+        style={{ overflow: 'visible' }}
       >
         {/* Shadow/glow effect */}
         <path
@@ -150,7 +113,41 @@ export default function EkgCssAnimation({
           }}
         />
         
-        {/* Main ECG trace */}
+        {/* Main visible ECG line */}
+        <defs>
+          <mask id={`mask-${maskId}`}>
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            
+            {/* Moving eraser circle that creates a black (cut-out) area */}
+            {isAnimating && (
+              <circle
+                cx="0" cy={baselineY} 
+                r={strokeWidth * 7} 
+                fill="black"
+                opacity="0"
+              >
+                <animateMotion
+                  dur="2s"
+                  path={ekgPath}
+                  begin="2.5s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+                <animate 
+                  attributeName="opacity"
+                  values="0;1;1;0"
+                  keyTimes="0;0.1;0.9;1"
+                  dur="2s"
+                  begin="2.5s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+              </circle>
+            )}
+          </mask>
+        </defs>
+        
+        {/* Main ECG trace that gets drawn and then masked (erased) */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -164,6 +161,7 @@ export default function EkgCssAnimation({
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
+            mask: `url(#mask-${maskId})`
           }}
         />
         
@@ -200,43 +198,47 @@ export default function EkgCssAnimation({
             />
           </circle>
         )}
+        
+        {/* Eraser dot with bright glowing effect that follows the erasing path */}
+        {isAnimating && (
+          <circle
+            r={strokeWidth * 1.5}
+            fill="white"
+            style={{
+              filter: `drop-shadow(0 0 ${strokeWidth * 2}px white)`,
+              position: 'relative' // Ensure proper positioning
+            }}
+            opacity="0" // Start invisible
+          >
+            {/* Start this dot when the erasing effect begins */}
+            <animateMotion
+              dur="2s"
+              path={ekgPath}
+              begin="2.5s" // Start when erasing begins
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate 
+              attributeName="opacity"
+              values="0;1;1;0"
+              keyTimes="0;0.1;0.9;1"
+              dur="2s"
+              begin="2.5s"
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate
+              attributeName="r"
+              values={`${strokeWidth * 1.5};${strokeWidth * 2.5};${strokeWidth * 3};${strokeWidth * 1.5}`}
+              keyTimes="0;0.4;0.5;1"
+              dur="2s"
+              begin="2.5s"
+              repeatCount="1"
+              fill="freeze"
+            />
+          </circle>
+        )}
       </svg>
-      
-      {/* Physical eraser element that wipes the line */}
-      {isAnimating && eraserPosition > 0 && (
-        <div
-          ref={eraserRef}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: eraserPosition,
-            height: '100%',
-            background: '#000', // Solid black to cover completely
-            zIndex: 2,
-            pointerEvents: 'none',
-            borderRight: `${strokeWidth * 3}px solid rgba(255, 255, 255, 0.3)` // Light border at the eraser edge
-          }}
-        />
-      )}
-      
-      {/* Eraser dot that follows the erasing effect */}
-      {isAnimating && eraserPosition > 0 && (
-        <div
-          style={{
-            position: 'absolute',
-            top: baselineY - strokeWidth * 4,
-            left: eraserPosition - strokeWidth * 4,
-            width: strokeWidth * 8,
-            height: strokeWidth * 8,
-            borderRadius: '50%',
-            background: 'white',
-            filter: `drop-shadow(0 0 ${strokeWidth * 3}px white)`,
-            zIndex: 3,
-            transition: 'all 0.05s linear'
-          }}
-        />
-      )}
     </div>
   );
 }
