@@ -107,7 +107,35 @@ export default function AliceCssEcg({
           }}
         />
         
-        {/* THIS IS A DIRECT APPROACH: The main ECG line draws normally */}
+        {/* Main ECG line implementation with mask for eraser effect */}
+        <defs>
+          <mask id={`${maskId}-eraser-mask`}>
+            {/* White background which means "visible" in masks */}
+            <rect x="0" y="0" width={width} height={height} fill="white" />
+            
+            {/* Black erasing rectangle that grows from left to right after delay */}
+            {isAnimating && (
+              <rect
+                x="0"
+                y="0"
+                width="0"
+                height={height}
+                fill="black"
+              >
+                <animate
+                  attributeName="width"
+                  from="0"
+                  to={width}
+                  begin="0.7s"
+                  dur="0.5s"
+                  fill="freeze"
+                />
+              </rect>
+            )}
+          </mask>
+        </defs>
+        
+        {/* The main ECG line with mask applied - only visible where mask is white */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -121,27 +149,9 @@ export default function AliceCssEcg({
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
+            mask: isAnimating ? `url(#${maskId}-eraser-mask)` : 'none'
           }}
         />
-        
-        {/* White overlay path that follows to erase the trace */}
-        {isAnimating && (
-          <path
-            d={ekgPath}
-            fill="none"
-            stroke="white"
-            strokeWidth={3}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeDasharray={pathLength}
-            strokeDashoffset={pathLength}
-            style={{
-              transition: isAnimating ? `stroke-dashoffset 0.5s linear` : 'none',
-              transitionDelay: '0.7s',
-              opacity: 1
-            }}
-          />
-        )}
         
         {/* Lead dot that draws the path */}
         {isAnimating && (
@@ -177,43 +187,83 @@ export default function AliceCssEcg({
           </circle>
         )}
         
-        {/* Eraser dot with bright glowing effect that follows the erasing path */}
+        {/* Eraser dot with enhanced bright glowing effect that follows the erasing path */}
         {isAnimating && (
-          <circle
-            r={2.5}
-            fill="white"
-            style={{
-              filter: 'drop-shadow(0 0 4px white)',
-              position: 'relative' // Ensure proper positioning
-            }}
-            opacity="0" // Start invisible
-          >
-            <animateMotion
-              dur="0.5s"
-              path={ekgPath}
-              begin="0.7s" // Start when erasing begins
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate 
-              attributeName="opacity"
-              values="0;1;1;0"
-              keyTimes="0;0.1;0.9;1"
-              dur="0.5s"
-              begin="0.7s"
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate
-              attributeName="r"
-              values="2.5;3.5;4;2.5"
-              keyTimes="0;0.4;0.5;1"
-              dur="0.5s"
-              begin="0.7s"
-              repeatCount="1"
-              fill="freeze"
-            />
-          </circle>
+          <>
+            {/* Inner bright core of eraser */}
+            <circle
+              r={2.5}
+              fill="white"
+              style={{
+                filter: 'drop-shadow(0 0 5px white)',
+                position: 'relative'
+              }}
+              opacity="0" // Start invisible
+            >
+              <animateMotion
+                dur="0.5s"
+                path={ekgPath}
+                begin="0.7s" // Start when erasing begins
+                repeatCount="1"
+                fill="freeze"
+              />
+              <animate 
+                attributeName="opacity"
+                values="0;1;1;0"
+                keyTimes="0;0.1;0.9;1"
+                dur="0.5s"
+                begin="0.7s"
+                repeatCount="1"
+                fill="freeze"
+              />
+              <animate
+                attributeName="r"
+                values="2.5;3.5;4;2.5"
+                keyTimes="0;0.4;0.5;1"
+                dur="0.5s"
+                begin="0.7s"
+                repeatCount="1"
+                fill="freeze"
+              />
+            </circle>
+            
+            {/* Outer glow for enhanced visibility */}
+            <circle
+              r={4}
+              fill="rgba(255, 255, 255, 0.3)"
+              style={{
+                filter: 'blur(3px)',
+                position: 'relative'
+              }}
+              opacity="0"
+            >
+              <animateMotion
+                dur="0.5s"
+                path={ekgPath}
+                begin="0.7s"
+                repeatCount="1"
+                fill="freeze"
+              />
+              <animate 
+                attributeName="opacity"
+                values="0;0.7;0.7;0"
+                keyTimes="0;0.1;0.9;1"
+                dur="0.5s"
+                begin="0.7s"
+                repeatCount="1"
+                fill="freeze"
+              />
+              <animate
+                attributeName="r"
+                values="4;6;6;4"
+                keyTimes="0;0.4;0.5;1"
+                dur="0.5s"
+                begin="0.7s"
+                repeatCount="1"
+                fill="freeze"
+              />
+            </circle>
+          </>
         )}
       </svg>
     </div>
