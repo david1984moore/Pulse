@@ -17,7 +17,7 @@ interface AccountBalanceData {
   lastUpdate: string | null;
 }
 import CalendarView from "@/components/ui/calendar-view";
-import Chatbot from "@/components/ui/chatbot";
+import ChatbotNew from "@/components/ui/chatbot-new";
 import IncomeBills from "@/components/ui/income-bills";
 import AddBillModal from "@/components/ui/add-bill-modal";
 //import RemoveBillModal from "@/components/ui/remove-bill-modal"; // Removed
@@ -244,8 +244,8 @@ export default function DashboardPage() {
               onAddBill={() => setAddBillOpen(true)} 
             />
 
-            {/* Alice */}
-            <Chatbot bills={bills || []} />
+            {/* Alice - Enhanced Version */}
+            <ChatbotNew bills={bills || []} />
           </div>
         </div>
       </main>

@@ -51,6 +51,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isCustomAmount, setIsCustomAmount] = useState<boolean>(false);
+  const [freeFormQuestion, setFreeFormQuestion] = useState<string>("");
+  const [questionMode, setQuestionMode] = useState<"amount" | "freeform">("amount");
   const [isPending, setIsPending] = useState(false);
 
   // Prevent multiple rapid/duplicate clicks
@@ -113,128 +115,162 @@ export default function Chatbot({ bills }: ChatbotProps) {
   }, [messages]);
 
   const handleSubmit = async () => {
-    const amountToUse = isCustomAmount ? customAmount : (selectedAmount || "");
-    if (!amountToUse) return;
+    // Handle different question modes
+    if (questionMode === "amount") {
+      const amountToUse = isCustomAmount ? customAmount : (selectedAmount || "");
+      if (!amountToUse) return;
 
-    // Add user message
-    const userMessage = `${t('canISpend')} $${amountToUse}?`;
-    setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
+      // Add user message
+      const userMessage = `${t('canISpend')} $${amountToUse}?`;
+      setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
 
-    // Send request to API
-    setIsPending(true);
-    try {
-      // Use secureApiRequest instead of apiRequest to include CSRF token
-      const response = await secureApiRequest("POST", "/api/spending-advisor", { amount: amountToUse });
-      const data: SpendingResponse = await response.json();
+      // Send request to API
+      setIsPending(true);
+      try {
+        // Use secureApiRequest instead of apiRequest to include CSRF token
+        const response = await secureApiRequest("POST", "/api/spending-advisor", { amount: amountToUse });
+        const data: SpendingResponse = await response.json();
 
-      // Translate the response if in Spanish mode
-      let botMessage = data.message;
+        // Translate the response if in Spanish mode
+        let botMessage = data.message;
 
-      if (language === 'es') {
-        // Handle translations based on message type
-        const originalMessage = data.message;
+        if (language === 'es') {
+          // Handle translations based on message type
+          const originalMessage = data.message;
 
-        if (originalMessage.startsWith("Yes, you can spend") && originalMessage.includes("next bill")) {
-          // Pattern: Yes, you can spend $X. Your balance will be $Y. Next bill Name ($Z) due in N days, leaving $W.
-          const amount = amountToUse;
+          if (originalMessage.startsWith("Yes, you can spend") && originalMessage.includes("next bill")) {
+            // Pattern: Yes, you can spend $X. Your balance will be $Y. Next bill Name ($Z) due in N days, leaving $W.
+            const amount = amountToUse;
 
-          // Extract newBalance
-          const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
-          const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
+            // Extract newBalance
+            const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
+            const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
 
-          // Extract bill name
-          const billNameMatch = originalMessage.match(/next bill ([A-Za-z\s]+) \(\$/);
-          const billName = billNameMatch ? billNameMatch[1] : "?";
+            // Extract bill name
+            const billNameMatch = originalMessage.match(/next bill ([A-Za-z\s]+) \(\$/);
+            const billName = billNameMatch ? billNameMatch[1] : "?";
 
-          // Extract bill amount
-          const billAmountMatch = originalMessage.match(/\(\\?\$([0-9.]+)\) is due/);
-          const billAmount = billAmountMatch ? billAmountMatch[1] : "0.00";
+            // Extract bill amount
+            const billAmountMatch = originalMessage.match(/\(\\?\$([0-9.]+)\) is due/);
+            const billAmount = billAmountMatch ? billAmountMatch[1] : "0.00";
 
-          // Extract days until bill
-          const daysMatch = originalMessage.match(/due in ([0-9]+) days/);
-          const days = daysMatch ? daysMatch[1] : "0";
+            // Extract days until bill
+            const daysMatch = originalMessage.match(/due in ([0-9]+) days/);
+            const days = daysMatch ? daysMatch[1] : "0";
 
-          // Extract remaining balance
-          const remainingBalanceMatch = originalMessage.match(/leave you with \$([0-9.]+)/);
-          const remainingBalance = remainingBalanceMatch ? remainingBalanceMatch[1] : "0.00";
+            // Extract remaining balance
+            const remainingBalanceMatch = originalMessage.match(/leave you with \$([0-9.]+)/);
+            const remainingBalance = remainingBalanceMatch ? remainingBalanceMatch[1] : "0.00";
 
-          // Use the translated template with values
-          botMessage = t('yesSafeToSpend')
-            .replace('%amount%', amount)
-            .replace('%newBalance%', newBalance)
-            .replace('%billName%', billName)
-            .replace('%billAmount%', billAmount)
-            .replace('%days%', days)
-            .replace('%remainingBalance%', remainingBalance);
+            // Use the translated template with values
+            botMessage = t('yesSafeToSpend')
+              .replace('%amount%', amount)
+              .replace('%newBalance%', newBalance)
+              .replace('%billName%', billName)
+              .replace('%billAmount%', billAmount)
+              .replace('%days%', days)
+              .replace('%remainingBalance%', remainingBalance);
 
-        } else if (originalMessage.startsWith("Yes, you can spend") && !originalMessage.includes("next bill")) {
-          // Pattern: Yes, you can spend $X. Your balance will be $Y.
-          const amount = amountToUse;
+          } else if (originalMessage.startsWith("Yes, you can spend") && !originalMessage.includes("next bill")) {
+            // Pattern: Yes, you can spend $X. Your balance will be $Y.
+            const amount = amountToUse;
 
-          // Extract newBalance
-          const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
-          const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
+            // Extract newBalance
+            const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
+            const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
 
-          // Use the translated template with values
-          botMessage = t('yesSafeToSpendNoBills')
-            .replace('%amount%', amount)
-            .replace('%newBalance%', newBalance);
+            // Use the translated template with values
+            botMessage = t('yesSafeToSpendNoBills')
+              .replace('%amount%', amount)
+              .replace('%newBalance%', newBalance);
 
-        } else if (originalMessage.includes("but be careful")) {
-          // Pattern: You can spend $X, but be careful. Balance will be $Y, and you have $Z in upcoming bills which would leave you with $W.
-          const amount = amountToUse;
+          } else if (originalMessage.includes("but be careful")) {
+            // Pattern: You can spend $X, but be careful. Balance will be $Y, and you have $Z in upcoming bills which would leave you with $W.
+            const amount = amountToUse;
 
-          // Extract newBalance
-          const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
-          const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
+            // Extract newBalance
+            const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
+            const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
 
-          // Extract upcoming bills total
-          const upcomingBillsMatch = originalMessage.match(/you have \$([0-9.]+) in upcoming bills/);
-          const upcomingBills = upcomingBillsMatch ? upcomingBillsMatch[1] : "0.00";
+            // Extract upcoming bills total
+            const upcomingBillsMatch = originalMessage.match(/you have \$([0-9.]+) in upcoming bills/);
+            const upcomingBills = upcomingBillsMatch ? upcomingBillsMatch[1] : "0.00";
 
-          // Extract remaining balance
-          const remainingBalanceMatch = originalMessage.match(/leave you with \$([0-9.]+)/);
-          const remainingBalance = remainingBalanceMatch ? remainingBalanceMatch[1] : "0.00";
+            // Extract remaining balance
+            const remainingBalanceMatch = originalMessage.match(/leave you with \$([0-9.]+)/);
+            const remainingBalance = remainingBalanceMatch ? remainingBalanceMatch[1] : "0.00";
 
-          // Use the translated template with values
-          botMessage = t('yesButBeCareful')
-            .replace('%amount%', amount)
-            .replace('%newBalance%', newBalance)
-            .replace('%upcomingBills%', upcomingBills)
-            .replace('%remainingBalance%', remainingBalance);
+            // Use the translated template with values
+            botMessage = t('yesButBeCareful')
+              .replace('%amount%', amount)
+              .replace('%newBalance%', newBalance)
+              .replace('%upcomingBills%', upcomingBills)
+              .replace('%remainingBalance%', remainingBalance);
 
-        } else if (originalMessage.startsWith("Sorry, you cannot spend")) {
-          // Pattern: Sorry, you cannot spend $X as it would exceed your current account balance of $Y.
-          const amount = amountToUse;
+          } else if (originalMessage.startsWith("Sorry, you cannot spend")) {
+            // Pattern: Sorry, you cannot spend $X as it would exceed your current account balance of $Y.
+            const amount = amountToUse;
 
-          // Extract balance
-          const balanceMatch = originalMessage.match(/account balance of \$([0-9.]+)/);
-          const balance = balanceMatch ? balanceMatch[1] : "0.00";
+            // Extract balance
+            const balanceMatch = originalMessage.match(/account balance of \$([0-9.]+)/);
+            const balance = balanceMatch ? balanceMatch[1] : "0.00";
 
-          // Use the translated template with values
-          botMessage = t('sorryCannotSpend')
-            .replace('%amount%', amount)
-            .replace('%balance%', balance);
+            // Use the translated template with values
+            botMessage = t('sorryCannotSpend')
+              .replace('%amount%', amount)
+              .replace('%balance%', balance);
+          }
         }
-      }
 
-      // Add bot response with animation flag
-      setMessages((prev) => [...prev, { text: botMessage, sender: "bot", isAnimating: true }]);
-    } catch (error) {
-      console.error("Failed to get spending advice:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: t('chatbotErrorMessage'),
-          sender: "bot",
-          isAnimating: true
-        },
-      ]);
-    } finally {
-      setIsPending(false);
-      setSelectedAmount(null);
-      setIsCustomAmount(false);
-      setCustomAmount("");
+        // Add bot response with animation flag
+        setMessages((prev) => [...prev, { text: botMessage, sender: "bot", isAnimating: true }]);
+      } catch (error) {
+        console.error("Failed to get spending advice:", error);
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: t('chatbotErrorMessage'),
+            sender: "bot",
+            isAnimating: true
+          },
+        ]);
+      } finally {
+        setIsPending(false);
+        setSelectedAmount(null);
+        setIsCustomAmount(false);
+        setCustomAmount("");
+      }
+    } else if (questionMode === "freeform") {
+      // Handle free-form questions
+      if (!freeFormQuestion.trim()) return;
+      
+      // Add user message
+      setMessages((prev) => [...prev, { text: freeFormQuestion, sender: "user" }]);
+      
+      // Send request to API
+      setIsPending(true);
+      try {
+        // Use the financial advisor API for free-form questions
+        const response = await secureApiRequest("POST", "/api/financial-advisor", { query: freeFormQuestion });
+        const data = await response.json();
+        
+        // Add bot response with animation flag
+        let botMessage = data.message || t('chatbotErrorMessage');
+        setMessages((prev) => [...prev, { text: botMessage, sender: "bot", isAnimating: true }]);
+      } catch (error) {
+        console.error("Failed to process financial question:", error);
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: t('chatbotErrorMessage'),
+            sender: "bot",
+            isAnimating: true
+          },
+        ]);
+      } finally {
+        setIsPending(false);
+        setFreeFormQuestion("");
+      }
     }
   };
 
@@ -242,12 +278,21 @@ export default function Chatbot({ bills }: ChatbotProps) {
    * Guaranteed reliable handler that starts the animation independently from API response
    */
   const handleSubmitClick = () => {
-    // Check if there is a valid selection
-    if ((isCustomAmount && !customAmount) || (!isCustomAmount && !selectedAmount)) {
-      // If no valid selection, prompt the user to make a selection
-      const userMessage = "Please select or enter an amount";
-      setMessages((prev) => [...prev, { text: userMessage, sender: "bot", isAnimating: true }]);
-      return;
+    // Check if there is a valid input based on the question mode
+    if (questionMode === "amount") {
+      if ((isCustomAmount && !customAmount) || (!isCustomAmount && !selectedAmount)) {
+        // If no valid selection, prompt the user to make a selection
+        const userMessage = "Please select or enter an amount";
+        setMessages((prev) => [...prev, { text: userMessage, sender: "bot", isAnimating: true }]);
+        return;
+      }
+    } else if (questionMode === "freeform") {
+      if (!freeFormQuestion.trim()) {
+        // If no question is entered, prompt the user
+        const userMessage = "Please enter a question about your finances";
+        setMessages((prev) => [...prev, { text: userMessage, sender: "bot", isAnimating: true }]);
+        return;
+      }
     }
 
     // Prevent rapid clicks
@@ -460,6 +505,36 @@ export default function Chatbot({ bills }: ChatbotProps) {
             )}
           </ScrollArea>
 
+          {/* Question mode toggle */}
+          <div className="mb-3 flex justify-center">
+            <div className="inline-flex items-center p-1 bg-primary-50/50 backdrop-blur-sm rounded-lg border border-primary-100/50">
+              <button
+                onClick={() => setQuestionMode("amount")}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  questionMode === "amount"
+                    ? "bg-white text-primary-700 shadow-sm"
+                    : "text-primary-600 hover:bg-white/50"
+                }`}
+              >
+                <DollarSign className="h-3.5 w-3.5 inline-block mr-1.5" />
+                Spending
+              </button>
+              <button
+                onClick={() => setQuestionMode("freeform")}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  questionMode === "freeform"
+                    ? "bg-white text-primary-700 shadow-sm"
+                    : "text-primary-600 hover:bg-white/50"
+                }`}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" className="inline-block mr-1.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 12H16M8 8H16M8 16H13M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Questions
+              </button>
+            </div>
+          </div>
+
           {/* Input area with futuristic styling */}
           <div className="p-5 rounded-xl bg-gradient-to-b from-white/90 to-white/70 backdrop-blur-lg border border-primary-50 shadow-sm relative">
             {/* Decorative tech dots in background */}
@@ -471,7 +546,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
             </div>
             
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 relative z-10">
-              {isCustomAmount ? (
+              {questionMode === "amount" ? (
+                isCustomAmount ? (
                 <div className="flex w-full sm:flex-1">
                   <div className="relative flex-1">
                     {/* Futuristic $ icon with glow */}
@@ -539,6 +615,32 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     <SelectItem value="custom" className="text-primary-600 font-medium hover:bg-primary-50/50">{t('customSpend')}</SelectItem>
                   </SelectContent>
                 </Select>
+              ) : (
+                // Free-form question mode
+                <div className="relative flex-1 w-full">
+                  <input
+                    type="text"
+                    value={freeFormQuestion}
+                    onChange={(e) => setFreeFormQuestion(e.target.value)}
+                    placeholder="Ask Alice about your finances..."
+                    className="w-full px-4 py-2.5 border-0 bg-primary-50/30 text-primary-900 rounded-lg 
+                              focus:outline-none focus:ring-2 focus:ring-primary/30 focus:bg-white/80 
+                              shadow-inner transition-all duration-150 backdrop-blur-sm"
+                    style={{ boxShadow: 'inset 0 1px 2px rgba(59, 130, 246, 0.1)' }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && freeFormQuestion.trim() && !isPending) {
+                        handleSubmitClick();
+                      }
+                    }}
+                  />
+                  
+                  {/* Help ghost lines */}
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1 pointer-events-none opacity-30">
+                    <div className="h-3 w-0.5 bg-primary-300 rounded-full"></div>
+                    <div className="h-2 w-0.5 bg-primary-300 rounded-full"></div>
+                    <div className="h-4 w-0.5 bg-primary-300 rounded-full"></div>
+                  </div>
+                </div>
               )}
               
               {isPending ? (
