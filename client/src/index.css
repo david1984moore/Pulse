@@ -248,8 +248,8 @@
   /* Modern tight letter spacing as seen in premium tech brands */
   letter-spacing: -0.07em;
   
-  /* Subtle text enhancement for depth with refined shadow */
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  /* Enhanced text shadow for better visibility */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   
   /* Unique padding that creates an organic feel */
   padding-left: 0.05em;

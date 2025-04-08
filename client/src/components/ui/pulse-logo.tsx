@@ -76,10 +76,10 @@ export function PulseLogo({
       
       {showText && (
         <div className="relative inline-block">
-          {/* Subtle text outline effect for depth */}
+          {/* Stronger text shadow effect for better visibility */}
           <span 
             className={cn(
-              "absolute pulse-text select-none text-transparent bg-clip-text bg-white/5 blur-[0.3px] transform scale-101 -translate-y-[0.5px] translate-x-[0.5px]", 
+              "absolute pulse-text select-none text-black blur-[1px] opacity-15 transform scale-101 -translate-y-[1px] translate-x-[1px]", 
               textSizeClasses[size],
               textClassName
             )}
@@ -88,10 +88,10 @@ export function PulseLogo({
             <span>p</span><span>u</span><span>l</span><span>s</span><span>e</span>
           </span>
 
-          {/* Main text with premium multi-directional gradient */}
+          {/* Main text with strong, visible color */}
           <span 
             className={cn(
-              "pulse-text relative select-none text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary/95 to-primary/85", 
+              "pulse-text relative select-none text-primary-foreground font-bold", 
               textSizeClasses[size],
               textClassName
             )}
