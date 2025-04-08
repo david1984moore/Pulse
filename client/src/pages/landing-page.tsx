@@ -49,7 +49,7 @@ export default function LandingPage() {
                     <Button variant="ghost">{t('login')}</Button>
                   </Link>
                   <Link href="/auth?mode=register">
-                    <Button variant="primary">{t('signup')}</Button>
+                    <Button>{t('signup')}</Button>
                   </Link>
                 </>
               )}
@@ -112,7 +112,7 @@ export default function LandingPage() {
                           </Button>
                         </Link>
                         <Link href="/auth?mode=register">
-                          <Button variant="primary" className="w-full justify-start">
+                          <Button className="w-full justify-start">
                             {t('signup')}
                           </Button>
                         </Link>
@@ -254,7 +254,17 @@ export default function LandingPage() {
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{t('calendarViewTitle')}</h3>
                     <p className="text-base text-gray-600">{t('calendarViewDescription')}</p>
                   </div>
-                  <div className="mt-6 flex flex-col gap-1">
+                  <div className="mt-4 rounded-xl border border-gray-100 shadow-sm p-4 bg-white">
+                    <div className="mb-4 flex justify-between items-center">
+                      <div className="flex items-center space-x-2">
+                        <div className="p-2 bg-primary text-white rounded-lg">
+                          <Calendar className="h-5 w-5" />
+                        </div>
+                        <h3 className="font-medium text-gray-700">Calendar View</h3>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">See all your bills on a monthly calendar to plan ahead and never miss a payment.</p>
+                    
                     <div className="grid grid-cols-7 gap-1 text-center mb-1">
                       <div className="text-xs font-medium text-gray-400">S</div>
                       <div className="text-xs font-medium text-gray-400">M</div>
@@ -264,17 +274,18 @@ export default function LandingPage() {
                       <div className="text-xs font-medium text-gray-400">F</div>
                       <div className="text-xs font-medium text-gray-400">S</div>
                     </div>
+                    
                     <div className="grid grid-cols-7 gap-1">
-                      {Array.from({ length: 30 }, (_, i) => (
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30].map((day) => (
                         <div 
-                          key={i} 
+                          key={day} 
                           className={`h-8 w-8 flex items-center justify-center rounded-full text-xs ${
-                            i === 14 ? 'bg-red-500 text-white' : 
-                            i === 27 ? 'bg-primary text-white' : 
+                            day === 15 ? 'bg-red-500 text-white' : 
+                            day === 28 ? 'bg-primary text-white' : 
                             'hover:bg-gray-100'
                           }`}
                         >
-                          {i + 1}
+                          {day}
                         </div>
                       ))}
                     </div>
@@ -294,10 +305,25 @@ export default function LandingPage() {
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{t('spendingAssistantTitle')}</h3>
                     <p className="text-base text-gray-600">{t('spendingAssistantDescription')}</p>
                   </div>
-                  <div className="mt-6 rounded-lg border border-gray-100 overflow-hidden">
-                    <div className="p-3 bg-primary/10 text-sm font-medium">Alice</div>
-                    <div className="p-3 text-sm text-gray-600">How much can I spend on dining out this month?</div>
-                    <div className="p-3 bg-primary/5 text-sm">Based on your budget, you can spend $350 on dining this month.</div>
+                  <div className="mt-4 rounded-xl border border-gray-100 shadow-sm p-4 bg-white">
+                    <div className="mb-4 flex justify-between items-center">
+                      <div className="flex items-center space-x-2">
+                        <div className="p-2 bg-primary text-white rounded-lg">
+                          <MessageSquare className="h-5 w-5" />
+                        </div>
+                        <h3 className="font-medium text-gray-700">Alice</h3>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.</p>
+                    
+                    <div className="rounded-lg shadow-sm bg-blue-50 p-3 mb-2 text-sm">
+                      <div className="font-semibold mb-1">Alice</div>
+                      <div>How much can I spend on dining out this month?</div>
+                    </div>
+                    
+                    <div className="rounded-lg shadow-sm bg-gray-50 p-3 text-sm">
+                      <div>Based on your budget, you can spend $350 on dining this month.</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -337,7 +363,7 @@ export default function LandingPage() {
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
                       <Check className="h-5 w-5" />
                     </div>
-                    <span className="text-gray-700">Monthly bill calendar with alerts</span>
+                    <span className="text-gray-700">Monthly bill calendar</span>
                   </li>
                   <li className="flex items-center">
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
@@ -365,7 +391,7 @@ export default function LandingPage() {
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
                       <Check className="h-5 w-5" />
                     </div>
-                    <span className="text-gray-700">Natural language queries about your finances</span>
+                    <span className="text-gray-700">Instant answers to financial questions</span>
                   </li>
                   <li className="flex items-center">
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
@@ -381,19 +407,7 @@ export default function LandingPage() {
               <div className="relative h-96 lg:h-auto overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 p-8">
                 {/* Dashboard mockup - Updated to match actual dashboard */}
                 <div className="relative h-full w-full overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200">
-                  {/* Header - Updated with gradient */}
-                  <div className="bg-gradient-to-r from-white to-primary/5 backdrop-blur-md border-b border-primary/10 p-4 flex justify-between items-center">
-                    <div className="flex items-center">
-                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-violet-700 mr-3 flex items-center justify-center shadow-md">
-                        <span className="text-white font-bold text-sm">DM</span>
-                      </div>
-                      <span className="font-medium text-gray-700">David Moore</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="text-xl font-bold text-primary">$400</div>
-                      <span className="text-gray-500 text-sm">Available</span>
-                    </div>
-                  </div>
+                  {/* Removed header as requested */}
                   
                   {/* Financial Summary - Matching dashboard's IncomeBills component */}
                   <div className="p-4">
