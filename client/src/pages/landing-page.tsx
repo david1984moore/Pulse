@@ -134,11 +134,8 @@ export default function LandingPage() {
       <div className="relative bg-white overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-50"></div>
         <div className="relative max-w-7xl mx-auto pt-16 pb-24 px-4 sm:pt-24 sm:pb-32 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <div className="flex items-center mb-6">
-              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
-              <span className="text-gray-500 font-medium text-sm uppercase tracking-wider">pulse finance</span>
-            </div>
+          <div className="max-w-4xl z-10 relative">
+            {/* Removed the "pulse finance" text and dot as requested */}
             
             <h1 className="text-4xl font-bold text-gray-800 sm:text-5xl lg:text-6xl mb-6 leading-tight">
               {t('heroTitle')}
@@ -177,20 +174,21 @@ export default function LandingPage() {
           </div>
         </div>
         
-        {/* Subtle background elements */}
-        <div className="absolute bottom-0 right-0 w-full h-40 md:w-1/2 md:h-full overflow-hidden">
+        {/* Modified background elements to not overlap with the text */}
+        <div className="absolute bottom-0 right-0 w-96 h-96 md:w-2/5 overflow-hidden pointer-events-none z-0">
           <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-primary/5 rounded-full"></div>
           <div className="absolute bottom-1/3 right-1/3 w-48 h-48 bg-blue-50 rounded-full"></div>
           <div className="absolute top-1/2 right-1/2 w-32 h-32 bg-gray-50 rounded-full"></div>
         </div>
       </div>
 
-      {/* Features Section - Modern and Refined */}
+      {/* Features Section - Modern and Refined with purple accent line */}
       <div className="py-20 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="flex justify-center items-center mb-4">
-              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+            <div className="flex flex-col items-center mb-4">
+              {/* Purple line accent instead of dot */}
+              <div className="w-16 h-1 bg-gradient-to-r from-primary to-violet-600 rounded-full mb-4"></div>
               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">{t('featuresTitle')}</h2>
             </div>
             <p className="mt-2 text-3xl font-bold text-gray-800 sm:text-4xl tracking-tight">{t('featuresTagline')}</p>
