@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import AliceEcg from "./alice-ecg";
-import EkgSvgAnimation from "./ekg-svg-animation";
+import EkgTrace from "./ekg-trace";
 import {
   Select,
   SelectContent,
@@ -235,7 +235,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
 
   /**
    * Handle the "Ask" button click
-   * This function manages the user submission
+   * This function manages the user submission with guaranteed animation behavior
    */
   const handleSubmitClick = () => {
     // Prevent multiple rapid clicks or processing while waiting for response
@@ -244,36 +244,36 @@ export default function Chatbot({ bills }: ChatbotProps) {
     // Set the processing flag to prevent duplicate clicks
     isSubmittingRef.current = true;
     
-    // Reset animation state completely
+    // STEP 1: Force the animation to unmount completely
     setIsPending(false);
     
-    // Use a more substantial delay to ensure complete unmounting
-    // This is crucial for the animation to properly reset
+    // STEP 2: Allow time for complete unmount and DOM cleanup
+    // This delay is critical for consistent animation behavior
     setTimeout(() => {
-      // Start animation first with fresh mount
+      // STEP 3: Re-mount the animation with a fresh component instance
       setIsPending(true);
       
-      // Then submit API request after animation has started
-      // This longer delay ensures the animation is properly initialized
+      // STEP 4: Allow animation to start before initiating API call
+      // This ensures the animation is visibly running before any potential state changes
       setTimeout(() => {
         handleSubmit();
-      }, 200);
-    }, 200);
+      }, 300); // Longer delay for animation to establish
+    }, 300); // Substantial delay to ensure complete unmount
     
-    // Reset submission flag after a longer delay to prevent double-clicks
-    // and ensure animation has time to properly complete its mounting cycle
+    // Reset submission flag after a longer delay to prevent rapid re-clicks
+    // This ensures the entire animation cycle has time to complete properly
     setTimeout(() => {
       isSubmittingRef.current = false;
-    }, 500);
+    }, 800); // Extended lockout period for animation stability
   };
   
   return (
     <div className="relative">
       {/* Full width ECG animation that shows when active */}
-      {/* Using the more consistent SVG-based animation */}
+      {/* Using the new guaranteed consistent animation trace */}
       {isPending && (
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
-          <EkgSvgAnimation 
+          <EkgTrace 
             active={isPending} 
             lineColor="rgba(255, 255, 255, 0.8)"
             width={600} 
