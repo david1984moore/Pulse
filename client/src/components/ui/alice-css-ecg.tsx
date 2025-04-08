@@ -107,33 +107,26 @@ export default function AliceCssEcg({
           }}
         />
         
-        {/* Progressive drawing and erasing technique */}
-        <clipPath id={`clip-${maskId}`}>
-          <rect 
-            x="0" 
-            y="0" 
-            width={isAnimating ? width : 0} 
-            height={height}
-            style={{
-              transition: isAnimating ? `width 1s linear` : 'none'
-            }}
-          />
-        </clipPath>
+        {/* Visible ECG line that will be drawn and erased */}
+        <defs>
+          <linearGradient id={`eraser-gradient-${maskId}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={color} />
+            <stop offset="0%" stopColor="transparent" stopOpacity="0">
+              {isAnimating && (
+                <animate 
+                  attributeName="offset" 
+                  values="0%;0%;100%" 
+                  keyTimes="0;0.7;1"
+                  dur="1.2s" 
+                  begin="0s"
+                  fill="freeze"
+                />
+              )}
+            </stop>
+          </linearGradient>
+        </defs>
         
-        <clipPath id={`eraser-clip-${maskId}`}>
-          <rect 
-            x="0" 
-            y="0" 
-            width={isAnimating ? 0 : width} 
-            height={height}
-            style={{
-              transition: isAnimating ? `width 0.5s linear` : 'none',
-              transitionDelay: isAnimating ? '0.7s' : '0s'
-            }}
-          />
-        </clipPath>
-        
-        {/* Path that appears progressively */}
+        {/* This is the main ECG trace that will appear as dashed and will be drawn */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -143,23 +136,24 @@ export default function AliceCssEcg({
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
+            strokeDasharray: pathLength,
+            strokeDashoffset: isAnimating ? 0 : pathLength,
+            transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
-            clipPath: `url(#clip-${maskId})` // Draw line
           }}
         />
         
-        {/* This path masks out the first path as it "erases" */}
+        {/* This is the mask layer that will erase the path */}
         {isAnimating && (
           <path
             d={ekgPath}
             fill="none"
-            stroke={color}
-            strokeWidth={2}
+            stroke={`url(#eraser-gradient-${maskId})`}
+            strokeWidth={3} // Slightly wider to ensure full coverage
             strokeLinecap="round"
             strokeLinejoin="round"
             style={{
               opacity: 1,
-              clipPath: `url(#eraser-clip-${maskId})` // Erase line
             }}
           />
         )}
