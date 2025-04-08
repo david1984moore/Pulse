@@ -209,24 +209,21 @@
   transform: scale(1.05);
 }
 
-/* Clean, futuristic Y-Combinator worthy styling for the pulse logo */
+/* Modern, sleek styling for the pulse logo - matching the screenshot */
 .pulse-text {
-  /* Modern, geometric font stack used by top YC startups */
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  /* Modern, geometric font stack used by top tech brands */
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   
-  /* Clean, solid color with perfect contrast */
-  color: #6d28d9;
+  /* Match the color from the screenshot */
+  color: #9333ea;
   
-  /* Precise typography for tech brands */
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  /* Typography matched to the screenshot */
+  font-weight: 600;
+  letter-spacing: -0.01em;
   
   /* Clean edges for perfect rendering */
   -webkit-font-smoothing: antialiased;
   
   /* Modern lowercase for tech brands */
   text-transform: lowercase;
-  
-  /* Very subtle shadow for depth - almost invisible but adds dimension */
-  text-shadow: 0px 0px 1px rgba(0,0,0,0.05);
 }

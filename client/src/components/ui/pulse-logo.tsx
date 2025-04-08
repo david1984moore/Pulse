@@ -103,15 +103,11 @@ export function PulseLogo({
   }, [animated]);
 
   return (
-    <div className={cn('flex items-center gap-3.5', className)}>
+    <div className={cn('flex items-center gap-2', className)}>
       {/* Elegant icon with subtle shadow */}
       <div className={cn('relative flex-shrink-0', sizeClasses[size])}>
-        <div className="w-full h-full rounded-md bg-primary shadow-sm flex items-center justify-center relative overflow-hidden">
-          {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-          
-          {/* Very subtle inner border for depth */}
-          <div className="absolute inset-0 border border-white/10 rounded-md"></div>
+        <div className="w-full h-full rounded-xl bg-primary flex items-center justify-center relative overflow-hidden">
+          {/* Clean, flat appearance to match the screenshot */}
           
           <svg 
             viewBox="0 0 24 24" 
@@ -144,20 +140,15 @@ export function PulseLogo({
         </div>
       </div>
       
-      {/* Clean futuristic text treatment */}
+      {/* Clean modern text treatment - matched to design */}
       {showText && (
-        <div className="relative">
-          <span className={cn(
-            "pulse-text font-sans relative", 
-            textSizeClasses[size],
-            textClassName
-          )}>
-            pulse
-          </span>
-          {/* Futuristic accent elements */}
-          <div className="absolute -right-1.5 top-0 w-1.5 h-1.5 bg-primary rounded-sm"></div>
-          <div className="absolute right-0 -bottom-1 w-5 h-[2px] bg-primary/30"></div>
-        </div>
+        <span className={cn(
+          "pulse-text font-sans", 
+          textSizeClasses[size],
+          textClassName
+        )}>
+          pulse
+        </span>
       )}
     </div>
   );
@@ -166,13 +157,7 @@ export function PulseLogo({
 // Export a standalone icon version
 export function PulseIcon({ className }: { className?: string }) {
   return (
-    <div className={cn("rounded-md bg-primary shadow-sm relative overflow-hidden", className)}>
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-      
-      {/* Very subtle inner border for depth */}
-      <div className="absolute inset-0 border border-white/10 rounded-md"></div>
-      
+    <div className={cn("rounded-xl bg-primary relative overflow-hidden", className)}>
       <svg 
         viewBox="0 0 24 24" 
         className="w-full h-full text-white p-1.5 relative z-10"
