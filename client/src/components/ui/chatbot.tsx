@@ -623,9 +623,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     value={freeFormQuestion}
                     onChange={(e) => setFreeFormQuestion(e.target.value)}
                     placeholder="Ask Alice about your finances..."
-                    className="w-full px-4 py-2.5 border-0 bg-primary-50/30 text-primary-900 rounded-lg 
-                              focus:outline-none focus:ring-2 focus:ring-primary/30 focus:bg-white/80 
-                              shadow-inner transition-all duration-150 backdrop-blur-sm"
+                    className="w-full px-4 py-2.5 border-0 bg-primary-50/30 text-primary-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:bg-white/80 shadow-inner transition-all duration-150 backdrop-blur-sm"
                     style={{ boxShadow: 'inset 0 1px 2px rgba(59, 130, 246, 0.1)' }}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && freeFormQuestion.trim() && !isPending) {
@@ -645,12 +643,10 @@ export default function Chatbot({ bills }: ChatbotProps) {
               
               {isPending ? (
                 // Futuristic processing button when pending
-                <div className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-primary-600/90 text-white 
-                                flex items-center justify-center relative overflow-hidden group">
+                <div className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-primary-600/90 text-white flex items-center justify-center relative overflow-hidden group">
                   {/* Animated pulse background */}
                   <div className="absolute inset-0 bg-primary-500 opacity-30 z-0">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary-400/0 via-primary-400/70 to-primary-400/0 
-                                    animate-pulse" style={{ animationDuration: '1.5s' }}></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-400/0 via-primary-400/70 to-primary-400/0 animate-pulse" style={{ animationDuration: '1.5s' }}></div>
                   </div>
                   
                   {/* Loading spinner with enhanced glow */}
@@ -663,13 +659,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                 <Button
                   onClick={handleSubmitClick}
                   disabled={false}
-                  className={`
-                    w-full sm:w-auto bg-blue-600
-                    text-white font-extrabold relative 
-                    shadow-xl
-                    rounded-lg py-4 px-8 border-2 border-blue-400
-                    text-lg
-                  `}
+                  className="w-full sm:w-auto bg-blue-600 text-white font-extrabold relative shadow-xl rounded-lg py-4 px-8 border-2 border-blue-400 text-lg"
                 >
                   <div className="flex items-center justify-center relative z-10">
                     {/* Pulse line icon instead of paper airplane */}

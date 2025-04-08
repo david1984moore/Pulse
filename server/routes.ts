@@ -1,5 +1,5 @@
 import express, { Express, Request, Response, NextFunction } from "express";
-import { Server } from "http";
+import { Server, createServer } from "http";
 import { storage } from "./storage";
 import { setupVite, log, serveStatic } from "./vite";
 import { setupAuth } from "./auth";
@@ -85,7 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Continue with Passport.js authentication
-      const passport = req.passport;
+      const passport = (req as any).passport;
       passport.authenticate("local", async (err: any, user: any, info: any) => {
         if (err) {
           return next(err);
@@ -396,6 +396,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Financial advisor - spending calculations and advice
+  // Free-form financial advisor endpoint
+  app.post("/api/financial-advisor", csrfProtection, async (req: Request, res: Response) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    
+    try {
+      const schema = z.object({
+        query: z.string().min(1)
+      });
+      
+      const result = schema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: result.error.issues });
+      }
+      
+      const { query } = result.data;
+      
+      // Get user data for financial context
+      const user = await storage.getUser(req.user.id);
+      const bills = await storage.getBillsByUserId(req.user.id);
+      const income = await storage.getIncomeByUserId(req.user.id);
+      
+      // Process the financial query
+      const response = processFinancialQuery(query, {
+        balance: Number(user?.account_balance) || 0,
+        bills,
+        income
+      });
+      
+      return res.json({
+        message: response
+      });
+    } catch (error) {
+      log(`Error in financial advisor: ${error}`, "routes");
+      return res.status(500).json({ error: "Error processing financial query" });
+    }
+  });
+
   app.post("/api/spending-advisor", csrfProtection, async (req: Request, res: Response) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ error: "Not authenticated" });
@@ -422,15 +461,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const balanceNum = user?.account_balance || 0;
       
       // Calculate if the user can spend this amount
-      if (amountNum > balanceNum) {
+      const numBalance = Number(balanceNum);
+      if (amountNum > numBalance) {
         return res.json({
           canSpend: false,
-          message: `Sorry, you cannot spend $${amountNum} as it would exceed your current account balance of $${balanceNum.toFixed(2)}.`
+          message: `Sorry, you cannot spend $${amountNum} as it would exceed your current account balance of $${numBalance.toFixed(2)}.`
         });
       }
       
       // Check upcoming bills
-      const newBalance = balanceNum - amountNum;
+      const newBalance = Number(balanceNum) - amountNum;
       let message = `Yes, you can spend $${amountNum}. Your balance after this purchase will be $${newBalance.toFixed(2)}.`;
       
       // Sort bills by due date
@@ -475,44 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Free-form financial advisor endpoint
-  app.post("/api/financial-advisor", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const schema = z.object({
-        query: z.string().min(1)
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { query } = result.data;
-      
-      // Get user data for financial context
-      const user = await storage.getUser(req.user.id);
-      const bills = await storage.getBillsByUserId(req.user.id);
-      const income = await storage.getIncomeByUserId(req.user.id);
-      
-      // Process the financial query
-      const response = processFinancialQuery(query, {
-        balance: user?.account_balance || 0,
-        bills,
-        income
-      });
-      
-      return res.json({
-        message: response
-      });
-    } catch (error) {
-      log(`Error in financial advisor: ${error}`, "routes");
-      return res.status(500).json({ error: "Error processing financial query" });
-    }
-  });
+
 
   // Get calculated balance API
   app.get("/api/calculated-balance", csrfProtection, async (req: Request, res: Response) => {
@@ -532,7 +535,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const today = new Date();
       const currentDay = today.getDate();
       
-      let calculatedBalance = balance;
+      let calculatedBalance = Number(balance);
       
       // Sort bills by due date
       const sortedBills = [...bills].sort((a, b) => a.due_date - b.due_date);
@@ -581,8 +584,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.status(500).json({ error: 'Server error' });
   });
 
+  // Create a server instance
+  const server = createServer(app);
+  
   // Set up Vite server in development mode
-  return await setupVite(app);
+  await setupVite(app, server);
+  
+  return server;
 }
 
 /**
