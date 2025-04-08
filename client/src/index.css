@@ -209,49 +209,24 @@
   transform: scale(1.05);
 }
 
-/* Cutting-edge modern text styling for the pulse logo */
+/* Clean, futuristic Y-Combinator worthy styling for the pulse logo */
 .pulse-text {
-  /* Ultra-modern tech font stack inspired by leading Y-Combinator startups */
-  font-family: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+  /* Modern, geometric font stack used by top YC startups */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   
-  /* Create a premium gradient text effect with slightly different colors */
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(135deg, #9333ea 0%, #6366f1 35%, #c026d3 65%, #9333ea 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  /* Clean, solid color with perfect contrast */
+  color: #6d28d9;
   
-  /* Sleek modern tech brand typography */
+  /* Precise typography for tech brands */
   font-weight: 800;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.04em;
   
-  /* Make the text appear slightly taller for premium look */
-  transform: scaleY(1.02);
-  
-  /* Ensure smooth rendering */
+  /* Clean edges for perfect rendering */
   -webkit-font-smoothing: antialiased;
   
-  /* Add a sophisticated highlight effect */
-  text-shadow: 
-    0 1px 2px rgba(0,0,0,0.02),
-    0 -1px 0 rgba(255,255,255,0.1);
-  
-  /* Animation for the shimmer effect - slightly faster for a tech feel */
-  background-size: 200% auto;
-  animation: shimmer 3s ease-in-out infinite alternate;
-  
-  /* Add a very subtle outline for definition */
-  text-stroke: 1px rgba(0,0,0,0.03);
-  -webkit-text-stroke: 1px rgba(0,0,0,0.03);
-  
-  /* Modern slightly lower case for tech brands */
+  /* Modern lowercase for tech brands */
   text-transform: lowercase;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: 0% center;
-  }
-  100% {
-    background-position: 100% center;
-  }
+  
+  /* Very subtle shadow for depth - almost invisible but adds dimension */
+  text-shadow: 0px 0px 1px rgba(0,0,0,0.05);
 }

@@ -25,11 +25,11 @@ export function PulseLogo({
     lg: 'h-10 w-10'
   };
 
-  // Premium modern text sizing - slightly larger for impact
+  // Futuristic text sizing - optimal proportions
   const textSizeClasses = {
-    sm: 'text-xl',
-    md: 'text-2xl',
-    lg: 'text-3xl'
+    sm: 'text-lg',
+    md: 'text-xl',
+    lg: 'text-2xl'
   };
   
   // Subtle animation for the heartbeat effect when animated is true
@@ -144,15 +144,20 @@ export function PulseLogo({
         </div>
       </div>
       
-      {/* Cutting-edge text treatment */}
+      {/* Clean futuristic text treatment */}
       {showText && (
-        <span className={cn(
-          "pulse-text font-sans relative ml-0.5 pb-0.5", 
-          textSizeClasses[size],
-          textClassName
-        )}>
-          pulse
-        </span>
+        <div className="relative">
+          <span className={cn(
+            "pulse-text font-sans relative", 
+            textSizeClasses[size],
+            textClassName
+          )}>
+            pulse
+          </span>
+          {/* Futuristic accent elements */}
+          <div className="absolute -right-1.5 top-0 w-1.5 h-1.5 bg-primary rounded-sm"></div>
+          <div className="absolute right-0 -bottom-1 w-5 h-[2px] bg-primary/30"></div>
+        </div>
       )}
     </div>
   );
