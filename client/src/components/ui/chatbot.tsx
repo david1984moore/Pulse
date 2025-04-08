@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import AliceEcg from "./alice-ecg";
-import EkgTrace from "./ekg-trace";
+import SimpleEkg from "./simple-ekg";
 import {
   Select,
   SelectContent,
@@ -234,56 +234,40 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
 
   /**
-   * Handle the "Ask" button click with a single animation cycle guarantee
+   * Simple, reliable handler for the Ask button
    */
   const handleSubmitClick = () => {
-    // Prevent multiple rapid clicks or processing while waiting for response
+    // Prevent rapid double-clicks
     if (isPending || isSubmittingRef.current) return;
     
-    // Set the processing flag to prevent duplicate clicks during this entire flow
+    // Lock the button
     isSubmittingRef.current = true;
     
-    // Force React to remove the animation components completely from DOM
-    setIsPending(false);
+    // Start the animation immediately
+    setIsPending(true);
     
-    // Create a unique identifier to ensure we don't stack animations
-    const currentCycleId = Date.now();
-    
-    // Allow React to complete the unmount cycle (DOM removal)
+    // Submit the API call with a slight delay to allow animation to start
     setTimeout(() => {
-      // Only start a new animation if we're the most recent cycle
-      if (isSubmittingRef.current) {
-        // Mount with a completely fresh component instance
-        setIsPending(true);
-        
-        // Wait until animation is visibly running before showing API response
-        setTimeout(() => {
-          // Again verify we're still the active cycle
-          if (isSubmittingRef.current) {
-            handleSubmit();
-            
-            // Allow animation to complete (3.5s) before re-enabling button
-            setTimeout(() => {
-              isSubmittingRef.current = false;
-            }, 3700); // Slightly longer than animation duration (3.5s)
-          }
-        }, 500); // Increased delay to ensure animation is fully visible
-      }
-    }, 500); // Substantial delay for complete DOM cleanup between animations
+      handleSubmit();
+      
+      // Reset the lock after the animation duration plus a small buffer
+      setTimeout(() => {
+        isSubmittingRef.current = false;
+      }, 3000);
+    }, 100);
   };
   
   return (
     <div className="relative">
-      {/* Full width ECG animation that shows when active */}
-      {/* Using the new guaranteed consistent animation trace */}
+      {/* Full width ECG animation with smooth, continuous rendering */}
       {isPending && (
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
-          <EkgTrace 
+          <SimpleEkg 
             active={isPending} 
-            lineColor="rgba(255, 255, 255, 0.8)"
+            lineColor="rgba(255, 255, 255, 0.9)"
             width={600} 
             height={300}
-            strokeWidth={4}
+            strokeWidth={3}
           />
         </div>
       )}
