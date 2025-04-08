@@ -325,7 +325,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                       <span className="absolute -inset-1 bg-gradient-to-r from-primary/5 to-transparent rounded-lg blur-sm opacity-70"></span>
                       <span className="relative">{language === 'es' ? 'Alicia' : 'Alice'}</span>
                       {/* Tech version indicator */}
-                      <span className="ml-1.5 text-xs font-medium text-primary-500 opacity-70 tracking-wider">v3.0</span>
+                      <span className="ml-1.5 text-xs font-medium text-primary-500 opacity-70 tracking-wider">v1.0</span>
                     </span>
                   </div>
 
@@ -412,15 +412,14 @@ export default function Chatbot({ bills }: ChatbotProps) {
                           : ""
                       }`}
                     >
-                      {/* Message content with futuristic styling based on sender */}
-                      <div 
-                        className={`${
-                          message.sender === "user" 
-                            ? "bg-primary-100/60 text-primary-800 border border-primary-200/50 rounded-tl-xl rounded-tr-xl rounded-bl-xl" 
-                            : "bg-white/70 border border-primary-100/30 text-gray-700 rounded-tr-xl rounded-bl-xl rounded-br-xl"
-                        } px-4 py-2.5 shadow-sm relative z-10 backdrop-blur-sm`}
-                      >
-                        <p className={`text-sm leading-relaxed relative z-10 ${message.sender === "user" ? "text-primary-700" : "text-gray-700"}`}>
+                      {/* Message content with borderless Grok3-style directly on screen */}
+                      <div className="relative z-10">
+                        <p className={`text-base leading-relaxed relative z-10 ${
+                            message.sender === "user" 
+                              ? "text-primary-600 font-medium" 
+                              : "text-gray-700"
+                          }`}
+                        >
                           {message.sender === "bot" && message.isAnimating ? (
                             <TypeAnimation 
                               text={message.text} 
@@ -552,31 +551,37 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   </div>
                 </div>
               ) : (
-                // Futuristic button when not pending
                 <Button
                   onClick={handleSubmitClick}
                   disabled={isCustomAmount ? !customAmount : !selectedAmount}
                   className={`
-                    w-full sm:w-auto bg-gradient-to-br from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-600 
-                    text-white relative overflow-hidden transition-all duration-200
-                    shadow-[0_4px_16px_rgba(59,130,246,0.3)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.5)]
-                    rounded-lg py-2.5 px-5 border border-primary-400/30
+                    w-full sm:w-auto bg-gradient-to-br from-primary-600 via-primary-500 to-primary-600 
+                    hover:from-primary-500 hover:via-primary-400 hover:to-primary-500 
+                    text-white font-semibold relative overflow-hidden transition-all duration-200
+                    shadow-[0_4px_20px_rgba(59,130,246,0.5)] hover:shadow-[0_6px_25px_rgba(59,130,246,0.7)]
+                    rounded-lg py-3 px-6 border border-primary-300/50 animated-glow
                     ${isCustomAmount && !customAmount || !isCustomAmount && !selectedAmount ? 'opacity-50' : 'opacity-100'}
                   `}
                 >
-                  {/* Tech background effect */}
-                  <div className="absolute inset-0 overflow-hidden opacity-20">
+                  <span className="absolute inset-0 rounded-lg overflow-hidden">
+                    <span className="absolute inset-0 rounded-lg opacity-30"
+                          style={{
+                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)'
+                          }} />
+                  </span>
+                  
+                  <div className="absolute inset-0 overflow-hidden opacity-40">
                     <div className="absolute inset-0" 
                          style={{ 
-                           backgroundImage: `radial-gradient(circle at 30% 107%, rgba(255, 255, 255, 0.3) 5%, rgba(255, 255, 255, 0.05) 15%, transparent 30%)`,
+                           backgroundImage: `radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 20%, transparent 50%)`,
                            backgroundSize: '100% 100%'
                          }}>
                     </div>
                   </div>
                 
                   <div className="flex items-center justify-center group relative z-10">
-                    <Send className="mr-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-                    <span className="font-medium tracking-wide">{t('ask')}</span>
+                    <Send className="mr-2 h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
+                    <span className="font-medium tracking-wide text-base">{t('ask')}</span>
                   </div>
                 </Button>
               )}

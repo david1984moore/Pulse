@@ -124,3 +124,18 @@
   animation-play-state: running !important;
   animation-delay: 0ms !important;
 }
+
+/* Button glow animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Button animation */
+.animated-glow span {
+  animation: shimmer 2s infinite;
+}
