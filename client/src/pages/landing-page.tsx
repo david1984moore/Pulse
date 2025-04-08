@@ -201,10 +201,10 @@ export default function LandingPage() {
         </div>
       </div>
       
-      {/* Features section - Enhanced with SVG decorations */}
-      <div className="py-24 bg-white">
+      {/* Features section - Improved spacing and layout */}
+      <div className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
+          <div className="lg:text-center mb-10">
             <h2 className="text-base text-primary font-semibold tracking-wide uppercase">{t('featuresTagline')}</h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
               {t('featuresTitle')}
@@ -214,8 +214,8 @@ export default function LandingPage() {
             </p>
           </div>
           
-          <div className="mt-20">
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
+          <div className="mt-12">
+            <div className="grid grid-cols-1 gap-8 md:gap-10 lg:grid-cols-3">
               {/* Income Management Feature */}
               <div className="relative">
                 <div className="absolute -left-4 -top-4 w-16 h-16 bg-primary/10 rounded-full"></div>
@@ -255,97 +255,98 @@ export default function LandingPage() {
                     <p className="text-base text-gray-600">{t('calendarViewDescription')}</p>
                   </div>
                   
-                  {/* Calendar Preview - Static mockup matching dashboard */}
-                  <div className="mt-4 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
-                    <div className="p-4">
+                  {/* Calendar Preview - Static mockup matching dashboard exactly */}
+                  <div className="mt-4">
+                    <div className="p-4 bg-white rounded-xl shadow-sm mb-4">
                       {/* Header text */}
-                      <p className="text-sm text-gray-600 mb-4">
+                      <p className="text-sm text-gray-600 mb-2">
                         See all your bills on a monthly calendar to plan ahead and never miss a payment.
                       </p>
-                      
-                      {/* Month view */}
-                      <div className="mb-2">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center">
-                            <h3 className="text-lg font-semibold text-gray-800">
-                              April <span className="text-gray-500 font-normal">2025</span>
-                            </h3>
+                    </div>
+                    
+                    {/* Exact calendar mockup from screenshot */}
+                    <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <h3 className="text-lg font-medium">
+                            April <span className="text-gray-500 font-normal ml-1">2025</span>
+                          </h3>
+                        </div>
+                        
+                        <div className="flex space-x-1">
+                          <div className="rounded-full h-7 w-7 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center">
+                            <ChevronLeft className="h-4 w-4" />
                           </div>
-                          
-                          <div className="flex space-x-2">
-                            <div className="rounded-full h-8 w-8 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center">
-                              <ChevronLeft className="h-4 w-4" />
-                            </div>
-                            <div className="rounded-full h-8 w-8 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center">
-                              <ChevronRight className="h-4 w-4" />
-                            </div>
+                          <div className="rounded-full h-7 w-7 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center">
+                            <ChevronRight className="h-4 w-4" />
                           </div>
                         </div>
+                      </div>
 
-                        {/* Day headers */}
-                        <div className="grid grid-cols-7 text-center border-b border-gray-200 pb-2 mb-2">
-                          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-                            <div 
-                              key={`day-header-${index}`} 
-                              className="text-xs text-gray-500 font-medium py-2"
-                            >
-                              {day}
-                            </div>
-                          ))}
-                        </div>
+                      {/* Weekday headers */}
+                      <div className="grid grid-cols-7 text-center border-b border-gray-200 pb-2 mb-3">
+                        <div className="text-xs text-gray-500 font-medium">S</div>
+                        <div className="text-xs text-gray-500 font-medium">M</div>
+                        <div className="text-xs text-gray-500 font-medium">T</div>
+                        <div className="text-xs text-gray-500 font-medium">W</div>
+                        <div className="text-xs text-gray-500 font-medium">T</div>
+                        <div className="text-xs text-gray-500 font-medium">F</div>
+                        <div className="text-xs text-gray-500 font-medium">S</div>
+                      </div>
 
-                        {/* Calendar grid exact match to dashboard */}
-                        <div className="grid grid-cols-7 gap-x-0 gap-y-1">
-                          {/* First row: 1-7 */}
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">1</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">2</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">3</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">4</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">5</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">6</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">7</span></div>
-                          
-                          {/* Second row: 8-14 */}
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">8</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">9</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">10</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">11</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">12</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">13</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">14</span></div>
-                          
-                          {/* Third row: 15-21 with bill on 15 */}
-                          <div className="h-10 flex items-center justify-center relative">
+                      {/* Calendar grid - Fixed sizes to match screenshot */}
+                      <div className="grid grid-cols-7 gap-1">
+                        {/* Week 1 */}
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">1</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">2</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">3</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">4</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">5</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">6</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">7</span></div>
+                        
+                        {/* Week 2 */}
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">8</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">9</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">10</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">11</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">12</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">13</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">14</span></div>
+                        
+                        {/* Week 3 - with bill on 15 (today) */}
+                        <div className="h-8 flex items-center justify-center relative">
+                          <div className="flex items-center justify-center w-7 h-7 rounded-full border-2 border-primary">
                             <span className="text-sm font-bold text-primary">15</span>
-                            <div className="absolute bottom-0 right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                              <Home className="h-3 w-3 text-white" />
-                            </div>
                           </div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">16</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">17</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">18</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">19</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">20</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">21</span></div>
-                          
-                          {/* Fourth row: 22-28 with bill on 28 */}
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">22</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">23</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">24</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">25</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">26</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">27</span></div>
-                          <div className="h-10 flex items-center justify-center relative">
-                            <span className="text-sm">28</span>
-                            <div className="absolute bottom-0 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                              <Wifi className="h-3 w-3 text-white" />
-                            </div>
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center border border-white">
+                            <Home className="h-3 w-3 text-white" />
                           </div>
-                          
-                          {/* Fifth row: 29-30 */}
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">29</span></div>
-                          <div className="h-10 flex items-center justify-center"><span className="text-sm">30</span></div>
                         </div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">16</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">17</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">18</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">19</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">20</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">21</span></div>
+                        
+                        {/* Week 4 - with bill on 28 */}
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">22</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">23</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">24</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">25</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">26</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">27</span></div>
+                        <div className="h-8 flex items-center justify-center relative">
+                          <span className="text-sm">28</span>
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center border border-white">
+                            <Wifi className="h-3 w-3 text-white" />
+                          </div>
+                        </div>
+                        
+                        {/* Week 5 - partial */}
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">29</span></div>
+                        <div className="h-8 flex items-center justify-center"><span className="text-sm">30</span></div>
                       </div>
                     </div>
                   </div>
@@ -365,73 +366,80 @@ export default function LandingPage() {
                     <p className="text-base text-gray-600">{t('spendingAssistantDescription')}</p>
                   </div>
                   
-                  {/* Alice Preview - Static mockup matching dashboard */}
-                  <div className="mt-4 bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
-                    <div className="p-4">
-                      {/* Info text */}
-                      <p className="text-sm text-gray-600 mb-4">
+                  {/* Alice Preview - Split into two parts for better spacing */}
+                  <div className="mt-4">
+                    <div className="p-4 bg-white rounded-xl shadow-sm mb-4">
+                      {/* Info text exactly matching screenshot */}
+                      <p className="text-sm text-gray-600 mb-2">
                         Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.
                       </p>
-                      
-                      {/* Alice chat interface - static mockup */}
-                      <div className="w-full bg-blue-100 p-4 rounded-t-xl">
-                        <div className="flex items-center justify-between">
-                          {/* Logo and name */}
-                          <div className="flex items-center">
-                            <div className="h-10 w-10 bg-blue-500 mr-2 flex items-center justify-center" style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
-                              <span className="text-white font-bold text-lg">A</span>
-                            </div>
-                            <div>
-                              <span className="font-bold text-black text-xl">Alice</span>
-                              <span className="ml-1 text-xs text-gray-600">v1.0</span>
-                            </div>
+                    </div>
+                    
+                    {/* Alice chat interface - exact match to dashboard */}
+                    <div className="overflow-hidden bg-white rounded-xl shadow-sm">
+                      {/* Header - Blue with hexagonal logo */}
+                      <div className="bg-blue-100 p-4 flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="bg-blue-500 h-10 w-10 flex items-center justify-center mr-3" 
+                               style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                            <span className="text-white font-bold text-lg">A</span>
                           </div>
-                          
-                          {/* Balance */}
-                          <div className="bg-blue-200 py-1 px-4 rounded-full flex items-center">
-                            <DollarSign className="h-4 w-4 mr-1 text-blue-700" />
-                            <span className="text-blue-800 font-semibold">$800.00</span>
-                            <span className="ml-1 w-2 h-2 bg-green-400 rounded-full"></span>
+                          <div>
+                            <span className="font-bold text-xl">Alice</span>
+                            <span className="text-xs text-gray-600 ml-1">v1.0</span>
                           </div>
+                        </div>
+                        
+                        {/* Balance pill */}
+                        <div className="bg-blue-200 rounded-full px-4 py-1 flex items-center">
+                          <DollarSign className="h-4 w-4 mr-1 text-blue-700" />
+                          <span className="font-medium text-blue-800">$800.00</span>
+                          <span className="ml-1 h-2 w-2 bg-green-400 rounded-full"></span>
                         </div>
                       </div>
                       
-                      {/* Chat messages */}
-                      <div className="p-4 bg-white border-x border-gray-200">
-                        {/* Alice first message */}
-                        <div className="flex mb-4">
-                          <div className="h-8 w-8 bg-blue-500 mr-2 flex-shrink-0 flex items-center justify-center" style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                      {/* Chat area with exact message styling */}
+                      <div className="p-3 bg-white">
+                        {/* Alice's greeting message */}
+                        <div className="mb-3 flex items-start">
+                          <div className="bg-blue-500 h-8 w-8 mr-2 flex-shrink-0 flex items-center justify-center"
+                               style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
                             <span className="text-white font-bold text-sm">A</span>
                           </div>
-                          <div className="bg-gray-100 p-3 rounded-xl">
+                          <div className="bg-gray-100 p-3 rounded-xl max-w-xs">
                             <p className="text-gray-800">Hello! I'm Alice. Ask me what you can spend.</p>
                           </div>
                         </div>
                         
-                        {/* User message */}
-                        <div className="flex justify-end mb-4">
-                          <div className="bg-blue-600 p-3 rounded-xl">
+                        {/* User's question in blue */}
+                        <div className="mb-3 flex justify-end">
+                          <div className="bg-blue-600 p-3 rounded-xl max-w-xs">
                             <p className="text-white">Can I spend $75 on dining out this month?</p>
                           </div>
                         </div>
                         
-                        {/* Alice response */}
-                        <div className="flex mb-4">
-                          <div className="h-8 w-8 bg-blue-500 mr-2 flex-shrink-0 flex items-center justify-center" style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
+                        {/* Alice's response */}
+                        <div className="mb-3 flex items-start">
+                          <div className="bg-blue-500 h-8 w-8 mr-2 flex-shrink-0 flex items-center justify-center"
+                               style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
                             <span className="text-white font-bold text-sm">A</span>
                           </div>
-                          <div className="bg-gray-100 p-3 rounded-xl">
-                            <p className="text-gray-800">Yes, you can spend $75 on dining. Your balance after this purchase will be $725, which is enough to cover your upcoming bills.</p>
+                          <div className="bg-gray-100 p-3 rounded-xl max-w-xs">
+                            <p className="text-gray-800">
+                              Yes, you can spend $75 on dining. Your balance after this purchase will be $725, which is enough to cover your upcoming bills.
+                            </p>
                           </div>
                         </div>
                       </div>
                       
-                      {/* Input area */}
-                      <div className="border border-gray-200 p-2 rounded-b-xl flex">
-                        <div className="flex-1 bg-gray-50 px-3 py-2 text-gray-500 rounded-md">
+                      {/* Input area with rounded blue button */}
+                      <div className="border-t border-gray-200 p-2 flex items-center">
+                        <div className="flex-1 px-3 py-2 text-gray-500">
                           Ask Alice...
                         </div>
-                        <div className="ml-2 bg-blue-600 text-white px-4 py-2 rounded-md">Send</div>
+                        <div className="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium">
+                          Send
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -442,10 +450,10 @@ export default function LandingPage() {
         </div>
       </div>
       
-      {/* Dashboard Preview Section */}
-      <div className="py-12 bg-gradient-to-b from-white to-gray-50">
+      {/* Dashboard Preview Section with improved spacing */}
+      <div className="py-16 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
               Track Your Finances with Elegance
             </h2>
@@ -580,10 +588,10 @@ export default function LandingPage() {
         </div>
       </div>
       
-      {/* Footer - Enhanced Design */}
-      <footer className="bg-gradient-to-b from-white to-gray-50 border-t border-gray-100 mt-auto py-16">
+      {/* Footer - Improved spacing */}
+      <footer className="bg-gradient-to-b from-white to-gray-50 border-t border-gray-100 mt-auto py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center mb-6">
                 <PulseLogo size="md" />
