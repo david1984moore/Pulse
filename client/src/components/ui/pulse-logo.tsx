@@ -75,30 +75,13 @@ export function PulseLogo({
       </div>
       
       {showText && (
-        <div className="relative inline-block">
-          {/* Stronger text shadow effect for better visibility */}
-          <span 
-            className={cn(
-              "absolute pulse-text select-none text-black blur-[1px] opacity-15 transform scale-101 -translate-y-[1px] translate-x-[1px]", 
-              textSizeClasses[size],
-              textClassName
-            )}
-            aria-hidden="true"
-          >
-            <span>p</span><span>u</span><span>l</span><span>s</span><span>e</span>
-          </span>
-
-          {/* Main text with strong, visible color */}
-          <span 
-            className={cn(
-              "pulse-text relative select-none text-primary-foreground font-bold", 
-              textSizeClasses[size],
-              textClassName
-            )}
-          >
-            <span>p</span><span>u</span><span>l</span><span>s</span><span>e</span>
-          </span>
-        </div>
+        <span className={cn(
+          "pulse-text text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary/95 to-primary/80 tracking-tight letter-spacing-tighter drop-shadow-sm", 
+          textSizeClasses[size],
+          textClassName
+        )}>
+          pulse
+        </span>
       )}
     </div>
   );
@@ -121,7 +104,7 @@ export function PulseIcon({ className }: { className?: string }) {
         
         <svg 
           viewBox="0 0 24 24" 
-          className="w-full h-full text-white relative z-10 animate-subtle-pulse"
+          className="w-full h-full text-white relative z-10"
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* Subtle glow effect under the main path */}
