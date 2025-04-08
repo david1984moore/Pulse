@@ -264,27 +264,28 @@ export default function LandingPage() {
                       </p>
                     </div>
                     
-                    {/* Exact calendar mockup from screenshot */}
-                    <div className="bg-white rounded-xl shadow-sm overflow-hidden p-4">
-                      <div className="flex items-center justify-between mb-4">
+                    {/* Pure 1:1 calendar mockup from screenshot */}
+                    <div className="bg-white px-3 py-5 rounded-xl">
+                      {/* April 2025 header */}
+                      <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center">
-                          <h3 className="text-lg font-medium">
-                            April <span className="text-gray-500 font-normal ml-1">2025</span>
+                          <h3 className="text-base font-medium">
+                            April <span className="text-gray-500 font-normal">2025</span>
                           </h3>
                         </div>
                         
-                        <div className="flex space-x-1">
-                          <div className="rounded-full h-7 w-7 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center">
+                        <div className="flex space-x-2">
+                          <div className="rounded-full h-7 w-7 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center cursor-default">
                             <ChevronLeft className="h-4 w-4" />
                           </div>
-                          <div className="rounded-full h-7 w-7 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center">
+                          <div className="rounded-full h-7 w-7 bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center cursor-default">
                             <ChevronRight className="h-4 w-4" />
                           </div>
                         </div>
                       </div>
 
                       {/* Weekday headers */}
-                      <div className="grid grid-cols-7 text-center border-b border-gray-200 pb-2 mb-3">
+                      <div className="grid grid-cols-7 text-center border-b border-gray-200 pb-2">
                         <div className="text-xs text-gray-500 font-medium">S</div>
                         <div className="text-xs text-gray-500 font-medium">M</div>
                         <div className="text-xs text-gray-500 font-medium">T</div>
@@ -294,59 +295,59 @@ export default function LandingPage() {
                         <div className="text-xs text-gray-500 font-medium">S</div>
                       </div>
 
-                      {/* Calendar grid - Fixed sizes to match screenshot */}
-                      <div className="grid grid-cols-7 gap-1">
+                      {/* Calendar grid - Exact match to screenshot */}
+                      <div className="grid grid-cols-7 gap-1 pt-2">
                         {/* Week 1 */}
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">1</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">2</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">3</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">4</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">5</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">6</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">7</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">1</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">2</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">3</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">4</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">5</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">6</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">7</span></div>
                         
                         {/* Week 2 */}
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">8</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">9</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">10</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">11</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">12</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">13</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">14</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">8</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">9</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">10</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">11</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">12</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">13</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">14</span></div>
                         
-                        {/* Week 3 - with bill on 15 (today) */}
-                        <div className="h-8 flex items-center justify-center relative">
-                          <div className="flex items-center justify-center w-7 h-7 rounded-full border-2 border-primary">
-                            <span className="text-sm font-bold text-primary">15</span>
+                        {/* Week 3 with bill on 15 */}
+                        <div className="w-10 h-9 flex items-center justify-center relative">
+                          <div className="bg-transparent w-7 h-7 rounded-full border-2 border-blue-500 flex items-center justify-center">
+                            <span className="text-sm font-semibold text-blue-500">15</span>
                           </div>
-                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center border border-white">
-                            <Home className="h-3 w-3 text-white" />
+                          <div className="absolute bottom-0 right-0 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                            <Home className="h-2.5 w-2.5 text-white" />
                           </div>
                         </div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">16</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">17</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">18</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">19</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">20</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">21</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">16</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">17</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">18</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">19</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">20</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">21</span></div>
                         
-                        {/* Week 4 - with bill on 28 */}
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">22</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">23</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">24</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">25</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">26</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">27</span></div>
-                        <div className="h-8 flex items-center justify-center relative">
+                        {/* Week 4 with bill on 28 */}
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">22</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">23</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">24</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">25</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">26</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">27</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center relative">
                           <span className="text-sm">28</span>
-                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center border border-white">
-                            <Wifi className="h-3 w-3 text-white" />
+                          <div className="absolute bottom-0 right-0 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                            <Wifi className="h-2.5 w-2.5 text-white" />
                           </div>
                         </div>
                         
                         {/* Week 5 - partial */}
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">29</span></div>
-                        <div className="h-8 flex items-center justify-center"><span className="text-sm">30</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">29</span></div>
+                        <div className="w-10 h-9 flex items-center justify-center"><span className="text-sm">30</span></div>
                       </div>
                     </div>
                   </div>
