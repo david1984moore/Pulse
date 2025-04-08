@@ -16,11 +16,11 @@ export function PulseLogo({
   showText = true,
   animated = true
 }: PulseLogoProps) {
-  // Size mappings
+  // Size mappings with slightly larger dimensions
   const sizeClasses = {
-    sm: 'h-6 w-6',
-    md: 'h-8 w-8',
-    lg: 'h-10 w-10'
+    sm: 'h-7 w-7',
+    md: 'h-9 w-9',
+    lg: 'h-11 w-11'
   };
 
   const textSizeClasses = {
@@ -30,10 +30,13 @@ export function PulseLogo({
   };
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn('flex items-center gap-2.5', className)}>
       <div className={cn('relative flex-shrink-0', sizeClasses[size])}>
-        {/* EKG Line in a circle */}
-        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-purple-600 shadow-md flex items-center justify-center p-1.5">
+        {/* Subtle outer glow */}
+        <div className="absolute inset-0 rounded-full bg-primary/20 blur-md transform scale-110" />
+        
+        {/* EKG Line in a circle with enhanced gradient */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary via-purple-600 to-violet-700 shadow-lg flex items-center justify-center p-1.5">
           <svg 
             viewBox="0 0 24 24" 
             className="w-full h-full text-white"
@@ -51,15 +54,18 @@ export function PulseLogo({
           </svg>
         </div>
         
-        {/* Subtle pulsing ring animation */}
+        {/* Enhanced pulsing ring animation */}
         {animated && (
-          <div className="absolute inset-0 rounded-full animate-ping-slow bg-primary/20" />
+          <>
+            <div className="absolute inset-0 rounded-full animate-ping-slow bg-primary/30" />
+            <div className="absolute inset-0 rounded-full animate-ping-slow bg-white/20 delay-150" />
+          </>
         )}
       </div>
       
       {showText && (
         <span className={cn(
-          "font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-600 tracking-tight", 
+          "font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-600 tracking-tight drop-shadow-sm", 
           textSizeClasses[size],
           textClassName
         )}>
@@ -70,25 +76,31 @@ export function PulseLogo({
   );
 }
 
-// Export a simple SVG version that can be used as an icon
+// Export an enhanced SVG version that can be used as an icon
 export function PulseIcon({ className }: { className?: string }) {
   return (
-    <div className={cn("rounded-full bg-gradient-to-r from-primary to-purple-600 p-1.5", className)}>
-      <svg 
-        viewBox="0 0 24 24" 
-        className="w-full h-full text-white"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path 
-          d="M2,12 L6,12 L8,8 L10,17 L12,10 L14,14 L16,7 L18,12 L22,12" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          className="pulse-line"
-        />
-      </svg>
+    <div className={cn("relative rounded-full shadow-lg", className)}>
+      {/* Subtle outer glow */}
+      <div className="absolute inset-0 rounded-full bg-primary/20 blur-md transform scale-110" />
+      
+      {/* Icon container with enhanced gradient */}
+      <div className="relative rounded-full bg-gradient-to-br from-primary via-purple-600 to-violet-700 p-1.5">
+        <svg 
+          viewBox="0 0 24 24" 
+          className="w-full h-full text-white"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M2,12 L6,12 L8,8 L10,17 L12,10 L14,14 L16,7 L18,12 L22,12" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            className="pulse-line"
+          />
+        </svg>
+      </div>
     </div>
   );
 }

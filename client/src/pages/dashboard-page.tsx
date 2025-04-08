@@ -100,30 +100,31 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-[#f8f7ff] to-[#f5f3ff]">
-      {/* Header - Refined modern design */}
-      <header className="backdrop-blur-md bg-white/80 sticky top-0 z-10 border-b border-gray-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-[#f8f7ff] to-[#f5f3ff]">
+      {/* Header - Enhanced modern design with glass effect */}
+      <header className="backdrop-blur-lg bg-white/70 sticky top-0 z-10 border-b border-gray-100 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-              <div className="mr-8 cursor-pointer">
+              <div className="mr-8 cursor-pointer relative group">
+                <div className="absolute inset-0 bg-primary/10 rounded-full filter blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <PulseLogo size="lg" animated={true} />
               </div>
             </Link>
-            <h1 className="text-lg font-medium text-gray-700">{t('dashboard')}</h1>
+            <h1 className="text-lg font-medium text-gray-700 glow-text">{t('dashboard')}</h1>
           </div>
           <div className="flex items-center space-x-4">
             <LanguageToggle />
-            <div className="bg-gray-50 border border-gray-100 px-4 py-1.5 rounded-full">
+            <div className="bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 px-4 py-1.5 rounded-full shadow-glow-sm">
               <span className="text-sm font-medium text-gray-700 flex items-center">
-                <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-ping-slow"></span>
                 {t('welcome')} {user?.name?.split(' ')[0]}
               </span>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="bg-white hover:bg-gray-50 border-gray-200 text-gray-700 rounded-full px-4"
+              className="bg-white/90 hover:bg-primary/5 border-primary/20 text-gray-700 hover:text-primary rounded-full px-4 shadow-glow-sm hover:shadow-glow-md transition-all duration-300"
               onClick={() => logoutMutation.mutate()}
               disabled={logoutMutation.isPending}
             >
@@ -139,38 +140,55 @@ export default function DashboardPage() {
 
       {/* Main Dashboard Content - Enhanced with card styling and spacing */}
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex-grow">
-        {/* Top balance summary - Sleek, premium design */}
-        <div className="mb-8 bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
-            <div className="flex items-center gap-6 w-full md:w-auto">
-              <div className="bg-gradient-to-br from-primary to-violet-700 p-5 rounded-xl shadow-sm flex-shrink-0">
-                <div className="text-3xl font-bold text-white">
-                  ${accountBalance?.accountBalance || '0.00'}
+        {/* Top balance summary - Enhanced premium design with glass effect */}
+        <div className="mb-8 bg-gradient-to-r from-white to-primary/5 backdrop-blur-md rounded-2xl shadow-md border border-primary/10 relative overflow-hidden">
+          {/* Animated background elements */}
+          <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/10 rounded-full opacity-60 animate-float-slow"></div>
+          <div className="absolute -left-10 -bottom-10 w-32 h-32 bg-primary/5 rounded-full opacity-40 animate-float delay-300"></div>
+          <div className="absolute left-1/3 top-0 w-16 h-16 bg-primary/5 rounded-full opacity-30 animate-float-slow delay-500"></div>
+          
+          {/* Shimmer effect overlay */}
+          <div className="absolute inset-0 animate-shimmer opacity-40 pointer-events-none"></div>
+          
+          <div className="p-6 relative">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
+              <div className="flex items-center gap-6 w-full md:w-auto">
+                <div className="bg-gradient-to-br from-primary to-violet-700 p-5 rounded-xl shadow-lg flex-shrink-0 relative group">
+                  {/* Inner glow effect */}
+                  <div className="absolute inset-0 bg-white/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  {/* Subtle outer glow */}
+                  <div className="absolute -inset-0.5 bg-white/20 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  {/* Balance display with enhanced text */}
+                  <div className="text-3xl font-bold text-white drop-shadow-md">
+                    ${accountBalance?.accountBalance || '0.00'}
+                  </div>
+                  <div className="text-sm text-white mt-1 opacity-90">{t('accountBalance')}</div>
                 </div>
-                <div className="text-sm text-white mt-1 opacity-90">{t('accountBalance')}</div>
+                <Button 
+                  onClick={() => setBalanceModalOpen(true)}
+                  className="bg-white/80 hover:bg-white text-primary border border-primary/20 hover:border-primary/40 shadow-glow-sm hover:shadow-glow-md font-medium transition-all duration-300 group"
+                  variant="outline"
+                >
+                  <span className="mr-1.5 group-hover:animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 20V10" />
+                      <path d="M18 14H6" />
+                    </svg>
+                  </span>
+                  {t('updateBalance')}
+                </Button>
               </div>
-              <Button 
-                onClick={() => setBalanceModalOpen(true)}
-                className="bg-white hover:bg-gray-50 text-primary border border-gray-200 hover:border-primary/20 shadow-sm font-medium transition-all duration-200"
-                variant="outline"
-              >
-                <span className="mr-1.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20V10" />
-                    <path d="M18 14H6" />
-                  </svg>
-                </span>
-                {t('updateBalance')}
-              </Button>
-            </div>
-            <div className="flex gap-4 md:gap-6 w-full md:w-auto justify-center">
-              <div className="text-center px-6 py-3 rounded-xl border border-emerald-100 bg-emerald-50/50 flex-1 md:flex-initial">
-                <div className="text-2xl font-bold text-emerald-600">{income?.length || 0}</div>
-                <div className="text-xs font-medium text-emerald-700 mt-1 opacity-80">{t('yourIncome')}</div>
-              </div>
-              <div className="text-center px-6 py-3 rounded-xl border border-red-100 bg-red-50/50 flex-1 md:flex-initial">
-                <div className="text-2xl font-bold text-red-600">{bills?.length || 0}</div>
-                <div className="text-xs font-medium text-red-700 mt-1 opacity-80">{t('yourBills')}</div>
+              <div className="flex gap-4 md:gap-6 w-full md:w-auto justify-center">
+                <div className="text-center px-6 py-3 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white shadow-md flex-1 md:flex-initial transform hover:scale-105 transition-all duration-300 hover:shadow-glow-sm">
+                  <div className="text-2xl font-bold text-emerald-600">{income?.length || 0}</div>
+                  <div className="text-xs font-medium text-emerald-700 mt-1 opacity-80">{t('yourIncome')}</div>
+                </div>
+                <div className="text-center px-6 py-3 rounded-xl border border-red-200 bg-gradient-to-br from-red-50 to-white shadow-md flex-1 md:flex-initial transform hover:scale-105 transition-all duration-300 hover:shadow-glow-sm">
+                  <div className="text-2xl font-bold text-red-600">{bills?.length || 0}</div>
+                  <div className="text-xs font-medium text-red-700 mt-1 opacity-80">{t('yourBills')}</div>
+                </div>
               </div>
             </div>
           </div>
