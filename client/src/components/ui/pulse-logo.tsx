@@ -75,13 +75,30 @@ export function PulseLogo({
       </div>
       
       {showText && (
-        <span className={cn(
-          "pulse-text text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary/95 to-primary/80 tracking-tight letter-spacing-tighter drop-shadow-sm", 
-          textSizeClasses[size],
-          textClassName
-        )}>
-          pulse
-        </span>
+        <div className="relative inline-block">
+          {/* Subtle text outline effect for depth */}
+          <span 
+            className={cn(
+              "absolute pulse-text select-none text-transparent bg-clip-text bg-white/5 blur-[0.3px] transform scale-101 -translate-y-[0.5px] translate-x-[0.5px]", 
+              textSizeClasses[size],
+              textClassName
+            )}
+            aria-hidden="true"
+          >
+            <span>p</span><span>u</span><span>l</span><span>s</span><span>e</span>
+          </span>
+
+          {/* Main text with premium multi-directional gradient */}
+          <span 
+            className={cn(
+              "pulse-text relative select-none text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary/95 to-primary/85", 
+              textSizeClasses[size],
+              textClassName
+            )}
+          >
+            <span>p</span><span>u</span><span>l</span><span>s</span><span>e</span>
+          </span>
+        </div>
       )}
     </div>
   );
@@ -104,7 +121,7 @@ export function PulseIcon({ className }: { className?: string }) {
         
         <svg 
           viewBox="0 0 24 24" 
-          className="w-full h-full text-white relative z-10"
+          className="w-full h-full text-white relative z-10 animate-subtle-pulse"
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* Subtle glow effect under the main path */}
