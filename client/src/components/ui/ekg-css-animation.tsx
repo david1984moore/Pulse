@@ -113,26 +113,41 @@ export default function EkgCssAnimation({
           }}
         />
         
-        {/* Visible ECG line that will be drawn and erased */}
+        {/* Main visible ECG line */}
         <defs>
-          <linearGradient id={`eraser-gradient-${maskId}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={lineColor} />
-            <stop offset="0%" stopColor="transparent" stopOpacity="0">
-              {isAnimating && (
-                <animate 
-                  attributeName="offset" 
-                  values="0%;0%;100%" 
-                  keyTimes="0;0.7;1"
-                  dur="4.5s" 
-                  begin="0s"
+          <mask id={`mask-${maskId}`}>
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            
+            {/* Moving eraser circle that creates a black (cut-out) area */}
+            {isAnimating && (
+              <circle
+                cx="0" cy={baselineY} 
+                r={strokeWidth * 7} 
+                fill="black"
+                opacity="0"
+              >
+                <animateMotion
+                  dur="2s"
+                  path={ekgPath}
+                  begin="2.5s"
+                  repeatCount="1"
                   fill="freeze"
                 />
-              )}
-            </stop>
-          </linearGradient>
+                <animate 
+                  attributeName="opacity"
+                  values="0;1;1;0"
+                  keyTimes="0;0.1;0.9;1"
+                  dur="2s"
+                  begin="2.5s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+              </circle>
+            )}
+          </mask>
         </defs>
         
-        {/* This is the main ECG trace that will appear as dashed and will be drawn */}
+        {/* Main ECG trace that gets drawn and then masked (erased) */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -146,23 +161,9 @@ export default function EkgCssAnimation({
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
+            mask: `url(#mask-${maskId})`
           }}
         />
-        
-        {/* This is the mask layer that will erase the path */}
-        {isAnimating && (
-          <path
-            d={ekgPath}
-            fill="none"
-            stroke={`url(#eraser-gradient-${maskId})`}
-            strokeWidth={strokeWidth * 1.5} // Slightly wider to ensure full coverage
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{
-              opacity: 1,
-            }}
-          />
-        )}
         
         {/* Lead dot that draws the trace */}
         {isAnimating && (
