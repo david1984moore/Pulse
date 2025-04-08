@@ -24,14 +24,31 @@
   overflow: visible;
 }
 
-/* SVG animation keyframes - simplified for reliability */
+/* SVG animation keyframes with variable-speed follow-through */
 @keyframes ekg-dash {
   0% {
-    stroke-dashoffset: 1000;
-    opacity: 0.7;
+    stroke-dashoffset: 2000;
+    opacity: 0.5;
   }
   5% {
+    opacity: 0.8;
+  }
+  /* Start fast with a pulse of energy */
+  15% {
+    stroke-dashoffset: 1700;
+  }
+  /* Slow down for the main ECG event */
+  40% {
+    stroke-dashoffset: 1200;
     opacity: 1;
+  }
+  /* Speed back up as it transitions through the main spike */
+  65% {
+    stroke-dashoffset: 600;
+  }
+  /* Then gradually ease out with follow-through */
+  85% {
+    stroke-dashoffset: 200;
   }
   100% {
     stroke-dashoffset: 0;
@@ -42,20 +59,39 @@
 @keyframes ekg-dot {
   0% {
     opacity: 0;
-    transform: scale(0.7);
+    transform: scale(0);
   }
   5% {
-    opacity: 0.7;
+    opacity: 0.5;
     filter: drop-shadow(0 0 5px white);
+    transform: scale(0.8);
+  }
+  15% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px white);
     transform: scale(1);
   }
-  80% {
+  /* Brighten during the main spike */
+  50% {
     opacity: 1;
     filter: drop-shadow(0 0 12px white);
+    transform: scale(1.1);
+  }
+  /* Then subtle pulsing as it continues */
+  70% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 10px white);
+    transform: scale(0.95);
+  }
+  85% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px white);
+    transform: scale(1);
   }
   100% {
     opacity: 1;
     filter: drop-shadow(0 0 15px white);
+    transform: scale(0.9);
   }
 }
 

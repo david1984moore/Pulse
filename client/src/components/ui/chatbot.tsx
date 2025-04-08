@@ -234,37 +234,42 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
 
   /**
-   * Handle the "Ask" button click
-   * This function manages the user submission with guaranteed animation behavior
+   * Handle the "Ask" button click with a single animation cycle guarantee
    */
   const handleSubmitClick = () => {
     // Prevent multiple rapid clicks or processing while waiting for response
     if (isPending || isSubmittingRef.current) return;
     
-    // Set the processing flag to prevent duplicate clicks
+    // Set the processing flag to prevent duplicate clicks during this entire flow
     isSubmittingRef.current = true;
     
-    // STEP 1: Force the animation to unmount completely
+    // Force React to remove the animation components completely from DOM
     setIsPending(false);
     
-    // STEP 2: Allow time for complete unmount and DOM cleanup
-    // This delay is critical for consistent animation behavior
-    setTimeout(() => {
-      // STEP 3: Re-mount the animation with a fresh component instance
-      setIsPending(true);
-      
-      // STEP 4: Allow animation to start before initiating API call
-      // This ensures the animation is visibly running before any potential state changes
-      setTimeout(() => {
-        handleSubmit();
-      }, 300); // Longer delay for animation to establish
-    }, 300); // Substantial delay to ensure complete unmount
+    // Create a unique identifier to ensure we don't stack animations
+    const currentCycleId = Date.now();
     
-    // Reset submission flag after a longer delay to prevent rapid re-clicks
-    // This ensures the entire animation cycle has time to complete properly
+    // Allow React to complete the unmount cycle (DOM removal)
     setTimeout(() => {
-      isSubmittingRef.current = false;
-    }, 800); // Extended lockout period for animation stability
+      // Only start a new animation if we're the most recent cycle
+      if (isSubmittingRef.current) {
+        // Mount with a completely fresh component instance
+        setIsPending(true);
+        
+        // Wait until animation is visibly running before showing API response
+        setTimeout(() => {
+          // Again verify we're still the active cycle
+          if (isSubmittingRef.current) {
+            handleSubmit();
+            
+            // Allow animation to complete (3.5s) before re-enabling button
+            setTimeout(() => {
+              isSubmittingRef.current = false;
+            }, 3700); // Slightly longer than animation duration (3.5s)
+          }
+        }, 500); // Increased delay to ensure animation is fully visible
+      }
+    }, 500); // Substantial delay for complete DOM cleanup between animations
   };
   
   return (

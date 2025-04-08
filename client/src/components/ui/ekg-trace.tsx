@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './ekg-animation.css';
 
 interface EkgTraceProps {
@@ -10,7 +10,7 @@ interface EkgTraceProps {
 }
 
 /**
- * A completely reliable ECG trace animation with guaranteed 
+ * EKG trace with follow-through and guaranteed 
  * identical behavior on every activation
  */
 export default function EkgTrace({
@@ -20,36 +20,40 @@ export default function EkgTrace({
   lineColor = "#FFFFFF",
   strokeWidth = 3
 }: EkgTraceProps) {
-  // Using both a counter for remounting and a local active state
-  const [counter, setCounter] = useState(0);
-  const [isActive, setIsActive] = useState(false);
+  // Track mount state to prevent double animations
+  const [mounted, setMounted] = useState(false);
+  const animationCompletionRef = useRef(false);
   
-  // This effect ensures the animation completely restarts on every activation
+  // This ensures the animation runs exactly once per activation
   useEffect(() => {
-    // When the component becomes active
-    if (active) {
-      // First fully deactivate
-      setIsActive(false);
+    if (active && !mounted) {
+      // Mount the animation
+      setMounted(true);
+      animationCompletionRef.current = false;
       
-      // Using a longer delay for complete cleanup in the browser
-      const timer = setTimeout(() => {
-        // Force remount by incrementing counter
-        setCounter(prevCounter => prevCounter + 1);
-        // Then activate the animation
-        setIsActive(true);
-      }, 50);
+      // Set a timeout to prevent double animation cycles
+      // but don't unmount - we'll handle that in the deactivation flow
+      const completionTimer = setTimeout(() => {
+        animationCompletionRef.current = true;
+      }, 3500); // Match exactly with animation duration
       
-      return () => clearTimeout(timer);
-    } else {
-      // Simply deactivate when necessary
-      setIsActive(false);
+      return () => clearTimeout(completionTimer);
+    } else if (!active && mounted) {
+      // Complete unmount on deactivation with delay
+      // This ensures the animation has time to complete before unmounting
+      const unmountTimer = setTimeout(() => {
+        setMounted(false);
+      }, 100);
+      
+      return () => clearTimeout(unmountTimer);
     }
-  }, [active]);
+  }, [active, mounted]);
   
-  // The stationary component is rendered when inactive
-  if (!isActive) return null;
+  // Only render when mounted
+  if (!mounted) return null;
   
-  // The ECG path data - identical for all animations
+  // The ECG path with proper follow-through at the end
+  // Notice the smoother finish after the main QRS complex
   const ekgPath = `M 0,${height/2} 
     L 100,${height/2} 
     L 120,${height/2 - 5} 
@@ -60,17 +64,23 @@ export default function EkgTrace({
     L 220,${height/2 - 40} 
     L 240,${height/2 + 50} 
     L 260,${height/2} 
-    L 280,${height/2} 
+    L 280,${height/2 - 6} 
+    L 290,${height/2 + 8} 
     L 300,${height/2 - 10} 
     L 320,${height/2 + 10} 
-    L 340,${height/2} 
+    L 340,${height/2 - 4} 
+    L 360,${height/2 + 4} 
+    L 380,${height/2 - 2} 
+    L 400,${height/2 + 2} 
+    L 430,${height/2 - 1} 
+    L 450,${height/2 + 1} 
+    L 470,${height/2} 
     L 800,${height/2}`;
   
-  // Render a completely fresh instance of the animation with each counter change
   return (
     <div 
       className="ekg-svg-wrapper" 
-      key={`trace-${counter}`}
+      key={`trace-${active}-${Date.now()}`}
       data-active="true"
       style={{
         position: 'absolute',
@@ -80,7 +90,7 @@ export default function EkgTrace({
         height: '100%',
         zIndex: 5,
         pointerEvents: 'none',
-        overflow: 'visible'
+        overflow: 'hidden'
       }}
     >
       <svg 
@@ -90,19 +100,27 @@ export default function EkgTrace({
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="xMidYMid meet"
       >
+        {/* Create subtle grid background for medical feel */}
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)" />
+        
         {/* Shadow path with glow effect for depth */}
         <path
           d={ekgPath}
           fill="none"
-          stroke="rgba(255, 255, 255, 0.4)"
-          strokeWidth={strokeWidth + 4}
+          stroke="rgba(255, 255, 255, 0.3)"
+          strokeWidth={strokeWidth + 6}
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
-            strokeDasharray: 1000,
-            strokeDashoffset: 1000,
-            animation: 'ekg-dash 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-            filter: 'blur(8px)'
+            strokeDasharray: 2000,
+            strokeDashoffset: 2000,
+            animation: 'ekg-dash 3.5s cubic-bezier(0.25, 0, 0.3, 1) forwards',
+            filter: 'blur(10px)'
           }}
         />
         
@@ -115,9 +133,9 @@ export default function EkgTrace({
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
-            strokeDasharray: 1000,
-            strokeDashoffset: 1000,
-            animation: 'ekg-dash 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards'
+            strokeDasharray: 2000,
+            strokeDashoffset: 2000,
+            animation: 'ekg-dash 3.5s cubic-bezier(0.25, 0, 0.3, 1) forwards'
           }}
         />
         
@@ -127,17 +145,17 @@ export default function EkgTrace({
           fill="white"
           style={{
             filter: 'drop-shadow(0 0 8px white)',
-            animation: 'ekg-dot 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards'
+            animation: 'ekg-dot 3.5s cubic-bezier(0.25, 0, 0.3, 1) forwards'
           }}
         >
           {/* Motion path animation for the dot */}
           <animateMotion
             dur="3.5s"
             repeatCount="1"
-            keyTimes="0; 0.2; 0.4; 0.6; 0.8; 1"
-            keyPoints="0; 0.15; 0.35; 0.6; 0.85; 1"
+            keyPoints="0; 0.1; 0.25; 0.4; 0.6; 0.75; 0.9; 1"
+            keyTimes="0; 0.1; 0.25; 0.4; 0.6; 0.75; 0.9; 1"
             calcMode="spline"
-            keySplines="0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1"
+            keySplines="0.25 0 0.3 1; 0.25 0 0.3 1; 0.25 0 0.3 1; 0.25 0 0.3 1; 0.25 0 0.3 1; 0.25 0 0.3 1; 0.25 0 0.3 1"
             path={ekgPath}
           />
         </circle>
