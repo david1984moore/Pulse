@@ -203,10 +203,10 @@ export default function LandingPage() {
         </div>
       </div>
       
-      {/* Features section - Improved spacing and layout */}
+      {/* Features section - Completely restructured with proper card layout */}
       <div className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center mb-10">
+          <div className="lg:text-center mb-12">
             <h2 className="text-base text-primary font-semibold tracking-wide uppercase">{t('featuresTagline')}</h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
               {t('featuresTitle')}
@@ -216,94 +216,63 @@ export default function LandingPage() {
             </p>
           </div>
           
-          <div className="mt-12">
-            <div className="grid grid-cols-1 gap-8 md:gap-10 lg:grid-cols-3">
-              {/* Income Management Feature */}
-              <div className="relative">
-                <div className="absolute -left-4 -top-4 w-16 h-16 bg-primary/10 rounded-full"></div>
-                <div className="relative rounded-2xl border border-gray-100 bg-white shadow-lg p-6 overflow-hidden">
-                  <div className="absolute right-0 bottom-0 w-20 h-20 bg-primary/5 rounded-full -mr-10 -mb-10"></div>
-                  <div>
-                    <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary text-white mb-5">
-                      <CircleDollarSign className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t('incomeManagementTitle')}</h3>
-                    <p className="text-base text-gray-600">{t('incomeManagementDescription')}</p>
+          {/* Features grid - Redesigned to match screenshot exactly */}
+          <div className="mt-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Feature Card 1: Income Management */}
+              <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+                <div className="p-6">
+                  <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                    <CircleDollarSign className="h-6 w-6 text-blue-600" />
                   </div>
-                  <div className="mt-6 bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-100">
-                    <div className="flex justify-between items-center p-2 bg-gradient-to-r from-emerald-50 to-white rounded-lg border border-emerald-100">
-                      <span className="text-sm font-semibold text-gray-700 flex items-center">
-                        <span className="w-6 h-6 bg-emerald-500 rounded-full mr-2 flex items-center justify-center">
-                          <Check className="h-3 w-3 text-white" />
-                        </span>
-                        Income
-                      </span>
-                      <span className="text-sm font-bold text-emerald-600">+$2,400</span>
+                  <h3 className="text-lg font-bold mb-2">Income & Bill Management</h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Easily track your income sources and upcoming bills. Get a clear picture of your financial obligations.
+                  </p>
+                  
+                  {/* Income Pill from screenshot */}
+                  <div className="flex items-center bg-gray-50 rounded-full py-1 px-2 w-fit">
+                    <div className="w-4 h-4 bg-green-500 rounded-full mr-2 flex items-center justify-center">
+                      <Check className="h-2.5 w-2.5 text-white" />
                     </div>
+                    <span className="text-xs font-medium mr-2">Income</span>
+                    <span className="text-xs font-medium text-green-600">+$2,400</span>
                   </div>
                 </div>
               </div>
               
-              {/* Calendar View Feature */}
-              <div className="relative">
-                <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-50 rounded-full"></div>
-                <div className="relative rounded-2xl border border-gray-100 bg-white shadow-lg p-6 overflow-hidden">
-                  <div className="absolute left-0 bottom-0 w-20 h-20 bg-blue-50 rounded-full -ml-10 -mb-10"></div>
-                  <div>
-                    <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary text-white mb-5">
-                      <Calendar className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t('calendarViewTitle')}</h3>
-                    <p className="text-base text-gray-600">{t('calendarViewDescription')}</p>
+              {/* Feature Card 2: Calendar View */}
+              <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+                <div className="p-6">
+                  <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                    <Calendar className="h-6 w-6 text-blue-600" />
                   </div>
+                  <h3 className="text-lg font-bold mb-2">Calendar View</h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    See all your bills on a monthly calendar to plan ahead and never miss a payment.
+                  </p>
                   
-                  {/* Calendar Preview - Using dedicated mockup component */}
-                  <div className="mt-4">
-                    <div className="p-4 bg-white rounded-xl shadow-sm mb-4">
-                      {/* Header text exactly as in screenshot */}
-                      <p className="text-sm text-gray-600">
-                        See all your bills on a monthly calendar to plan ahead and never miss a payment.
-                      </p>
-                    </div>
-                    
-                    {/* Wrapper to size and center the calendar */}
-                    <div className="flex justify-center">
-                      <div className="max-w-[300px]">
-                        <CalendarMockup />
-                      </div>
-                    </div>
+                  {/* Calendar - Using CalendarMockup component */}
+                  <div className="mt-1">
+                    <CalendarMockup />
                   </div>
                 </div>
               </div>
               
-              {/* AI Assistant Feature */}
-              <div className="relative">
-                <div className="absolute -left-4 -top-4 w-16 h-16 bg-purple-50 rounded-full"></div>
-                <div className="relative rounded-2xl border border-gray-100 bg-white shadow-lg p-6 overflow-hidden">
-                  <div className="absolute right-0 bottom-0 w-20 h-20 bg-purple-50 rounded-full -mr-10 -mb-10"></div>
-                  <div>
-                    <div className="flex items-center justify-center w-12 h-12 rounded-md bg-primary text-white mb-5">
-                      <MessageSquare className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t('spendingAssistantTitle')}</h3>
-                    <p className="text-base text-gray-600">{t('spendingAssistantDescription')}</p>
+              {/* Feature Card 3: Alice */}
+              <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+                <div className="p-6">
+                  <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                    <MessageSquare className="h-6 w-6 text-blue-600" />
                   </div>
+                  <h3 className="text-lg font-bold mb-2">Alice</h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.
+                  </p>
                   
-                  {/* Alice Preview - Using dedicated mockup component */}
-                  <div className="mt-4">
-                    <div className="p-4 bg-white rounded-xl shadow-sm mb-4">
-                      {/* Info text exactly as in screenshot */}
-                      <p className="text-sm text-gray-600">
-                        Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.
-                      </p>
-                    </div>
-                    
-                    {/* Wrapper to size and center the Alice mockup */}
-                    <div className="flex justify-center">
-                      <div className="w-full max-w-[320px]">
-                        <AliceMockup />
-                      </div>
-                    </div>
+                  {/* Alice Chat - Using AliceMockup component */}
+                  <div className="mt-1">
+                    <AliceMockup />
                   </div>
                 </div>
               </div>
