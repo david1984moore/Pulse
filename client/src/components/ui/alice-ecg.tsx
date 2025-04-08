@@ -19,16 +19,18 @@ export default function AliceEcg({ active, color = "#FFFFFF" }: AliceEcgProps) {
   const height = 28;
   const centerY = height / 2;
   
-  // Mini version of the EKG path with smooth bezier curves
+  // Mini version of the classic ECG waveform path with proper P, QRS, and T waves
   const ekgPath = `
-    M 0,${centerY} 
-    H 15
-    C 20,${centerY} 25,${centerY-4} 30,${centerY}
-    C 35,${centerY+4} 40,${centerY-2} 45,${centerY}
-    C 50,${centerY+1} 55,${centerY-14} 60,${centerY+6}
-    C 65,${centerY-3} 70,${centerY+3} 75,${centerY}
-    C 80,${centerY-1} 85,${centerY+1} 90,${centerY}
-    H 100
+    M 0,${centerY}
+    H ${width * 0.15}
+    C ${width * 0.18},${centerY} ${width * 0.2},${centerY - height * 0.2} ${width * 0.25},${centerY}
+    H ${width * 0.35}
+    L ${width * 0.4},${centerY + height * 0.15}
+    L ${width * 0.45},${centerY - height * 0.5}
+    L ${width * 0.5},${centerY + height * 0.25}
+    H ${width * 0.6}
+    C ${width * 0.65},${centerY - height * 0.3} ${width * 0.7},${centerY - height * 0.3} ${width * 0.75},${centerY}
+    H ${width}
   `;
   
   // Animation loop for smooth control
