@@ -8,10 +8,6 @@ export default function AliceCssEcg({
   color = "#FFFFFF",
   active = false,
 }) {
-  // Create unique IDs for each component instance to prevent conflicts 
-  const maskId = `alice-ecg-mask-${Math.random().toString(36).substring(2, 9)}`;
-  const eraserId = `alice-eraser-${Math.random().toString(36).substring(2, 9)}`;
-  
   // Keep track if animation has started
   const [isAnimating, setIsAnimating] = useState(false);
   
@@ -91,76 +87,41 @@ export default function AliceCssEcg({
         viewBox={`0 0 ${width} ${height}`}
         className="transition-opacity duration-300"
       >
-        <defs>
-          {/* Define mask for the first half of the line drawing */}
-          <mask id={maskId}>
-            <rect x="0" y="0" width={width} height={height} fill="white" />
-            
-            {/* Black circle (in mask this means the area becomes transparent) that follows path */}
-            {isAnimating && (
-              <circle
-                r={4}
-                fill="black"
-              >
-                <animateMotion
-                  dur="1s"
-                  path={ekgPath}
-                  begin="0.7s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-              </circle>
-            )}
-          </mask>
-          
-          {/* Create a radial gradient for the eraser dot glow */}
-          <radialGradient id={eraserId} cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5">
-            <stop offset="0%" stopColor="white" stopOpacity="1" />
-            <stop offset="70%" stopColor="white" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="white" stopOpacity="0" />
-          </radialGradient>
-        </defs>
+        {/* Shadow path with glow effect */}
+        <path
+          d={ekgPath}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.3)"
+          strokeWidth={3}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            filter: 'blur(2px)',
+            opacity: isAnimating ? 0.3 : 0,
+            strokeDasharray: pathLength,
+            strokeDashoffset: isAnimating ? 0 : pathLength,
+            transition: isAnimating ? `stroke-dashoffset 1s linear, opacity 0.1s linear` : 'none'
+          }}
+        />
         
-        {/* SECTION 1: Initial line with mask applied - this gets "erased" */}
-        <g mask={`url(#${maskId})`}>
-          {/* Shadow path with glow effect */}
-          <path
-            d={ekgPath}
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.3)"
-            strokeWidth={3}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{
-              filter: 'blur(2px)',
-              opacity: isAnimating ? 0.3 : 0,
-              strokeDasharray: pathLength,
-              strokeDashoffset: isAnimating ? 0 : pathLength,
-              transition: isAnimating ? `stroke-dashoffset 1s linear, opacity 0.1s linear` : 'none'
-            }}
-          />
-          
-          {/* Main bright visible path */}
-          <path
-            ref={mainPathRef}
-            d={ekgPath}
-            fill="none"
-            stroke={color}
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{
-              strokeDasharray: pathLength,
-              strokeDashoffset: isAnimating ? 0 : pathLength,
-              transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
-              opacity: isAnimating ? 1 : 0
-            }}
-          />
-        </g>
+        {/* Main bright visible path */}
+        <path
+          ref={mainPathRef}
+          d={ekgPath}
+          fill="none"
+          stroke={color}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            strokeDasharray: pathLength,
+            strokeDashoffset: isAnimating ? 0 : pathLength,
+            transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
+            opacity: isAnimating ? 1 : 0
+          }}
+        />
         
-        {/* SECTION 2: Visible dots */}
-        
-        {/* Lead dot that draws the path - not masked */}
+        {/* Lead dot that draws the path */}
         {isAnimating && (
           <circle
             r={2.5}
@@ -194,19 +155,21 @@ export default function AliceCssEcg({
           </circle>
         )}
         
-        {/* Eraser dot that follows - same styling as lead dot */}
+        {/* Eraser dot - identical to the lead dot but with delayed start */}
         {isAnimating && (
           <circle
             r={2.5}
             fill="white"
             style={{
               filter: 'drop-shadow(0 0 3px white)',
+              position: 'relative' // Ensure proper positioning
             }}
+            opacity="0" // Start invisible
           >
             <animateMotion
               dur="1s"
               path={ekgPath}
-              begin="0.7s"
+              begin="0.7s" // Start when lead dot is almost done
               repeatCount="1"
               fill="freeze"
             />
@@ -223,32 +186,6 @@ export default function AliceCssEcg({
               attributeName="r"
               values="2.5;2.5;3.5;2.5"
               keyTimes="0;0.4;0.5;1"
-              dur="1s"
-              begin="0.7s"
-              repeatCount="1"
-              fill="freeze"
-            />
-          </circle>
-        )}
-        
-        {/* Softer glow around eraser for better erasing effect */}
-        {isAnimating && (
-          <circle
-            r={5}
-            fill={`url(#${eraserId})`}
-            opacity="0.5"
-          >
-            <animateMotion
-              dur="1s"
-              path={ekgPath}
-              begin="0.7s"
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate 
-              attributeName="opacity"
-              values="0;0.5;0.5;0"
-              keyTimes="0;0.1;0.9;1"
               dur="1s"
               begin="0.7s"
               repeatCount="1"
