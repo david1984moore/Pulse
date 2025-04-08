@@ -264,12 +264,12 @@ export default function Chatbot({ bills }: ChatbotProps) {
       // Animation runs independently from API response
       handleSubmit();
       
-      // Set a timer to end the animation after the main animation has completed
+      // Set a timer to end the animation right after it completes
       setTimeout(() => {
         setShowAnimation(false);
         setIsPending(false);
         isSubmittingRef.current = false;
-      }, 5500); // Slightly longer than the 5s animation to ensure completion
+      }, 3600); // Match the 3.5s animation duration plus a tiny buffer
     }, 50);
   };
   

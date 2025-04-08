@@ -88,9 +88,10 @@ export default function AliceCssEcg({
           strokeLinejoin="round"
           style={{
             filter: 'blur(2px)',
+            opacity: isAnimating ? 0.3 : 0,
             strokeDasharray: pathLength,
             strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 1.2s linear` : 'none'
+            transition: isAnimating ? `stroke-dashoffset 1s linear, opacity 0.1s linear` : 'none'
           }}
         />
         
@@ -106,7 +107,8 @@ export default function AliceCssEcg({
           style={{
             strokeDasharray: pathLength,
             strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 1.2s linear` : 'none'
+            transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
+            opacity: isAnimating ? 1 : 0
           }}
         />
         
@@ -120,7 +122,7 @@ export default function AliceCssEcg({
             }}
           >
             <animateMotion
-              dur="1.2s"
+              dur="1s"
               path={ekgPath}
               repeatCount="1"
               fill="freeze"
@@ -129,7 +131,7 @@ export default function AliceCssEcg({
               attributeName="opacity"
               values="0.8;0.8;1;0.8;0.8;0"
               keyTimes="0;0.4;0.5;0.6;0.99;1"
-              dur="1.2s"
+              dur="1s"
               repeatCount="1"
               fill="freeze"
             />
@@ -137,7 +139,7 @@ export default function AliceCssEcg({
               attributeName="r"
               values="2.5;2.5;3.5;2.5;2.5"
               keyTimes="0;0.4;0.5;0.6;1"
-              dur="1.2s"
+              dur="1s"
               repeatCount="1"
               fill="freeze"
             />

@@ -94,10 +94,10 @@ export default function EkgCssAnimation({
           strokeLinejoin="round"
           style={{
             filter: 'blur(8px)',
-            opacity: 0.7,
+            opacity: isAnimating ? 0.7 : 0,
             strokeDasharray: pathLength,
             strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 5s linear` : 'none'
+            transition: isAnimating ? `stroke-dashoffset 3.5s linear, opacity 0.1s linear` : 'none'
           }}
         />
         
@@ -113,7 +113,8 @@ export default function EkgCssAnimation({
           style={{
             strokeDasharray: pathLength,
             strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 5s linear` : 'none'
+            transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
+            opacity: isAnimating ? 1 : 0
           }}
         />
         
@@ -127,7 +128,7 @@ export default function EkgCssAnimation({
             }}
           >
             <animateMotion
-              dur="5s"
+              dur="3.5s"
               path={ekgPath}
               repeatCount="1"
               fill="freeze"
@@ -136,7 +137,7 @@ export default function EkgCssAnimation({
               attributeName="opacity"
               values="0.8;0.8;1;0.8;0.8;0"
               keyTimes="0;0.25;0.3;0.4;0.99;1"
-              dur="5s"
+              dur="3.5s"
               repeatCount="1"
               fill="freeze"
             />
@@ -144,7 +145,7 @@ export default function EkgCssAnimation({
               attributeName="r"
               values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2.5};${strokeWidth * 1.5};${strokeWidth * 1.5}`}
               keyTimes="0;0.25;0.3;0.4;1"
-              dur="5s"
+              dur="3.5s"
               repeatCount="1"
               fill="freeze"
             />
