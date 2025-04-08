@@ -99,25 +99,25 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#0e1e38] via-[#132e4e] to-[#0c1c34]">
-      {/* Header - Modernized with gradient and glass effect */}
-      <header className="backdrop-blur-md bg-background/10 sticky top-0 z-10 border-b border-white/10">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-black via-[#120B29] to-[#1B0B40]">
+      {/* Header - Modernized with sleek glass effect */}
+      <header className="backdrop-blur-lg bg-background/5 sticky top-0 z-10 border-b border-primary/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/">
-              <span className="text-white font-bold text-3xl mr-8 cursor-pointer glow-text bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">pulse</span>
+              <span className="font-bold text-3xl mr-8 cursor-pointer glow-text bg-gradient-to-r from-purple-500 to-violet-400 bg-clip-text text-transparent">pulse</span>
             </Link>
-            <h1 className="text-xl font-bold text-white/90">{t('dashboard')}</h1>
+            <h1 className="text-xl font-semibold text-white/90">{t('dashboard')}</h1>
           </div>
           <div className="flex items-center space-x-4">
             <LanguageToggle />
-            <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full shadow-glow-sm">
+            <div className="bg-primary/10 backdrop-blur-md px-4 py-2 rounded-lg shadow-glow-sm">
               <span className="text-sm font-medium text-white/90">{t('welcome')} {user?.name?.split(' ')[0]}</span>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="bg-white/10 hover:bg-primary/20 border-white/20 text-white"
+              className="bg-background/5 hover:bg-primary/20 border-primary/20 text-white"
               onClick={() => logoutMutation.mutate()}
               disabled={logoutMutation.isPending}
             >
@@ -133,11 +133,11 @@ export default function DashboardPage() {
 
       {/* Main Dashboard Content - Enhanced with card styling and spacing */}
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex-grow">
-        {/* Top balance summary - New widget at the top to highlight most important info */}
-        <div className="mb-8 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 backdrop-blur-md rounded-2xl shadow-glow-md p-6 border border-white/10">
+        {/* Top balance summary - Sleek modern widget */}
+        <div className="mb-8 bg-gradient-to-r from-primary/10 via-primary/15 to-primary/10 backdrop-blur-lg rounded-xl shadow-glow-sm p-6 border border-primary/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
             <div className="flex items-center gap-4">
-              <div className="bg-primary/30 p-4 rounded-xl shadow-glow-sm">
+              <div className="bg-gradient-to-br from-primary/30 to-primary/20 p-4 rounded-lg shadow-glow-sm">
                 <div className="text-3xl font-bold text-white glow-text">
                   ${accountBalance?.accountBalance || '0.00'}
                 </div>
@@ -145,19 +145,19 @@ export default function DashboardPage() {
               </div>
               <Button 
                 onClick={() => setBalanceModalOpen(true)}
-                className="ml-2 bg-white/10 hover:bg-white/20 text-white border border-white/10"
+                className="ml-2 bg-primary/20 hover:bg-primary/30 text-white border border-primary/30"
               >
                 {t('updateBalance')}
               </Button>
             </div>
             <div className="flex gap-4">
-              <div className="text-center bg-white/10 px-4 py-3 rounded-xl shadow-glow-sm backdrop-blur-sm">
+              <div className="text-center bg-background/20 px-4 py-3 rounded-lg shadow-glow-sm backdrop-blur-md border border-primary/10">
                 <div className="text-xl font-bold text-green-400">{income?.length || 0}</div>
-                <div className="text-xs text-white/70">{t('yourIncome')}</div>
+                <div className="text-xs text-white/80 mt-1">{t('yourIncome')}</div>
               </div>
-              <div className="text-center bg-white/10 px-4 py-3 rounded-xl shadow-glow-sm backdrop-blur-sm">
+              <div className="text-center bg-background/20 px-4 py-3 rounded-lg shadow-glow-sm backdrop-blur-md border border-primary/10">
                 <div className="text-xl font-bold text-red-400">{bills?.length || 0}</div>
-                <div className="text-xs text-white/70">{t('yourBills')}</div>
+                <div className="text-xs text-white/80 mt-1">{t('yourBills')}</div>
               </div>
             </div>
           </div>

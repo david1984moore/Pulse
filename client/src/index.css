@@ -4,66 +4,67 @@
  
 @layer base {
   :root {
-    /* Modern color scheme with a beautiful blue-cyan gradient theme */
-    --background: 210 50% 98%; /* Very light blue-gray background */
-    --foreground: 222 47% 11%;
+    /* Modern sleek light mode color scheme */
+    --background: 0 0% 100%; /* Pure white background */
+    --foreground: 224 71% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 224 71% 4%;
  
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 224 71% 4%;
  
-    --primary: 196 80% 45%; /* Vibrant cyan */
+    --primary: 259 94% 51%; /* Rich purple */
     --primary-foreground: 0 0% 100%;
  
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 224 71% 4%;
  
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 8% 46%;
  
-    --accent: 196 80% 45%; /* Matching accent color */
+    --accent: 262 83% 58%; /* Complementary purple accent */
     --accent-foreground: 0 0% 100%;
  
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 196 80% 45%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 259 94% 60%;
  
-    --radius: 0.75rem; /* Slightly larger corner radius for modern feel */
+    --radius: 0.75rem;
   }
  
   .dark {
-    --background: 220 60% 10%; /* Rich dark blue background */
-    --foreground: 213 31% 91%;
+    /* Modern sleek dark mode color scheme */
+    --background: 224 71% 4%; /* Nearly black, slightly blue background */
+    --foreground: 210 20% 98%;
  
-    --card: 215 45% 15%; /* Slightly lighter than background */
-    --card-foreground: 213 31% 91%;
+    --card: 224 71% 6%; /* Slightly lighter than background */
+    --card-foreground: 210 20% 98%;
  
-    --popover: 215 45% 15%;
-    --popover-foreground: 213 31% 91%;
+    --popover: 224 71% 6%;
+    --popover-foreground: 210 20% 98%;
  
-    --primary: 192 91% 55%; /* Vibrant cyan */
-    --primary-foreground: 220 60% 10%; /* Dark blue */
+    --primary: 259 94% 51%; /* Rich purple */
+    --primary-foreground: 210 20% 98%;
  
-    --secondary: 222 47% 11%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 215 27% 16%;
+    --secondary-foreground: 210 20% 98%;
  
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 215 27% 16%;
+    --muted-foreground: 217 10% 64%;
  
-    --accent: 196 80% 45%; /* Vibrant cyan accent */
-    --accent-foreground: 222 47% 11%;
+    --accent: 262 83% 58%; /* Complementary purple accent */
+    --accent-foreground: 210 20% 98%;
  
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 20% 98%;
  
-    --border: 216 34% 20%;
-    --input: 216 34% 20%;
-    --ring: 196 80% 45%;
+    --border: 215 27% 14%;
+    --input: 215 27% 14%;
+    --ring: 259 94% 60%;
   }
 }
  
@@ -78,16 +79,16 @@
 
 /* Add glow effect to primary text elements */
 .glow-text {
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  text-shadow: 0 0 10px rgba(133, 56, 255, 0.5);
 }
 
 /* Shadow for buttons and cards with subtle glow */
 .shadow-glow-sm {
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+  box-shadow: 0 0 10px rgba(133, 56, 255, 0.15);
 }
 
 .shadow-glow-md {
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+  box-shadow: 0 0 15px rgba(133, 56, 255, 0.2);
 }
 
 /* Add subtle background blur to certain elements */
