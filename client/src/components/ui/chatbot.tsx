@@ -555,32 +555,14 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   onClick={handleSubmitClick}
                   disabled={isCustomAmount ? !customAmount : !selectedAmount}
                   className={`
-                    w-full sm:w-auto bg-gradient-to-br from-primary-600 via-primary-500 to-primary-600 
-                    hover:from-primary-500 hover:via-primary-400 hover:to-primary-500 
-                    text-white font-semibold relative overflow-hidden transition-all duration-200
-                    shadow-[0_4px_20px_rgba(59,130,246,0.5)] hover:shadow-[0_6px_25px_rgba(59,130,246,0.7)]
-                    rounded-lg py-3.5 px-7 border border-primary-300/50 animated-glow text-lg
-                    transform hover:scale-105 hover:-translate-y-0.5
+                    w-full sm:w-auto bg-primary-600
+                    text-white font-bold relative 
+                    shadow-lg
+                    rounded-lg py-3.5 px-7 border-2 border-primary-400
                     ${isCustomAmount && !customAmount || !isCustomAmount && !selectedAmount ? 'opacity-50' : 'opacity-100'}
                   `}
                 >
-                  <span className="absolute inset-0 rounded-lg overflow-hidden">
-                    <span className="absolute inset-0 rounded-lg opacity-30"
-                          style={{
-                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)'
-                          }} />
-                  </span>
-                  
-                  <div className="absolute inset-0 overflow-hidden opacity-40">
-                    <div className="absolute inset-0" 
-                         style={{ 
-                           backgroundImage: `radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 20%, transparent 50%)`,
-                           backgroundSize: '100% 100%'
-                         }}>
-                    </div>
-                  </div>
-                
-                  <div className="flex items-center justify-center group relative z-10">
+                  <div className="flex items-center justify-center relative z-10">
                     {/* Pulse line icon instead of paper airplane */}
                     <svg
                       viewBox="0 0 24 24"
