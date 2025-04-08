@@ -18,6 +18,9 @@ export default function EkgCssAnimation({
   const [isAnimating, setIsAnimating] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   
+  // Generate unique mask ID to prevent conflicts with multiple animations
+  const maskId = useRef(`trace-mask-${Math.random().toString(36).substr(2, 9)}`).current;
+  
   // Calculate baseline Y position (horizontal line)
   const baselineY = height / 2;
   
@@ -110,7 +113,39 @@ export default function EkgCssAnimation({
           }}
         />
         
-        {/* Main ECG trace */}
+        {/* Main ECG trace - this will be drawn and erased */}
+        <defs>
+          <mask id={maskId}>
+            <rect width="100%" height="100%" fill="white" />
+            {isAnimating && (
+              <circle
+                r={strokeWidth * 6}
+                fill="black"
+                style={{
+                  filter: 'blur(2px)',
+                }}
+              >
+                <animateMotion
+                  dur="3.5s"
+                  path={ekgPath}
+                  begin="2.5s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+                <animate 
+                  attributeName="r"
+                  values={`${strokeWidth * 6};${strokeWidth * 7};${strokeWidth * 8}`}
+                  keyTimes="0;0.5;1"
+                  dur="3.5s"
+                  begin="2.5s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+              </circle>
+            )}
+          </mask>
+        </defs>
+        
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -123,7 +158,8 @@ export default function EkgCssAnimation({
             strokeDasharray: pathLength,
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
-            opacity: isAnimating ? 1 : 0
+            opacity: isAnimating ? 1 : 0,
+            mask: `url(#${maskId})`
           }}
         />
         

@@ -11,6 +11,9 @@ export default function AliceCssEcg({
   // Keep track if animation has started
   const [isAnimating, setIsAnimating] = useState(false);
   
+  // Generate unique mask ID to prevent conflicts with multiple animations
+  const maskId = useRef(`alice-mask-${Math.random().toString(36).substr(2, 9)}`).current;
+  
   // Scale the animation to fit in the header area
   const width = 100;
   const height = 28;
@@ -104,7 +107,39 @@ export default function AliceCssEcg({
           }}
         />
         
-        {/* Main bright visible path */}
+        {/* Main bright visible path with mask for erasing effect */}
+        <defs>
+          <mask id={maskId}>
+            <rect width="100%" height="100%" fill="white" />
+            {isAnimating && (
+              <circle
+                r={4}
+                fill="black"
+                style={{
+                  filter: 'blur(2px)',
+                }}
+              >
+                <animateMotion
+                  dur="1s"
+                  path={ekgPath}
+                  begin="0.7s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+                <animate 
+                  attributeName="r"
+                  values="4;5;6"
+                  keyTimes="0;0.5;1"
+                  dur="1s"
+                  begin="0.7s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+              </circle>
+            )}
+          </mask>
+        </defs>
+        
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -117,7 +152,8 @@ export default function AliceCssEcg({
             strokeDasharray: pathLength,
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
-            opacity: isAnimating ? 1 : 0
+            opacity: isAnimating ? 1 : 0,
+            mask: `url(#${maskId})`
           }}
         />
         
