@@ -23,14 +23,15 @@ export function PulseLogo({
     lg: 'h-12 w-12'
   };
 
+  // Modernized text sizing for a more startup-like appearance
   const textSizeClasses = {
     sm: 'text-lg',
-    md: 'text-xl',
-    lg: 'text-2xl'
+    md: 'text-2xl',
+    lg: 'text-3xl'
   };
 
   return (
-    <div className={cn('flex items-center gap-2.5', className)}>
+    <div className={cn('flex items-center gap-3', className)}>
       {/* Static Logo Circle */}
       <div className={cn('relative flex-shrink-0', sizeClasses[size])}>
         {/* Subtle glow effect */}
@@ -56,17 +57,13 @@ export function PulseLogo({
       </div>
       
       {showText && (
-        <div className="flex flex-col">
-          <span className={cn(
-            "font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-primary/80 tracking-tight", 
-            textSizeClasses[size],
-            textClassName
-          )}>
-            pulse
-          </span>
-          {/* Add a subtle line under the text */}
-          <div className="h-0.5 w-3/4 bg-gradient-to-r from-primary/80 to-transparent rounded-full mt-0.5"></div>
-        </div>
+        <span className={cn(
+          "pulse-text text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/90 tracking-tight letter-spacing-tighter", 
+          textSizeClasses[size],
+          textClassName
+        )}>
+          pulse
+        </span>
       )}
     </div>
   );
