@@ -161,18 +161,21 @@ export default function EkgCssAnimation({
           </circle>
         )}
         
-        {/* Eraser dot - identical to the lead dot but with delayed start */}
+        {/* Special eraser circle that follows the line and erases it */}
         {isAnimating && (
           <circle
-            r={strokeWidth * 1.5}
-            fill="white"
+            r={strokeWidth * 4}
+            fill="none"
+            stroke="white"
+            strokeWidth={strokeWidth * 6}
             style={{
-              filter: `drop-shadow(0 0 ${strokeWidth * 2}px ${lineColor})`,
-              position: 'relative' // Ensure proper positioning
+              filter: 'blur(2px)',
+              mixBlendMode: 'difference',
+              position: 'relative'
             }}
             opacity="0" // Start invisible
           >
-            {/* Start this dot when the first one is almost done */}
+            {/* Start this eraser when the first dot is almost done */}
             <animateMotion
               dur="3.5s"
               path={ekgPath}
@@ -182,10 +185,41 @@ export default function EkgCssAnimation({
             />
             <animate 
               attributeName="opacity"
-              values="0;0.9;0.9;0"
+              values="0;0.95;0.95;0"
               keyTimes="0;0.1;0.9;1"
               dur="3.5s"
               begin="2.5s"
+              repeatCount="1"
+              fill="freeze"
+            />
+          </circle>
+        )}
+        
+        {/* Identical lead dot that follows after the eraser to "draw" the path again */}
+        {isAnimating && (
+          <circle
+            r={strokeWidth * 1.5}
+            fill="white"
+            style={{
+              filter: `drop-shadow(0 0 ${strokeWidth * 2}px ${lineColor})`,
+              position: 'relative'
+            }}
+            opacity="0" // Start invisible
+          >
+            {/* Start this dot after the eraser */}
+            <animateMotion
+              dur="3.5s"
+              path={ekgPath}
+              begin="2.6s" // Slightly after eraser
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate 
+              attributeName="opacity"
+              values="0;0.9;0.9;0"
+              keyTimes="0;0.1;0.9;1"
+              dur="3.5s"
+              begin="2.6s"
               repeatCount="1"
               fill="freeze"
             />
@@ -194,7 +228,7 @@ export default function EkgCssAnimation({
               values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2};${strokeWidth * 1.5}`}
               keyTimes="0;0.4;0.5;1"
               dur="3.5s"
-              begin="2.5s"
+              begin="2.6s"
               repeatCount="1"
               fill="freeze"
             />
