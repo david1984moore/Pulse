@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { CircleDollarSign, Calendar, MessageSquare, Menu, X } from "lucide-react";
+import { CircleDollarSign, Calendar, MessageSquare, Menu, X, Check, SendHorizontal } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
 import LanguageToggle from "@/components/ui/language-toggle";
@@ -169,11 +169,10 @@ export default function LandingPage() {
             
             <h1 className="text-4xl font-extrabold text-gray-800 sm:text-5xl lg:text-6xl mb-8 leading-tight">
               {t('heroTitle')}
-              <span className="text-primary">.</span>
             </h1>
             
             <p className="max-w-3xl text-lg text-gray-600 leading-relaxed">
-              {t('heroDescription')}
+              Track your money, manage bills, and know exactly what you can spend with Alice - your personal financial assistant.
             </p>
             
             {/* Enhanced CTA buttons with subtle animation */}
@@ -228,98 +227,256 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-medium mb-6">
-              {t('featuresTitle')}
+              Powerful Features
             </div>
             <h2 className="text-3xl font-extrabold text-gray-800 sm:text-4xl lg:text-5xl tracking-tight">
-              {t('featuresTagline')}
-              <span className="text-primary">.</span>
+              Everything you need for financial clarity
             </h2>
             <p className="mt-6 text-lg text-gray-600 leading-relaxed">
-              {t('featuresDescription')}
+              Our intuitive tools give you the full picture of your finances, helping you make smarter decisions about your money.
             </p>
           </div>
 
-          <div className="mt-20">
-            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-              {/* Income Management Card */}
-              <div className="group transform hover:-translate-y-2 transition-all duration-300">
-                <div className="flex flex-col h-full bg-white rounded-xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100">
-                  <div className="p-8 flex-grow">
-                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-xl flex items-center justify-center mb-6 shadow-md">
-                      <CircleDollarSign className="h-7 w-7 text-white" />
+          {/* Dashboard Preview Section */}
+          <div className="mt-24 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
+              <div className="p-8 lg:p-12">
+                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-sm font-medium mb-6">
+                  Real-time Dashboard
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-6">See your complete financial picture at a glance</h3>
+                <p className="text-gray-600 mb-8">Get an instant overview of your balance, upcoming bills, and spending insights, all in one beautifully designed dashboard.</p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-emerald-500" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">{t('incomeManagementTitle')}</h3>
-                    <p className="text-gray-600">{t('incomeManagementDescription')}</p>
+                    <p className="ml-3 text-gray-600">Interactive balance tracker with spending history</p>
                   </div>
-                  {/* Decorative pattern bottom */}
-                  <div className="h-2 w-full bg-gradient-to-r from-emerald-400 to-emerald-500"></div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-emerald-500" />
+                    </div>
+                    <p className="ml-3 text-gray-600">Visual payment calendar for due dates</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-emerald-500" />
+                    </div>
+                    <p className="ml-3 text-gray-600">Income and bills management with simple controls</p>
+                  </div>
                 </div>
               </div>
-
-              {/* Calendar View Card */}
-              <div className="group transform hover:-translate-y-2 transition-all duration-300">
-                <div className="flex flex-col h-full bg-white rounded-xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100">
-                  <div className="p-8 flex-grow">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center mb-6 shadow-md">
-                      <Calendar className="h-7 w-7 text-white" />
+              <div className="relative h-96 lg:h-auto overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+                {/* Dashboard mockup */}
+                <div className="relative h-full w-full overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200">
+                  {/* Header */}
+                  <div className="bg-white border-b border-gray-100 p-4 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <div className="h-8 w-8 rounded-full bg-primary mr-3 flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">DM</span>
+                      </div>
+                      <span className="font-medium text-gray-700">David Moore</span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">{t('calendarViewTitle')}</h3>
-                    <p className="text-gray-600">{t('calendarViewDescription')}</p>
-                  </div>
-                  {/* Decorative pattern bottom */}
-                  <div className="h-2 w-full bg-gradient-to-r from-blue-400 to-blue-500"></div>
-                </div>
-              </div>
-
-              {/* Spending Assistant Card */}
-              <div className="group transform hover:-translate-y-2 transition-all duration-300">
-                <div className="flex flex-col h-full bg-white rounded-xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100">
-                  <div className="p-8 flex-grow">
-                    <div className="w-14 h-14 bg-gradient-to-br from-primary to-violet-500 rounded-xl flex items-center justify-center mb-6 shadow-md">
-                      <MessageSquare className="h-7 w-7 text-white" />
+                    <div className="flex items-center space-x-2">
+                      <div className="text-xl font-bold text-primary">$400</div>
+                      <span className="text-gray-500 text-sm">Available</span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">{t('spendingAssistantTitle')}</h3>
-                    <p className="text-gray-600">{t('spendingAssistantDescription')}</p>
                   </div>
-                  {/* Decorative pattern bottom */}
-                  <div className="h-2 w-full bg-gradient-to-r from-primary to-violet-500"></div>
+                  {/* Main content */}
+                  <div className="grid grid-cols-2 gap-4 p-4">
+                    <div className="col-span-2 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-4">
+                      <h4 className="text-lg font-medium text-gray-800 mb-2">Income & Bills</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600 text-sm">Monthly Income</span>
+                            <span className="text-primary font-medium">$2,400</span>
+                          </div>
+                        </div>
+                        <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600 text-sm">Bills Due</span>
+                            <span className="text-rose-500 font-medium">$1,100</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Upcoming Bills</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 text-xs">Rent</span>
+                          <span className="text-gray-800 text-sm font-medium">$800</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 text-xs">Internet</span>
+                          <span className="text-gray-800 text-sm font-medium">$60</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Recent Income</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 text-xs">Amazon</span>
+                          <span className="text-emerald-500 text-sm font-medium">$1,200</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600 text-xs">Freelance</span>
+                          <span className="text-emerald-500 text-sm font-medium">$350</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            
-            {/* Feature Callout */}
-            <div className="mt-20 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-8 lg:p-12 flex flex-col justify-center">
-                  <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-medium mb-6">
-                    AI Powered
+          </div>
+          
+          {/* Calendar Feature */}
+          <div className="mt-24 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
+              <div className="relative h-96 lg:h-auto overflow-hidden bg-gradient-to-bl from-blue-50 to-gray-50 p-8 order-2 lg:order-1">
+                {/* Calendar mockup */}
+                <div className="relative h-full w-full overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200">
+                  <div className="bg-white border-b border-gray-100 p-4">
+                    <h4 className="text-lg font-medium text-gray-800">Payment Calendar</h4>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-6">Get smarter financial insights with our AI assistant</h3>
-                  <p className="text-gray-600 mb-8">Our AI assistant helps you make informed spending decisions based on your financial situation, upcoming bills, and spending patterns.</p>
-                  <div>
-                    <Link href="/signup">
-                      <Button className="bg-primary hover:bg-primary/90 text-white shadow-md hover:shadow-xl rounded-lg transform hover:-translate-y-0.5 transition-all">
-                        Try Now
-                      </Button>
-                    </Link>
+                  <div className="p-4">
+                    <div className="grid grid-cols-7 gap-1 text-center">
+                      {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                        <div key={i} className="text-xs font-medium text-gray-500 py-1">{day}</div>
+                      ))}
+                      {Array.from({ length: 31 }, (_, i) => {
+                        const isHighlighted = i === 4 || i === 14 || i === 25;
+                        return (
+                          <div 
+                            key={i} 
+                            className={`text-xs rounded-full w-8 h-8 mx-auto flex items-center justify-center ${
+                              isHighlighted 
+                                ? 'bg-primary text-white font-medium' 
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                          >
+                            {i + 1}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="mt-4 space-y-2">
+                      <div className="flex items-center p-2 bg-gray-50 rounded-lg">
+                        <div className="h-3 w-3 rounded-full bg-primary mr-2"></div>
+                        <span className="text-xs text-gray-600">Phone Bill - $45 (5th)</span>
+                      </div>
+                      <div className="flex items-center p-2 bg-gray-50 rounded-lg">
+                        <div className="h-3 w-3 rounded-full bg-primary mr-2"></div>
+                        <span className="text-xs text-gray-600">Rent - $800 (15th)</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-primary/5 to-blue-50 p-8 flex items-center justify-center">
-                  <div className="w-full max-w-md h-64 relative">
-                    {/* Simulated Chat UI */}
-                    <div className="absolute inset-0 rounded-xl bg-white shadow-md flex flex-col overflow-hidden border border-gray-100">
-                      <div className="p-4 bg-primary text-white flex items-center">
-                        <span className="h-3 w-3 bg-white rounded-full mr-2"></span>
-                        <span className="text-sm font-medium">Alice</span>
-                      </div>
-                      <div className="flex-1 p-4 flex flex-col space-y-3">
-                        <div className="bg-gray-100 rounded-lg p-3 text-sm text-gray-700 self-start max-w-xs">
-                          Can I spend $50 on dinner tonight?
-                        </div>
-                        <div className="bg-primary/10 rounded-lg p-3 text-sm text-gray-800 self-end max-w-xs">
-                          Yes, you can spend $50. Your balance will be $350. Your next bill is in 5 days.
-                        </div>
-                      </div>
+              </div>
+              <div className="p-8 lg:p-12 order-1 lg:order-2">
+                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium mb-6">
+                  Visual Calendar
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-6">Never miss a payment date again</h3>
+                <p className="text-gray-600 mb-8">Our intuitive calendar view shows all your upcoming bills, helping you plan ahead and avoid late fees.</p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-blue-500" />
+                    </div>
+                    <p className="ml-3 text-gray-600">Color-coded dates for easy identification</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-blue-500" />
+                    </div>
+                    <p className="ml-3 text-gray-600">Automatic bill reminders before due dates</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-blue-500" />
+                    </div>
+                    <p className="ml-3 text-gray-600">Month-at-a-glance view of your financial obligations</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* AI Assistant Feature */}
+          <div className="mt-24 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
+              <div className="p-8 lg:p-12">
+                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-medium mb-6">
+                  AI Assistant
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-6">Meet Alice, your personal financial advisor</h3>
+                <p className="text-gray-600 mb-8">Ask Alice about your spending, get instant insights, and make smarter financial decisions with AI-powered guidance.</p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-primary" />
+                    </div>
+                    <p className="ml-3 text-gray-600">Real-time spending recommendations based on your budget</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-primary" />
+                    </div>
+                    <p className="ml-3 text-gray-600">Natural language queries about your financial status</p>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-5 w-5 text-primary" />
+                    </div>
+                    <p className="ml-3 text-gray-600">Intelligent forecasting to help you plan ahead</p>
+                  </div>
+                </div>
+                
+                <div className="mt-8">
+                  <Link href="/signup">
+                    <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl rounded-lg transform hover:-translate-y-0.5 transition-all">
+                      Try Alice Now →
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              <div className="relative h-96 lg:h-auto overflow-hidden bg-gradient-to-br from-violet-50 to-primary/5 p-8">
+                {/* AI Assistant mockup */}
+                <div className="relative h-full w-full overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200">
+                  <div className="p-4 bg-primary text-white flex items-center">
+                    <span className="h-3 w-3 bg-white rounded-full mr-2"></span>
+                    <span className="text-sm font-medium">Alice</span>
+                  </div>
+                  <div className="h-full p-4 flex flex-col space-y-3 overflow-y-auto">
+                    <div className="bg-gray-100 rounded-lg p-3 text-sm text-gray-700 self-start max-w-xs">
+                      Can I spend $50 on dinner tonight?
+                    </div>
+                    <div className="bg-primary/10 rounded-lg p-3 text-sm text-gray-800 self-end max-w-xs">
+                      Yes, you can spend $50 on dinner. Your balance will be $350 after this purchase. Your next bill is due in 5 days.
+                    </div>
+                    <div className="bg-gray-100 rounded-lg p-3 text-sm text-gray-700 self-start max-w-xs">
+                      How much did I spend on groceries this month?
+                    </div>
+                    <div className="bg-primary/10 rounded-lg p-3 text-sm text-gray-800 self-end max-w-xs">
+                      You've spent $320 on groceries this month, which is about 15% of your monthly income.
+                    </div>
+                    <div className="mt-auto p-3 border-t border-gray-100 flex items-center">
+                      <input 
+                        type="text" 
+                        placeholder="Ask Alice about your finances..." 
+                        className="flex-1 text-sm bg-gray-50 rounded-lg px-3 py-2 border border-gray-200 focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <button className="ml-2 bg-primary text-white rounded-lg p-2">
+                        <SendHorizontal className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
