@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import AliceEcg from "./alice-ecg";
-import SimpleEkg from "./simple-ekg";
+// Use new CSS-based ECG animation components
+import AliceCssEcg from "./alice-css-ecg";
+import EkgCssAnimation from "./ekg-css-animation";
 import {
   Select,
   SelectContent,
@@ -274,9 +275,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
       {/* Full width ECG animation with forced unique instance per animation cycle */}
       {isPending && (
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
-          <SimpleEkg 
+          <EkgCssAnimation 
             key={`ekg-fullwidth-${animationKey}`}
-            active={isPending} 
             lineColor="rgba(255, 255, 255, 0.9)"
             width={600} 
             height={300}
@@ -299,7 +299,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   </div>
                   
                   {/* Sexy ECG heartbeat animation next to Alice's name - also with unique key */}
-                  <AliceEcg key={`alice-ecg-${animationKey}`} active={isPending} color="#FFFFFF" />
+                  <AliceCssEcg key={`alice-ecg-${animationKey}`} color="#FFFFFF" />
                 </div>
               </div>
             </div>
