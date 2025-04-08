@@ -23,11 +23,11 @@ export function PulseLogo({
     lg: 'h-12 w-12'
   };
 
-  // Modernized text sizing for a more startup-like appearance
+  // Bold, impactful text sizing for a premium startup appearance
   const textSizeClasses = {
-    sm: 'text-lg',
-    md: 'text-2xl',
-    lg: 'text-3xl'
+    sm: 'text-xl',
+    md: 'text-3xl',
+    lg: 'text-4xl'
   };
 
   return (
@@ -75,13 +75,25 @@ export function PulseLogo({
       </div>
       
       {showText && (
-        <span className={cn(
-          "pulse-text text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary/95 to-primary/80 tracking-tight letter-spacing-tighter drop-shadow-sm", 
-          textSizeClasses[size],
-          textClassName
-        )}>
-          pulse
-        </span>
+        <div className="relative">
+          {/* Subtle backdrop blur for depth behind text */}
+          <div className="absolute inset-0 blur-[2px] opacity-10 bg-primary/30 rounded-md transform scale-110" />
+          
+          {/* Main pulse text with enhanced premium gradient */}
+          <span className={cn(
+            "pulse-text relative text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-600 to-primary/90", 
+            textSizeClasses[size],
+            textClassName
+          )}>
+            pulse
+          </span>
+          
+          {/* Subtle tech accent mark - small "datapoint" inspired element */}
+          <div className="absolute bottom-1 right-0 transform translate-y-1 flex items-center gap-0.5">
+            <span className="w-1 h-1 rounded-full bg-purple-600"></span>
+            <span className="w-0.5 h-3 rounded-full bg-gradient-to-b from-purple-500 to-primary/60"></span>
+          </div>
+        </div>
       )}
     </div>
   );
