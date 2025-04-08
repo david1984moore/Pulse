@@ -244,26 +244,27 @@ export default function Chatbot({ bills }: ChatbotProps) {
     // Set the processing flag to prevent duplicate clicks
     isSubmittingRef.current = true;
     
-    // Force animation to reset completely before starting
+    // Reset animation state completely
     setIsPending(false);
     
-    // Properly sequence the animation start with a longer delay
-    // This ensures the component has time to unmount/remount properly
+    // Use a more substantial delay to ensure complete unmounting
+    // This is crucial for the animation to properly reset
     setTimeout(() => {
-      // Start animation first
+      // Start animation first with fresh mount
       setIsPending(true);
       
       // Then submit API request after animation has started
-      // This small delay ensures the animation is visible
+      // This longer delay ensures the animation is properly initialized
       setTimeout(() => {
         handleSubmit();
-      }, 100);
-    }, 100);
+      }, 200);
+    }, 200);
     
-    // Reset submission flag after a delay to prevent double-clicks
+    // Reset submission flag after a longer delay to prevent double-clicks
+    // and ensure animation has time to properly complete its mounting cycle
     setTimeout(() => {
       isSubmittingRef.current = false;
-    }, 350);
+    }, 500);
   };
   
   return (

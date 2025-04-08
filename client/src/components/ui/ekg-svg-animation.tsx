@@ -18,12 +18,17 @@ export default function EkgSvgAnimation({
 }: EkgSvgAnimationProps) {
   const [key, setKey] = useState(0); // Used to force re-render and restart animation
   
-  // Reset the animation when active state changes
+  // Reset the animation completely when active state changes
   useEffect(() => {
-    if (active) {
-      // Force re-render to restart animation
+    // Using a very short timeout to ensure complete clean restart
+    const timer = setTimeout(() => {
+      // This increments the key which forces React to remount the component
+      // Each increment creates a fresh instance of the SVG with new animations
       setKey(prevKey => prevKey + 1);
-    }
+    }, 50);
+    
+    // Clean up timer on unmount
+    return () => clearTimeout(timer);
   }, [active]);
 
   if (!active) return null;
