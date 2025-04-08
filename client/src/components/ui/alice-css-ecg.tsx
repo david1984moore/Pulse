@@ -107,41 +107,7 @@ export default function AliceCssEcg({
           }}
         />
         
-        {/* Main visible ECG line */}
-        <defs>
-          <mask id={`mask-${maskId}`}>
-            <rect x="0" y="0" width="100%" height="100%" fill="white" />
-            
-            {/* Moving eraser circle that creates a black (cut-out) area */}
-            {isAnimating && (
-              <circle
-                cx="0" cy={centerY} 
-                r={7} 
-                fill="black"
-                opacity="0"
-              >
-                <animateMotion
-                  dur="0.5s"
-                  path={ekgPath}
-                  begin="0.7s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-                <animate 
-                  attributeName="opacity"
-                  values="0;1;1;0"
-                  keyTimes="0;0.1;0.9;1"
-                  dur="0.5s"
-                  begin="0.7s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-              </circle>
-            )}
-          </mask>
-        </defs>
-        
-        {/* Main ECG trace that gets drawn and then masked (erased) */}
+        {/* THIS IS A DIRECT APPROACH: The main ECG line draws normally */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -155,9 +121,27 @@ export default function AliceCssEcg({
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
-            mask: `url(#mask-${maskId})`
           }}
         />
+        
+        {/* White overlay path that follows to erase the trace */}
+        {isAnimating && (
+          <path
+            d={ekgPath}
+            fill="none"
+            stroke="white"
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray={pathLength}
+            strokeDashoffset={pathLength}
+            style={{
+              transition: isAnimating ? `stroke-dashoffset 0.5s linear` : 'none',
+              transitionDelay: '0.7s',
+              opacity: 1
+            }}
+          />
+        )}
         
         {/* Lead dot that draws the path */}
         {isAnimating && (

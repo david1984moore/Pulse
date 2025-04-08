@@ -113,41 +113,7 @@ export default function EkgCssAnimation({
           }}
         />
         
-        {/* Main visible ECG line */}
-        <defs>
-          <mask id={`mask-${maskId}`}>
-            <rect x="0" y="0" width="100%" height="100%" fill="white" />
-            
-            {/* Moving eraser circle that creates a black (cut-out) area */}
-            {isAnimating && (
-              <circle
-                cx="0" cy={baselineY} 
-                r={strokeWidth * 7} 
-                fill="black"
-                opacity="0"
-              >
-                <animateMotion
-                  dur="2s"
-                  path={ekgPath}
-                  begin="2.5s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-                <animate 
-                  attributeName="opacity"
-                  values="0;1;1;0"
-                  keyTimes="0;0.1;0.9;1"
-                  dur="2s"
-                  begin="2.5s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-              </circle>
-            )}
-          </mask>
-        </defs>
-        
-        {/* Main ECG trace that gets drawn and then masked (erased) */}
+        {/* THIS IS A DIRECT APPROACH: The main ECG line draws normally */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -161,9 +127,27 @@ export default function EkgCssAnimation({
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
-            mask: `url(#mask-${maskId})`
           }}
         />
+        
+        {/* White overlay path that follows the eraser with thick white stroke to actually erase the trace */}
+        {isAnimating && (
+          <path
+            d={ekgPath}
+            fill="none"
+            stroke="white"
+            strokeWidth={strokeWidth * 2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray={pathLength}
+            strokeDashoffset={pathLength}
+            style={{
+              transition: isAnimating ? `stroke-dashoffset 2s linear` : 'none',
+              transitionDelay: '2.5s',
+              opacity: 1
+            }}
+          />
+        )}
         
         {/* Lead dot that draws the trace */}
         {isAnimating && (
