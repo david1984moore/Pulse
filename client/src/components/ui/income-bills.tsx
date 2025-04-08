@@ -251,11 +251,11 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-gradient-to-r from-red-50 to-white hover:shadow-md h-8 px-4 rounded-full shadow-sm border border-red-100 text-gray-700 transition-all duration-200 group"
+              className="bg-gradient-to-r from-primary/10 to-white hover:shadow-md h-8 px-4 rounded-full shadow-sm border border-primary/20 text-gray-700 transition-all duration-200 group"
               size="sm"
               variant="outline"
             >
-              <span className="w-5 h-5 bg-red-500 text-white rounded-full mr-2 flex items-center justify-center shadow-sm">
+              <span className="w-5 h-5 bg-primary text-white rounded-full mr-2 flex items-center justify-center shadow-sm">
                 <Plus className="h-3 w-3" />
               </span>
               <span className="text-xs font-medium">{t('addBill')}</span>
@@ -267,7 +267,7 @@ export default function IncomeBills({
                 <li 
                   key={bill.id} 
                   className="relative flex justify-between items-center bg-gradient-to-r from-white to-gray-50 border border-gray-100 rounded-xl 
-                             overflow-hidden shadow-sm hover:shadow-lg hover:border-red-100 cursor-pointer
+                             overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/30 cursor-pointer
                              transition-all duration-300 group"
                   onClick={() => {
                     setSelectedBill(bill);
@@ -275,16 +275,28 @@ export default function IncomeBills({
                   }}
                 >
                   {/* Background decoration */}
-                  <div className="absolute right-0 top-0 w-20 h-20 bg-red-50 rounded-full -mr-10 -mt-10 opacity-30"></div>
+                  <div className="absolute right-0 top-0 w-20 h-20 bg-primary/10 rounded-full -mr-10 -mt-10 opacity-30"></div>
                   
                   {/* Colored side indicator */}
-                  <div className="w-2 self-stretch bg-gradient-to-b from-red-400 to-red-500"></div>
+                  <div className="w-2 self-stretch bg-gradient-to-b from-primary to-primary/80"></div>
                   
                   <div className="flex-1 flex p-4 z-10">
                     <div className="flex items-center">
                       {/* Removed the box around the icon and made the icon more visible */}
                       <div className="w-10 h-10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                        <div className="w-9 h-9 rounded-full bg-red-500 flex items-center justify-center shadow-md">
+                        <div className={`
+                          w-9 h-9 rounded-full flex items-center justify-center shadow-md
+                          ${bill.name === 'Rent' ? 'bg-gray-600' : 
+                            bill.name === 'Electric' ? 'bg-yellow-500' : 
+                            bill.name === 'Water' ? 'bg-blue-500' : 
+                            bill.name === 'Internet' ? 'bg-blue-400' : 
+                            bill.name === 'Phone Service' ? 'bg-slate-500' : 
+                            bill.name === 'Car Payment' ? 'bg-gray-600' :
+                            bill.name === 'Credit Card' ? 'bg-purple-500' :
+                            bill.name === 'Insurance' ? 'bg-indigo-500' :
+                            bill.name === 'Groceries' ? 'bg-green-500' :
+                            'bg-primary'}
+                        `}>
                           {/* Increased icon size and adjusted margins */}
                           <span className="text-white">{getBillIcon(bill.name)}</span>
                         </div>
@@ -292,14 +304,14 @@ export default function IncomeBills({
                       <div>
                         <p className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">{translateBillName(bill.name)}</p>
                         <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                          {t('dueOnThe')} <span className="font-bold text-red-500">{bill.due_date}<sup>{getOrdinalSuffix(bill.due_date)}</sup></span>
+                          {t('dueOnThe')} <span className="font-bold text-primary">{bill.due_date}<sup>{getOrdinalSuffix(bill.due_date)}</sup></span>
                         </p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-center z-10 pr-3">
-                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-50 to-white text-red-600 mr-3 border border-red-100 shadow-md">
+                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-primary/10 to-white text-primary mr-3 border border-primary/20 shadow-md">
                       <p className="text-sm font-bold">
                         -${Number(bill.amount).toFixed(2)}
                       </p>
@@ -307,7 +319,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-9 w-9 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors rounded-full opacity-0 group-hover:opacity-100 shadow-sm"
+                      className="h-9 w-9 text-gray-400 hover:text-primary hover:bg-primary/10 transition-colors rounded-full opacity-0 group-hover:opacity-100 shadow-sm"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick
                         onDeleteBill(bill.id);
@@ -320,14 +332,14 @@ export default function IncomeBills({
               ))}
             </ul>
           ) : (
-            <div className="p-8 bg-gradient-to-br from-white to-gray-50 rounded-xl text-center border border-dashed border-red-100 relative overflow-hidden">
+            <div className="p-8 bg-gradient-to-br from-white to-gray-50 rounded-xl text-center border border-dashed border-primary/20 relative overflow-hidden">
               <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -right-10 -top-10 w-40 h-40 bg-red-50 rounded-full opacity-30"></div>
-                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-red-50 rounded-full opacity-30"></div>
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary/10 rounded-full opacity-30"></div>
+                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-primary/10 rounded-full opacity-30"></div>
               </div>
               
               <div className="relative z-10">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500 flex items-center justify-center shadow-md">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary flex items-center justify-center shadow-md">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
                     <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
@@ -336,10 +348,10 @@ export default function IncomeBills({
                 <p className="text-sm text-gray-600 mb-5">{t('noBillsAddedYet')}</p>
                 <Button
                   onClick={onAddBill}
-                  className="mt-3 bg-gradient-to-r from-red-50 to-white text-gray-700 border border-red-100 hover:shadow-md rounded-full text-xs px-5 py-2.5 shadow-sm transition-all"
+                  className="mt-3 bg-gradient-to-r from-primary/10 to-white text-gray-700 border border-primary/20 hover:shadow-md rounded-full text-xs px-5 py-2.5 shadow-sm transition-all"
                   variant="outline"
                 >
-                  <span className="w-5 h-5 bg-red-500 text-white rounded-full mr-2 flex items-center justify-center shadow-sm">
+                  <span className="w-5 h-5 bg-primary text-white rounded-full mr-2 flex items-center justify-center shadow-sm">
                     <Plus className="h-3 w-3" />
                   </span>
                   <span className="font-medium">{t('addBill')}</span>
@@ -415,7 +427,7 @@ export default function IncomeBills({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-9 w-9 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors rounded-full opacity-0 group-hover:opacity-100 shadow-sm"
+                      className="h-9 w-9 text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 transition-colors rounded-full opacity-0 group-hover:opacity-100 shadow-sm"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick
                         onDeleteIncome(inc.id);
