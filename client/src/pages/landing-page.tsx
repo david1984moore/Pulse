@@ -151,7 +151,7 @@ export default function LandingPage() {
             <div className="mb-3">
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary-600 text-sm font-medium">
                 <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
-                Pulse Finance
+                Pulse
               </div>
             </div>
             
@@ -300,7 +300,7 @@ export default function LandingPage() {
                     <div className="absolute inset-0 rounded-xl bg-white shadow-md flex flex-col overflow-hidden border border-gray-100">
                       <div className="p-4 bg-primary text-white flex items-center">
                         <span className="h-3 w-3 bg-white rounded-full mr-2"></span>
-                        <span className="text-sm font-medium">Alice Assistant</span>
+                        <span className="text-sm font-medium">Alice</span>
                       </div>
                       <div className="flex-1 p-4 flex flex-col space-y-3">
                         <div className="bg-gray-100 rounded-lg p-3 text-sm text-gray-700 self-start max-w-xs">
@@ -319,13 +319,54 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Footer - Clean and Minimal */}
-      <footer className="bg-white border-t border-gray-100 mt-auto py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-          <div className="flex items-center mb-4">
-            <PulseLogo size="md" />
+      {/* Footer - Enhanced Design */}
+      <footer className="bg-gradient-to-b from-white to-gray-50 border-t border-gray-100 mt-auto py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center mb-6">
+                <PulseLogo size="md" />
+              </div>
+              <p className="text-gray-600 mb-6 max-w-md">
+                Your personal finance tracker with intelligent insights. Manage your money smarter.
+              </p>
+              <p className="text-gray-500 text-sm">{t('copyright')}</p>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-800 mb-4">Quick Links</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link href="/dashboard">
+                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">Dashboard</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/login">
+                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">Login</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/signup">
+                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">Sign Up</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-800 mb-4">Features</h3>
+              <ul className="space-y-3">
+                <li>
+                  <span className="text-gray-600">Income Tracking</span>
+                </li>
+                <li>
+                  <span className="text-gray-600">Bill Management</span>
+                </li>
+                <li>
+                  <span className="text-gray-600">AI Spending Assistant</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <p className="text-gray-500 text-sm">{t('copyright')}</p>
         </div>
       </footer>
     </div>
