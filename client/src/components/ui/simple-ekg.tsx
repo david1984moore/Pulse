@@ -74,8 +74,8 @@ export default function SimpleEkg({
     // Calculate elapsed time
     const elapsed = timestamp - startTimeRef.current;
     
-    // Define animation duration (3.5 seconds total)
-    const duration = 3500;
+    // Define animation duration (4.5 seconds to ensure full visibility)
+    const duration = 4500;
     
     // Calculate animation progress (0 to 1)
     const progress = Math.min(elapsed / duration, 1);
@@ -83,26 +83,9 @@ export default function SimpleEkg({
     // Get the total path length
     const pathLength = pathRef.current.getTotalLength();
     
-    // Use variable speeds for different parts of the ECG trace
-    // Make the QRS complex faster and the rest slower for realism
-    let adjustedProgress;
-    
-    if (progress < 0.25) {
-      // Initial segment and P wave (slower)
-      adjustedProgress = progress * 0.8;
-    } else if (progress < 0.4) {
-      // QRS complex (faster)
-      adjustedProgress = 0.2 + (progress - 0.25) * 1.6;
-    } else if (progress < 0.7) {
-      // T wave and recovery (medium)
-      adjustedProgress = 0.44 + (progress - 0.4) * 0.9;
-    } else {
-      // Final segment (slower fadeout)
-      adjustedProgress = 0.71 + (progress - 0.7) * 0.7;
-    }
-    
-    // Ensure we don't exceed 1
-    adjustedProgress = Math.min(adjustedProgress, 1);
+    // Use linear progression to ensure complete drawing of the trace
+    // This makes sure we see the full ECG pattern without any cuts
+    const adjustedProgress = progress;
     
     // Set the stroke dash offset to create drawing effect
     pathRef.current.style.strokeDasharray = `${pathLength}`;

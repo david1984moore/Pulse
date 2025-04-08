@@ -234,27 +234,31 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
 
   /**
-   * Simple, reliable handler for the Ask button
+   * Guaranteed reliable handler for the Ask button that ensures animation completes
    */
   const handleSubmitClick = () => {
-    // Prevent rapid double-clicks
+    // Prevent clicks while already processing
     if (isPending || isSubmittingRef.current) return;
     
-    // Lock the button
+    // First, explicitly make sure animation is OFF
+    setIsPending(false);
     isSubmittingRef.current = true;
     
-    // Start the animation immediately
-    setIsPending(true);
-    
-    // Submit the API call with a slight delay to allow animation to start
+    // Force React to re-render and clear any existing animation
     setTimeout(() => {
-      handleSubmit();
+      // Then trigger a fresh animation with a new component instance
+      setIsPending(true);
       
-      // Reset the lock after the animation duration plus a small buffer
+      // Wait for animation to be fully visible before sending API request
       setTimeout(() => {
-        isSubmittingRef.current = false;
-      }, 3000);
-    }, 100);
+        handleSubmit();
+        
+        // Keep animation running for full duration to ensure complete trace (matching our 4.5s duration)
+        setTimeout(() => {
+          isSubmittingRef.current = false;
+        }, 4700); // Slightly longer than animation duration for safety
+      }, 150);
+    }, 50);
   };
   
   return (
