@@ -161,7 +161,7 @@ export default function IncomeBills({
         income={selectedIncome}
       />
       
-      <Card className="h-full backdrop-blur-lg bg-white/70 shadow-md border border-primary/10 overflow-hidden rounded-xl">
+      <Card className="h-full bg-white shadow-sm border border-gray-100 overflow-hidden rounded-2xl">
         <CardContent className="space-y-6 pt-6">
         {/* Recent Deductions section */}
         {balanceData?.deductedBills && balanceData.deductedBills.length > 0 && (
@@ -237,11 +237,14 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddBill}
-              className="bg-primary hover:bg-primary/90 h-8 px-3 rounded-lg shadow-sm text-white transition-all duration-200 group"
+              className="bg-white hover:bg-gray-50 h-8 px-3 rounded-full shadow-sm border border-gray-200 text-gray-700 transition-all duration-200 group"
               size="sm"
+              variant="outline"
             >
-              <Plus className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform" />
-              <span className="text-xs">{t('addBill')}</span>
+              <span className="w-4 h-4 bg-red-500 text-white rounded-full mr-1.5 flex items-center justify-center">
+                <Plus className="h-3 w-3" />
+              </span>
+              <span className="text-xs font-medium">{t('addBill')}</span>
             </Button>
           </div>
           {bills.length > 0 ? (
@@ -306,10 +309,13 @@ export default function IncomeBills({
               <p className="text-sm text-gray-600">{t('noBillsAddedYet')}</p>
               <Button
                 onClick={onAddBill}
-                className="mt-3 bg-primary text-white rounded-lg text-xs px-3 py-1.5 shadow-sm"
+                className="mt-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 rounded-full text-xs px-4 py-2 shadow-sm"
+                variant="outline"
               >
-                <Plus className="h-3.5 w-3.5 mr-1" />
-                {t('addBill')}
+                <span className="w-4 h-4 bg-red-500 text-white rounded-full mr-1.5 flex items-center justify-center">
+                  <Plus className="h-3 w-3" />
+                </span>
+                <span className="font-medium">{t('addBill')}</span>
               </Button>
             </div>
           )}
@@ -324,11 +330,14 @@ export default function IncomeBills({
             </h3>
             <Button
               onClick={onAddIncome}
-              className="bg-primary hover:bg-primary/90 h-8 px-3 rounded-lg shadow-sm text-white transition-all duration-200 group"
+              className="bg-white hover:bg-gray-50 h-8 px-3 rounded-full shadow-sm border border-gray-200 text-gray-700 transition-all duration-200 group"
               size="sm"
+              variant="outline"
             >
-              <Plus className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform" />
-              <span className="text-xs">{t('addIncome')}</span>
+              <span className="w-4 h-4 bg-emerald-500 text-white rounded-full mr-1.5 flex items-center justify-center">
+                <Plus className="h-3 w-3" />
+              </span>
+              <span className="text-xs font-medium">{t('addIncome')}</span>
             </Button>
           </div>
           {income.length > 0 ? (
@@ -392,10 +401,13 @@ export default function IncomeBills({
               <p className="text-sm text-gray-600">{t('noIncomeAddedYet')}</p>
               <Button
                 onClick={onAddIncome}
-                className="mt-3 bg-primary text-white rounded-lg text-xs px-3 py-1.5 shadow-sm"
+                className="mt-3 bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 rounded-full text-xs px-4 py-2 shadow-sm"
+                variant="outline"
               >
-                <Plus className="h-3.5 w-3.5 mr-1" />
-                {t('addIncome')}
+                <span className="w-4 h-4 bg-emerald-500 text-white rounded-full mr-1.5 flex items-center justify-center">
+                  <Plus className="h-3 w-3" />
+                </span>
+                <span className="font-medium">{t('addIncome')}</span>
               </Button>
             </div>
           )}
