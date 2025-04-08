@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { Send, Loader2, DollarSign } from "lucide-react";
+import { Loader2, DollarSign } from "lucide-react";
 import { secureApiRequest } from "@/lib/csrf";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/hooks/use-language";
@@ -559,7 +559,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     hover:from-primary-500 hover:via-primary-400 hover:to-primary-500 
                     text-white font-semibold relative overflow-hidden transition-all duration-200
                     shadow-[0_4px_20px_rgba(59,130,246,0.5)] hover:shadow-[0_6px_25px_rgba(59,130,246,0.7)]
-                    rounded-lg py-3 px-6 border border-primary-300/50 animated-glow
+                    rounded-lg py-3.5 px-7 border border-primary-300/50 animated-glow text-lg
+                    transform hover:scale-105 hover:-translate-y-0.5
                     ${isCustomAmount && !customAmount || !isCustomAmount && !selectedAmount ? 'opacity-50' : 'opacity-100'}
                   `}
                 >
@@ -580,8 +581,22 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   </div>
                 
                   <div className="flex items-center justify-center group relative z-10">
-                    <Send className="mr-2 h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
-                    <span className="font-medium tracking-wide text-base">{t('ask')}</span>
+                    {/* Pulse line icon instead of paper airplane */}
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-6 h-6 mr-2 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4,12 L8,12 L10,8 L12,16 L14,6 L16,12 L20,12"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span className="font-bold tracking-wide text-lg uppercase">{t('ask')}</span>
                   </div>
                 </Button>
               )}
