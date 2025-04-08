@@ -7,9 +7,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, DollarSign } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
+import { secureApiRequest } from "@/lib/csrf";
 import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 
 // Schema for balance form
 const balanceFormSchema = z.object({
@@ -61,8 +61,8 @@ export default function VerifyBalanceModal({
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
-      // Correct parameter order: method, url, data
-      await apiRequest("POST", "/api/account-balance", {
+      // Use secureApiRequest for CSRF protection
+      await secureApiRequest("POST", "/api/account-balance", {
         balance: data.balance
       });
       
@@ -92,8 +92,8 @@ export default function VerifyBalanceModal({
     if (currentBalance) {
       setIsSubmitting(true);
       try {
-        // Correct parameter order: method, url, data
-        await apiRequest("POST", "/api/account-balance", {
+        // Use secureApiRequest for CSRF protection
+        await secureApiRequest("POST", "/api/account-balance", {
           balance: currentBalance
         });
         
