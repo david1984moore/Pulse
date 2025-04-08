@@ -3,7 +3,7 @@ import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 // Use new CSS-based ECG animation components
 import AliceCssEcg from "./alice-css-ecg";
-import EkgCssAnimation from "./ekg-css-animation";
+import TrailingEraser from "./trailing-eraser";
 import {
   Select,
   SelectContent,
@@ -284,7 +284,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
       {/* Full width ECG animation with forced unique instance per animation cycle */}
       {isPending && (
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
-          <EkgCssAnimation 
+          <TrailingEraser 
             key={`ekg-fullwidth-${animationKey}`}
             active={showAnimation}
             lineColor="rgba(255, 255, 255, 0.9)"
