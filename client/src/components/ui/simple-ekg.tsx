@@ -74,8 +74,8 @@ export default function SimpleEkg({
     // Calculate elapsed time
     const elapsed = timestamp - startTimeRef.current;
     
-    // Define animation duration (4.5 seconds to ensure full visibility)
-    const duration = 4500;
+    // Define animation duration (5 seconds to ensure full visibility)
+    const duration = 5000;
     
     // Calculate animation progress (0 to 1)
     const progress = Math.min(elapsed / duration, 1);
@@ -114,39 +114,50 @@ export default function SimpleEkg({
       dotRef.current.style.opacity = '0';
     }
     
-    // Continue animation if not complete
-    if (progress < 1 && active) {
+    // Continue animation if not complete (progress < 1)
+    if (progress < 1) {
       requestIdRef.current = requestAnimationFrame(animate);
     } else {
-      // Reset for next cycle if still active
-      if (active) {
-        startTimeRef.current = null;
-        requestIdRef.current = requestAnimationFrame(animate);
-      }
+      // When animation completes (progress = 1), we're done
+      // Do not reset or restart - this component only animates once
+      // This ensures the full trace is visible without looping
+      requestIdRef.current = null;
     }
   };
   
-  // Setup animation when active state changes
+  // Setup animation when active state changes - runs exactly once per component mount
   useEffect(() => {
+    // Explicitly ensure we're starting fresh
     if (active) {
-      // Start fresh animation cycle
+      // Cancel any existing animation first
+      if (requestIdRef.current) {
+        cancelAnimationFrame(requestIdRef.current);
+      }
+      
+      // Reset the timing reference to ensure we start from the beginning
       startTimeRef.current = null;
+      
+      // Begin a fresh animation cycle
       requestIdRef.current = requestAnimationFrame(animate);
+      
+      // Important: this component should never stop animating while active
+      // It should run EXACTLY one complete cycle
     } else {
-      // Cancel any ongoing animation
+      // Explicitly cancel when inactive
       if (requestIdRef.current) {
         cancelAnimationFrame(requestIdRef.current);
         requestIdRef.current = null;
       }
     }
     
-    // Cleanup on unmount
+    // Always clean up on unmount
     return () => {
       if (requestIdRef.current) {
         cancelAnimationFrame(requestIdRef.current);
+        requestIdRef.current = null;
       }
     };
-  }, [active]);
+  }, []);
   
   return (
     <div className="simple-ekg-container" style={{ width, height, position: 'relative' }}>

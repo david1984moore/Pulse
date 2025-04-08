@@ -55,6 +55,9 @@ export default function Chatbot({ bills }: ChatbotProps) {
   // Prevent multiple rapid/duplicate clicks
   const isSubmittingRef = useRef(false);
   
+  // Use a unique key to force complete remount of animation component
+  const [animationKey, setAnimationKey] = useState(1);
+  
   // Chat messages
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -234,39 +237,45 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
 
   /**
-   * Guaranteed reliable handler for the Ask button that ensures animation completes
+   * Guaranteed reliable handler that forces a complete remount of the animation
    */
   const handleSubmitClick = () => {
-    // Prevent clicks while already processing
+    // Prevent rapid clicks
     if (isPending || isSubmittingRef.current) return;
     
-    // First, explicitly make sure animation is OFF
-    setIsPending(false);
+    // Lock the button immediately
     isSubmittingRef.current = true;
     
-    // Force React to re-render and clear any existing animation
+    // Force animation to stop
+    setIsPending(false);
+    
+    // Generate a new animation key to force complete component remount
+    setAnimationKey(prevKey => prevKey + 1);
+    
+    // Wait for DOM to update and previous animation to be removed
     setTimeout(() => {
-      // Then trigger a fresh animation with a new component instance
+      // Start completely fresh animation
       setIsPending(true);
       
-      // Wait for animation to be fully visible before sending API request
+      // Submit the request after a small delay to let animation start
       setTimeout(() => {
         handleSubmit();
         
-        // Keep animation running for full duration to ensure complete trace (matching our 4.5s duration)
+        // Allow a full 5 seconds for animation to complete
         setTimeout(() => {
           isSubmittingRef.current = false;
-        }, 4700); // Slightly longer than animation duration for safety
-      }, 150);
-    }, 50);
+        }, 5000);
+      }, 200);
+    }, 100);
   };
   
   return (
     <div className="relative">
-      {/* Full width ECG animation with smooth, continuous rendering */}
+      {/* Full width ECG animation with forced unique instance per animation cycle */}
       {isPending && (
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
           <SimpleEkg 
+            key={`ekg-${animationKey}`}
             active={isPending} 
             lineColor="rgba(255, 255, 255, 0.9)"
             width={600} 
@@ -289,8 +298,8 @@ export default function Chatbot({ bills }: ChatbotProps) {
                     {language === 'es' ? 'Alicia' : 'Alice'}
                   </div>
                   
-                  {/* Sexy ECG heartbeat animation next to Alice's name */}
-                  <AliceEcg active={isPending} color="#FFFFFF" />
+                  {/* Sexy ECG heartbeat animation next to Alice's name - also with unique key */}
+                  <AliceEcg key={`alice-ecg-${animationKey}`} active={isPending} color="#FFFFFF" />
                 </div>
               </div>
             </div>
