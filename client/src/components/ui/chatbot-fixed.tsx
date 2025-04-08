@@ -45,16 +45,16 @@ export default function Chatbot({ bills }: ChatbotProps) {
     queryKey: ["/api/calculated-balance"],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
-  
+
   // UI State
   const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isCustomAmount, setIsCustomAmount] = useState<boolean>(false);
   const [isPending, setIsPending] = useState(false);
-  
+
   // Prevent multiple rapid/duplicate clicks
   const isSubmittingRef = useRef(false);
-  
+
   // Chat messages
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -65,10 +65,10 @@ export default function Chatbot({ bills }: ChatbotProps) {
       isAnimating: true,
     },
   ]);
-  
+
   // Scroll area for messages
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  
+
   // Handle text animation completion
   const handleAnimationComplete = (index: number) => {
     setMessages(prevMessages => {
@@ -79,7 +79,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
       return updatedMessages;
     });
   };
-  
+
   // Reset initial message when language changes
   useEffect(() => {
     setMessages([{
@@ -88,7 +88,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
       isAnimating: true,
     }]);
   }, [language, t]);
-  
+
   // Toggle custom amount mode
   useEffect(() => {
     if (selectedAmount === "custom") {
@@ -96,7 +96,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
       setSelectedAmount(null);
     }
   }, [selectedAmount]);
-  
+
   // Auto-scroll to latest message
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -110,49 +110,49 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const handleSubmit = async () => {
     const amountToUse = isCustomAmount ? customAmount : (selectedAmount || "");
     if (!amountToUse) return;
-    
+
     // Add user message
     const userMessage = `${t('canISpend')} $${amountToUse}?`;
     setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
-    
+
     // Send request to API
     setIsPending(true);
     try {
       // Use secureApiRequest instead of apiRequest to include CSRF token
       const response = await secureApiRequest("POST", "/api/spending-advisor", { amount: amountToUse });
       const data: SpendingResponse = await response.json();
-      
+
       // Translate the response if in Spanish mode
       let botMessage = data.message;
-      
+
       if (language === 'es') {
         // Handle translations based on message type
         const originalMessage = data.message;
-        
+
         if (originalMessage.startsWith("Yes, you can spend") && originalMessage.includes("next bill")) {
           // Pattern: Yes, you can spend $X. Your balance will be $Y. Next bill Name ($Z) due in N days, leaving $W.
           const amount = amountToUse;
-          
+
           // Extract newBalance
           const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
           const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
-          
+
           // Extract bill name
           const billNameMatch = originalMessage.match(/next bill ([A-Za-z\s]+) \(\$/);
           const billName = billNameMatch ? billNameMatch[1] : "?";
-          
+
           // Extract bill amount
           const billAmountMatch = originalMessage.match(/\(\\?\$([0-9.]+)\) is due/);
           const billAmount = billAmountMatch ? billAmountMatch[1] : "0.00";
-          
+
           // Extract days until bill
           const daysMatch = originalMessage.match(/due in ([0-9]+) days/);
           const days = daysMatch ? daysMatch[1] : "0";
-          
+
           // Extract remaining balance
           const remainingBalanceMatch = originalMessage.match(/leave you with \$([0-9.]+)/);
           const remainingBalance = remainingBalanceMatch ? remainingBalanceMatch[1] : "0.00";
-          
+
           // Use the translated template with values
           botMessage = t('yesSafeToSpend')
             .replace('%amount%', amount)
@@ -161,58 +161,58 @@ export default function Chatbot({ bills }: ChatbotProps) {
             .replace('%billAmount%', billAmount)
             .replace('%days%', days)
             .replace('%remainingBalance%', remainingBalance);
-            
+
         } else if (originalMessage.startsWith("Yes, you can spend") && !originalMessage.includes("next bill")) {
           // Pattern: Yes, you can spend $X. Your balance will be $Y.
           const amount = amountToUse;
-          
+
           // Extract newBalance
           const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
           const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
-          
+
           // Use the translated template with values
           botMessage = t('yesSafeToSpendNoBills')
             .replace('%amount%', amount)
             .replace('%newBalance%', newBalance);
-            
+
         } else if (originalMessage.includes("but be careful")) {
           // Pattern: You can spend $X, but be careful. Balance will be $Y, and you have $Z in upcoming bills which would leave you with $W.
           const amount = amountToUse;
-          
+
           // Extract newBalance
           const newBalanceMatch = originalMessage.match(/balance after this purchase will be \$([0-9.]+)/);
           const newBalance = newBalanceMatch ? newBalanceMatch[1] : "0.00";
-          
+
           // Extract upcoming bills total
           const upcomingBillsMatch = originalMessage.match(/you have \$([0-9.]+) in upcoming bills/);
           const upcomingBills = upcomingBillsMatch ? upcomingBillsMatch[1] : "0.00";
-          
+
           // Extract remaining balance
           const remainingBalanceMatch = originalMessage.match(/leave you with \$([0-9.]+)/);
           const remainingBalance = remainingBalanceMatch ? remainingBalanceMatch[1] : "0.00";
-          
+
           // Use the translated template with values
           botMessage = t('yesButBeCareful')
             .replace('%amount%', amount)
             .replace('%newBalance%', newBalance)
             .replace('%upcomingBills%', upcomingBills)
             .replace('%remainingBalance%', remainingBalance);
-            
+
         } else if (originalMessage.startsWith("Sorry, you cannot spend")) {
           // Pattern: Sorry, you cannot spend $X as it would exceed your current account balance of $Y.
           const amount = amountToUse;
-          
+
           // Extract balance
           const balanceMatch = originalMessage.match(/account balance of \$([0-9.]+)/);
           const balance = balanceMatch ? balanceMatch[1] : "0.00";
-          
+
           // Use the translated template with values
           botMessage = t('sorryCannotSpend')
             .replace('%amount%', amount)
             .replace('%balance%', balance);
         }
       }
-      
+
       // Add bot response with animation flag
       setMessages((prev) => [...prev, { text: botMessage, sender: "bot", isAnimating: true }]);
     } catch (error) {
@@ -240,26 +240,26 @@ export default function Chatbot({ bills }: ChatbotProps) {
   const handleSubmitClick = () => {
     // Prevent multiple rapid clicks or processing while waiting for response
     if (isPending || isSubmittingRef.current) return;
-    
+
     // Set the processing flag to prevent duplicate clicks
     isSubmittingRef.current = true;
-    
+
     // Force animation to reset completely before starting
     setIsPending(false);
-    
+
     // Small delay to ensure animation resets completely before starting again
     setTimeout(() => {
       // Submit API request and start new animation
       setIsPending(true);
       handleSubmit();
     }, 50);
-    
+
     // Reset submission flag after a delay to prevent double-clicks
     setTimeout(() => {
       isSubmittingRef.current = false;
     }, 350);
   };
-  
+
   return (
     <div className="relative">
       {/* Full width ECG animation that shows when active */}
@@ -272,7 +272,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
           height={120}
         />
       </div>
-      
+
       <Card className="backdrop-blur-xl bg-white/90 shadow-xl border-none overflow-hidden rounded-2xl relative z-10">
         <CardHeader className="pb-4 border-b border-gray-100 bg-gradient-to-r from-primary/20 to-primary/10">
           <div className="flex flex-row items-center justify-between">
@@ -285,24 +285,24 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   <div className="text-xl font-bold tracking-wide text-primary-600">
                     {language === 'es' ? 'Alicia' : 'Alice'}
                   </div>
-                  
+
                   {/* Sexy ECG heartbeat animation next to Alice's name */}
                   <AliceEcg active={isPending} color="#FFFFFF" />
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center px-4 py-2">
               <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
                 <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
                 <span className="font-bold text-primary-700">
-                  ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
+                  {balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
                 </span>
               </div>
             </div>
           </div>
         </CardHeader>
-      
+
         <CardContent className="pt-5">
           {/* Chat message area with improved styling */}
           <ScrollArea 
@@ -333,7 +333,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                         <span className="text-white font-bold text-sm">A</span>
                       </div>
                     )}
-                    
+
                     <div
                       className={`max-w-sm ${
                         message.sender === "user"

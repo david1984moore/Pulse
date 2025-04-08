@@ -282,7 +282,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
             <div className="flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-600/20 to-primary/30 shadow-md">
               <DollarSign className="h-4 w-4 mr-1.5 text-primary-600" />
               <span className="font-bold text-primary-700">
-                ${balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
+                {balanceData?.calculatedBalance ? Number(balanceData.calculatedBalance).toFixed(2) : '0.00'}
               </span>
             </div>
           </div>
