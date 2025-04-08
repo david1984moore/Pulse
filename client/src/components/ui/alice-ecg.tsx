@@ -20,6 +20,7 @@ export default function AliceEcg({ active, color = "#FFFFFF" }: AliceEcgProps) {
   const centerY = height / 2;
   
   // Mini version of the classic ECG waveform path with proper P, QRS, and T waves
+  // Ensure all wave components end with a return to the horizontal baseline
   const ekgPath = `
     M 0,${centerY}
     H ${width * 0.15}
@@ -28,6 +29,7 @@ export default function AliceEcg({ active, color = "#FFFFFF" }: AliceEcgProps) {
     L ${width * 0.4},${centerY + height * 0.15}
     L ${width * 0.45},${centerY - height * 0.5}
     L ${width * 0.5},${centerY + height * 0.25}
+    L ${width * 0.55},${centerY}
     H ${width * 0.6}
     C ${width * 0.65},${centerY - height * 0.3} ${width * 0.7},${centerY - height * 0.3} ${width * 0.75},${centerY}
     H ${width}

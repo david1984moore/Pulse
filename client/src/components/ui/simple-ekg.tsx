@@ -126,11 +126,11 @@ export default function SimpleEkg({
     }
   };
   
-  // Setup animation when active state changes - runs exactly once per component mount
+  // Setup animation when active state changes - responds to active prop changes
   useEffect(() => {
-    // Explicitly ensure we're starting fresh
+    // Only start animation when active becomes true
     if (active) {
-      // Cancel any existing animation first
+      // Cancel any existing animation first to be safe
       if (requestIdRef.current) {
         cancelAnimationFrame(requestIdRef.current);
       }
@@ -141,13 +141,24 @@ export default function SimpleEkg({
       // Begin a fresh animation cycle
       requestIdRef.current = requestAnimationFrame(animate);
       
-      // Important: this component should never stop animating while active
-      // It should run EXACTLY one complete cycle
+      // Component should run EXACTLY one complete cycle, then stop
     } else {
-      // Explicitly cancel when inactive
+      // Cancel animation when not active
       if (requestIdRef.current) {
         cancelAnimationFrame(requestIdRef.current);
         requestIdRef.current = null;
+      }
+      
+      // Reset SVG elements when inactive
+      if (pathRef.current && shadowRef.current) {
+        const pathLength = pathRef.current.getTotalLength();
+        pathRef.current.style.strokeDasharray = `${pathLength}`;
+        pathRef.current.style.strokeDashoffset = `${pathLength}`;
+        shadowRef.current.style.strokeDasharray = `${pathLength}`;
+        shadowRef.current.style.strokeDashoffset = `${pathLength}`;
+        if (dotRef.current) {
+          dotRef.current.style.opacity = '0';
+        }
       }
     }
     
@@ -158,7 +169,7 @@ export default function SimpleEkg({
         requestIdRef.current = null;
       }
     };
-  }, []);
+  }, [active]);
   
   return (
     <div className="simple-ekg-container" style={{ width, height, position: 'relative' }}>

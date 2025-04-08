@@ -276,7 +276,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
           <SimpleEkg 
             key={`ekg-fullwidth-${animationKey}`}
-            active={true} 
+            active={isPending} 
             lineColor="rgba(255, 255, 255, 0.9)"
             width={600} 
             height={300}
@@ -299,7 +299,7 @@ export default function Chatbot({ bills }: ChatbotProps) {
                   </div>
                   
                   {/* Sexy ECG heartbeat animation next to Alice's name - also with unique key */}
-                  <AliceEcg key={`alice-ecg-${animationKey}`} active={true} color="#FFFFFF" />
+                  <AliceEcg key={`alice-ecg-${animationKey}`} active={isPending} color="#FFFFFF" />
                 </div>
               </div>
             </div>
