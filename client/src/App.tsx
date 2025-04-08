@@ -6,7 +6,6 @@ import NotFound from "@/pages/not-found";
 import LandingPage from "@/pages/landing-page";
 import AuthPage from "@/pages/auth-page";
 import DashboardPage from "@/pages/dashboard-page";
-import ECGDemoPage from "@/pages/ecg-demo-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 import { LanguageProvider } from "./hooks/use-language";
@@ -20,7 +19,6 @@ function Router() {
       <Route path="/login" component={AuthPage} />
       <Route path="/signup" component={AuthPage} />
       <ProtectedRoute path="/dashboard" component={DashboardPage} />
-      <Route path="/ecg-demo" component={ECGDemoPage} />
       <Route component={NotFound} />
     </Switch>
   );

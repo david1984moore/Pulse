@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Bill } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-// Use new canvas-based ECG animation components
+// Use new CSS-based ECG animation components
 import AliceCssEcg from "./alice-css-ecg";
 import EkgCssAnimation from "./ekg-css-animation";
-import ECGTraceAnimation from "./ecg-trace-animation";
 import {
   Select,
   SelectContent,
@@ -285,12 +284,11 @@ export default function Chatbot({ bills }: ChatbotProps) {
       {/* Full width ECG animation with forced unique instance per animation cycle */}
       {isPending && (
         <div className="ekg-fullwidth absolute top-0 left-0 w-full h-full">
-          <ECGTraceAnimation 
+          <EkgCssAnimation 
             key={`ekg-fullwidth-${animationKey}`}
             active={showAnimation}
             lineColor="rgba(255, 255, 255, 0.9)"
-            glowColor="rgba(96, 165, 250, 0.8)"
-            glowIntensity={15}
+            width={600} 
             height={300}
             strokeWidth={3}
           />
