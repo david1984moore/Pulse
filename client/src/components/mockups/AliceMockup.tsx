@@ -57,7 +57,7 @@ export const AliceMockup: React.FC = () => {
           </div>
           <div className="bg-gray-100 p-1.5 rounded-md">
             <p className="text-gray-800 text-xs">
-              Yes, you can spend $75 on dining. Your balance after this purchase will be $725.
+              Yes, you can spend $75 on dining. Your balance after this purchase will be $725, which is enough to cover your upcoming bills.
             </p>
           </div>
         </div>
