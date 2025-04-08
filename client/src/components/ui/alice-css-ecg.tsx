@@ -107,9 +107,33 @@ export default function AliceCssEcg({
           }}
         />
         
-        {/* Draw first, then erase with second path */}
+        {/* Progressive drawing and erasing technique */}
+        <clipPath id={`clip-${maskId}`}>
+          <rect 
+            x="0" 
+            y="0" 
+            width={isAnimating ? width : 0} 
+            height={height}
+            style={{
+              transition: isAnimating ? `width 1s linear` : 'none'
+            }}
+          />
+        </clipPath>
         
-        {/* First path draws the ECG trace */}
+        <clipPath id={`eraser-clip-${maskId}`}>
+          <rect 
+            x="0" 
+            y="0" 
+            width={isAnimating ? 0 : width} 
+            height={height}
+            style={{
+              transition: isAnimating ? `width 0.5s linear` : 'none',
+              transitionDelay: isAnimating ? '0.7s' : '0s'
+            }}
+          />
+        </clipPath>
+        
+        {/* Path that appears progressively */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -119,29 +143,23 @@ export default function AliceCssEcg({
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
-            strokeDasharray: pathLength,
-            strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
+            clipPath: `url(#clip-${maskId})` // Draw line
           }}
         />
         
-        {/* Second path with same path but white stroke to "erase" the first path */}
+        {/* This path masks out the first path as it "erases" */}
         {isAnimating && (
           <path
             d={ekgPath}
             fill="none"
-            stroke="white"
-            strokeWidth={3}
+            stroke={color}
+            strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
             style={{
-              strokeDasharray: pathLength,
-              strokeDashoffset: pathLength,
-              transition: `stroke-dashoffset 0.5s linear`,
               opacity: 1,
-              transitionDelay: '0.7s',
-              mixBlendMode: 'difference'
+              clipPath: `url(#eraser-clip-${maskId})` // Erase line
             }}
           />
         )}

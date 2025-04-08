@@ -113,9 +113,33 @@ export default function EkgCssAnimation({
           }}
         />
         
-        {/* Draw and then erase technique using two paths */}
+        {/* Progressive drawing and erasing technique */}
+        <clipPath id={`clip-${maskId}`}>
+          <rect 
+            x="0" 
+            y="0" 
+            width={isAnimating ? width : 0} 
+            height={height}
+            style={{
+              transition: isAnimating ? `width 3.5s linear` : 'none'
+            }}
+          />
+        </clipPath>
         
-        {/* First path draws the ECG trace */}
+        <clipPath id={`eraser-clip-${maskId}`}>
+          <rect 
+            x="0" 
+            y="0" 
+            width={isAnimating ? 0 : width} 
+            height={height}
+            style={{
+              transition: isAnimating ? `width 2s linear` : 'none',
+              transitionDelay: isAnimating ? '2.5s' : '0s'
+            }}
+          />
+        </clipPath>
+        
+        {/* Path that appears progressively */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -125,34 +149,23 @@ export default function EkgCssAnimation({
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
-            strokeDasharray: pathLength,
-            strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
-            opacity: isAnimating ? 1 : 0
+            opacity: isAnimating ? 1 : 0,
+            clipPath: `url(#clip-${maskId})` // Draw line
           }}
         />
         
-        {/* Second reverse path with white stroke to erase the first path */}
+        {/* This path masks out the first path as it "erases" */}
         {isAnimating && (
           <path
             d={ekgPath}
             fill="none"
-            stroke="white"
-            strokeWidth={strokeWidth * 2}
+            stroke={lineColor}
+            strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"
             style={{
-              strokeDasharray: pathLength,
-              strokeDashoffset: pathLength,
-              transition: `stroke-dashoffset 2s linear`,
               opacity: 1,
-              transitionDelay: '2.5s',
-              mixBlendMode: 'difference'
-            }}
-            onTransitionEnd={() => {
-              if (isAnimating) {
-                // Animation will clean up in useEffect
-              }
+              clipPath: `url(#eraser-clip-${maskId})` // Erase line
             }}
           />
         )}
