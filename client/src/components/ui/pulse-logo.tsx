@@ -25,11 +25,11 @@ export function PulseLogo({
     lg: 'h-10 w-10'
   };
 
-  // Premium modern text sizing
+  // Premium modern text sizing - slightly larger for impact
   const textSizeClasses = {
-    sm: 'text-lg',
-    md: 'text-xl',
-    lg: 'text-2xl'
+    sm: 'text-xl',
+    md: 'text-2xl',
+    lg: 'text-3xl'
   };
   
   // Subtle animation for the heartbeat effect when animated is true
@@ -103,7 +103,7 @@ export function PulseLogo({
   }, [animated]);
 
   return (
-    <div className={cn('flex items-center gap-2.5', className)}>
+    <div className={cn('flex items-center gap-3.5', className)}>
       {/* Elegant icon with subtle shadow */}
       <div className={cn('relative flex-shrink-0', sizeClasses[size])}>
         <div className="w-full h-full rounded-md bg-primary shadow-sm flex items-center justify-center relative overflow-hidden">
@@ -144,10 +144,10 @@ export function PulseLogo({
         </div>
       </div>
       
-      {/* Premium text treatment */}
+      {/* Cutting-edge text treatment */}
       {showText && (
         <span className={cn(
-          "font-sans font-semibold text-primary tracking-tight", 
+          "pulse-text font-sans relative ml-0.5 pb-0.5", 
           textSizeClasses[size],
           textClassName
         )}>
