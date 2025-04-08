@@ -113,7 +113,33 @@ export default function EkgCssAnimation({
           }}
         />
         
-        {/* THIS IS A DIRECT APPROACH: The main ECG line draws normally */}
+        {/* Create a clip path that gets smaller as the eraser moves */}
+        <defs>
+          <clipPath id={`visible-area-${maskId}`}>
+            {/* This rectangle gets smaller as the eraser moves */}
+            <rect 
+              x="-10" 
+              y="-10" 
+              width={isAnimating ? width + 20 : 0} 
+              height={height + 20}
+              style={{
+                transition: isAnimating ? 'none' : 'none'
+              }}
+            >
+              {isAnimating && (
+                <animate
+                  attributeName="width"
+                  values={`${width + 20};${width + 20};0`}
+                  keyTimes="0;0.7;1"
+                  dur="5.5s"
+                  fill="freeze"
+                />
+              )}
+            </rect>
+          </clipPath>
+        </defs>
+        
+        {/* Main path that's visible only inside the clip path */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -127,27 +153,9 @@ export default function EkgCssAnimation({
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
+            clipPath: `url(#visible-area-${maskId})`
           }}
         />
-        
-        {/* White overlay path that follows the eraser with thick white stroke to actually erase the trace */}
-        {isAnimating && (
-          <path
-            d={ekgPath}
-            fill="none"
-            stroke="white"
-            strokeWidth={strokeWidth * 2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeDasharray={pathLength}
-            strokeDashoffset={pathLength}
-            style={{
-              transition: isAnimating ? `stroke-dashoffset 2s linear` : 'none',
-              transitionDelay: '2.5s',
-              opacity: 1
-            }}
-          />
-        )}
         
         {/* Lead dot that draws the trace */}
         {isAnimating && (
