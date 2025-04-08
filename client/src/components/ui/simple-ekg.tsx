@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface SimpleEkgProps {
   active: boolean;
@@ -9,17 +9,18 @@ interface SimpleEkgProps {
 }
 
 /**
- * SimpleEkg - A smooth, medical-grade ECG animation using requestAnimationFrame for precise control
+ * SimpleEkg - A completely rewritten ECG animation with guaranteed consistency and completion
  * 
- * This component renders an ECG trace with the classic horizontal pattern with
- * proper P, QRS, and T waves that follow medical ECG patterns
+ * This component follows a classic medical ECG trace with horizontal baseline
+ * and characteristic P, QRS, and T waves, ensuring the full cycle completes
+ * every time.
  * 
  * Features:
- * - Smooth animation using requestAnimationFrame
- * - Precise SVG path length calculations
- * - Variable drawing speeds for different parts of the ECG
- * - Follows proper medical ECG pattern with horizontal baseline
- * - Customizable colors, dimensions, and stroke width
+ * - Guaranteed completion of the entire waveform on each click
+ * - Consistent animation cycle between clicks
+ * - Classic medical ECG pattern with horizontal baseline
+ * - Precise timing control using fixed animation phases
+ * - Medical-grade waveform with proper deflections
  */
 export default function SimpleEkg({
   active,
@@ -28,139 +29,159 @@ export default function SimpleEkg({
   height = 200,
   strokeWidth = 2
 }: SimpleEkgProps) {
+  // Use state to ensure proper re-renders
+  const [animationId, setAnimationId] = useState<number>(0);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  
+  // Create refs for animation control
   const pathRef = useRef<SVGPathElement>(null);
   const dotRef = useRef<SVGCircleElement>(null);
   const shadowRef = useRef<SVGPathElement>(null);
   const requestIdRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
+  const lastProgressRef = useRef<number>(0);
   
   // Calculate baseline Y position (horizontal line)
   const baselineY = height / 2;
   
-  // Define a classical ECG waveform path with proper P, QRS, and T waves
-  // This path stays on a horizontal baseline and only deflects up/down
-  // for the characteristic waves of a cardiac cycle
-  const ekgPath = `
-    M 0,${baselineY}
+  // Define the classic ECG path with pronounced segments
+  // This path creates a horizontal baseline with the characteristic
+  // P wave (small bump), QRS complex (sharp spike), and T wave (rounded hump)
+  const segments = [
+    // Starting segment - flat baseline
+    `M 0,${baselineY} H ${width * 0.15}`,
     
-    H ${width * 0.1}
+    // P wave - small upward deflection (atrial depolarization)
+    `C ${width * 0.18},${baselineY} ${width * 0.20},${baselineY - height * 0.08} ${width * 0.23},${baselineY}`,
     
-    C ${width * 0.12},${baselineY} ${width * 0.14},${baselineY - height * 0.05} ${width * 0.16},${baselineY}
+    // PR segment - flat line after P wave
+    `H ${width * 0.3}`,
     
-    H ${width * 0.24}
+    // QRS complex - sharp downward, tall upward, then downward deflection (ventricular depolarization)
+    `L ${width * 0.32},${baselineY + height * 0.06}`,  // Q wave (downward)
+    `L ${width * 0.34},${baselineY - height * 0.35}`,  // R wave (tall upward spike)
+    `L ${width * 0.36},${baselineY + height * 0.12}`,  // S wave (downward)
     
-    L ${width * 0.26},${baselineY + height * 0.06}
-    L ${width * 0.28},${baselineY - height * 0.28}
-    L ${width * 0.3},${baselineY + height * 0.15}
+    // ST segment - flat line after QRS
+    `H ${width * 0.45}`,
     
-    H ${width * 0.38}
+    // T wave - rounded upward deflection (ventricular repolarization)
+    `C ${width * 0.50},${baselineY - height * 0.15} ${width * 0.55},${baselineY - height * 0.15} ${width * 0.60},${baselineY}`,
     
-    C ${width * 0.42},${baselineY - height * 0.12} ${width * 0.46},${baselineY - height * 0.15} ${width * 0.5},${baselineY}
-    
-    H ${width}
-  `;
+    // Final baseline segment - flat line to end
+    `H ${width}`
+  ];
   
-  // Animation function using requestAnimationFrame for smooth control
+  // Join all segments into a complete path
+  const ekgPath = segments.join(' ');
+  
+  // Run animation with fixed stages to ensure complete cycle
   const animate = (timestamp: number) => {
-    if (!active || !pathRef.current || !dotRef.current || !shadowRef.current) {
+    // Ensure references exist before proceeding
+    if (!pathRef.current || !dotRef.current || !shadowRef.current) {
+      if (active) {
+        requestIdRef.current = requestAnimationFrame(animate);
+      }
       return;
     }
     
     // Initialize start time on first frame
     if (startTimeRef.current === null) {
       startTimeRef.current = timestamp;
+      lastProgressRef.current = 0;
     }
     
     // Calculate elapsed time
     const elapsed = timestamp - startTimeRef.current;
     
-    // Define animation duration (3.5 seconds total)
-    const duration = 3500;
+    // Fixed animation duration (3 seconds total)
+    const duration = 3000;
     
-    // Calculate animation progress (0 to 1)
-    const progress = Math.min(elapsed / duration, 1);
+    // Calculate basic progress (0 to 1)
+    const rawProgress = Math.min(elapsed / duration, 1);
     
-    // Get the total path length
+    // Apply easing for smoother motion
+    // Using easeInOutQuad for natural acceleration/deceleration
+    const progress = rawProgress < 0.5
+      ? 2 * rawProgress * rawProgress
+      : 1 - Math.pow(-2 * rawProgress + 2, 2) / 2;
+    
+    // Store for checking animation completion
+    lastProgressRef.current = progress;
+    
+    // Get the total path length once
     const pathLength = pathRef.current.getTotalLength();
     
-    // Use variable speeds for different parts of the ECG trace
-    // Make the QRS complex faster and the rest slower for realism
-    let adjustedProgress;
+    // Calculate path offset for drawing effect
+    const dashOffset = pathLength * (1 - progress);
     
-    if (progress < 0.25) {
-      // Initial segment and P wave (slower)
-      adjustedProgress = progress * 0.8;
-    } else if (progress < 0.4) {
-      // QRS complex (faster)
-      adjustedProgress = 0.2 + (progress - 0.25) * 1.6;
-    } else if (progress < 0.7) {
-      // T wave and recovery (medium)
-      adjustedProgress = 0.44 + (progress - 0.4) * 0.9;
-    } else {
-      // Final segment (slower fadeout)
-      adjustedProgress = 0.71 + (progress - 0.7) * 0.7;
-    }
-    
-    // Ensure we don't exceed 1
-    adjustedProgress = Math.min(adjustedProgress, 1);
-    
-    // Set the stroke dash offset to create drawing effect
+    // Update path stroke dash properties
     pathRef.current.style.strokeDasharray = `${pathLength}`;
-    pathRef.current.style.strokeDashoffset = `${pathLength * (1 - adjustedProgress)}`;
+    pathRef.current.style.strokeDashoffset = `${dashOffset}`;
     
     // Same for shadow path
     shadowRef.current.style.strokeDasharray = `${pathLength}`;
-    shadowRef.current.style.strokeDashoffset = `${pathLength * (1 - adjustedProgress)}`;
+    shadowRef.current.style.strokeDashoffset = `${dashOffset}`;
     
-    // Position the glowing dot at the current point on the path
-    if (adjustedProgress > 0 && adjustedProgress < 1) {
-      const point = pathRef.current.getPointAtLength(pathLength * adjustedProgress);
+    // Position and style the glowing dot that follows the path
+    if (progress > 0 && progress < 1) {
+      // Calculate the exact point on the path at current progress
+      const point = pathRef.current.getPointAtLength(pathLength * progress);
+      
+      // Update dot position
       dotRef.current.setAttribute('cx', point.x.toString());
       dotRef.current.setAttribute('cy', point.y.toString());
       
-      // Adjust dot size based on wave position (larger at QRS spike)
-      // Logic: QRS complex is around 25-40% of the path
-      const isInQRS = adjustedProgress > 0.25 && adjustedProgress < 0.4; 
-      const dotScale = isInQRS ? 1.8 : 1;
+      // Set dot size based on which part of the ECG we're in
+      // QRS complex (biggest spike) is roughly between 30-40% of the path
+      const isInQRS = progress > 0.3 && progress < 0.4;
+      const dotScale = isInQRS ? 2.0 : 1.2;
       const dotOpacity = isInQRS ? 1 : 0.8;
       
+      // Apply the calculated styles
       dotRef.current.style.transform = `scale(${dotScale})`;
       dotRef.current.style.opacity = dotOpacity.toString();
     } else {
-      // Hide dot at the end
+      // Hide dot at the very start or end
       dotRef.current.style.opacity = '0';
     }
     
-    // Continue animation if not complete
-    if (progress < 1 && active) {
+    // Continue animation until complete
+    if (progress < 1) {
       requestIdRef.current = requestAnimationFrame(animate);
     } else {
-      // Reset for next cycle if still active
-      if (active) {
-        startTimeRef.current = null;
-        requestIdRef.current = requestAnimationFrame(animate);
-      }
-    }
-  };
-  
-  // Setup animation when active state changes
-  useEffect(() => {
-    if (active) {
-      // Start fresh animation cycle
-      startTimeRef.current = null;
-      requestIdRef.current = requestAnimationFrame(animate);
-    } else {
-      // Cancel any ongoing animation
+      // Animation is complete - clean up
       if (requestIdRef.current) {
         cancelAnimationFrame(requestIdRef.current);
         requestIdRef.current = null;
       }
+      
+      // Reset for next cycle
+      startTimeRef.current = null;
+      setIsRunning(false);
+    }
+  };
+  
+  // Handle activation state changes
+  useEffect(() => {
+    if (active && !isRunning) {
+      // Start a fresh animation cycle
+      setIsRunning(true);
+      setAnimationId(prev => prev + 1);
+      
+      // Reset animation state
+      startTimeRef.current = null;
+      lastProgressRef.current = 0;
+      
+      // Start animation
+      requestIdRef.current = requestAnimationFrame(animate);
     }
     
-    // Cleanup on unmount
+    // Cleanup function
     return () => {
       if (requestIdRef.current) {
         cancelAnimationFrame(requestIdRef.current);
+        requestIdRef.current = null;
       }
     };
   }, [active]);
@@ -172,19 +193,20 @@ export default function SimpleEkg({
         height="100%" 
         viewBox={`0 0 ${width} ${height}`}
         style={{ overflow: 'visible' }}
+        key={`ekg-svg-${animationId}`} // Force complete remount on new animation
       >
         {/* Shadow/glow effect */}
         <path
           ref={shadowRef}
           d={ekgPath}
           fill="none"
-          stroke={lineColor.replace(')', ', 0.3)')}
-          strokeWidth={strokeWidth! + 4}
+          stroke={lineColor.replace(')', ', 0.2)')}
+          strokeWidth={strokeWidth! + 5}
           strokeLinecap="round"
           strokeLinejoin="round"
           style={{
-            filter: 'blur(8px)',
-            opacity: 0.7
+            filter: 'blur(12px)',
+            opacity: 0.6
           }}
         />
         
@@ -207,8 +229,8 @@ export default function SimpleEkg({
           cy={baselineY}
           fill="white"
           style={{
-            filter: `drop-shadow(0 0 ${strokeWidth! * 2}px ${lineColor})`,
-            transition: 'transform 0.1s ease-out'
+            filter: `drop-shadow(0 0 ${strokeWidth! * 2.5}px ${lineColor})`,
+            transition: 'transform 0.05s ease-out'
           }}
         />
       </svg>
