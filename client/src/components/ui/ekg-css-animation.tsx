@@ -93,113 +93,144 @@ export default function EkgCssAnimation({
         viewBox={`0 0 ${width} ${height}`}
         style={{ overflow: 'visible' }}
       >
-        {/* Shadow/glow effect */}
-        <path
-          d={ekgPath}
-          fill="none"
-          stroke={lineColor.replace(')', ', 0.3)')}
-          strokeWidth={strokeWidth + 4}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            filter: 'blur(8px)',
-            opacity: isAnimating ? 0.7 : 0,
-            strokeDasharray: pathLength,
-            strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 3.5s linear, opacity 0.1s linear` : 'none'
-          }}
-        />
-        
-        {/* Main ECG trace */}
-        <path
-          ref={mainPathRef}
-          d={ekgPath}
-          fill="none"
-          stroke={lineColor}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            strokeDasharray: pathLength,
-            strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
-            opacity: isAnimating ? 1 : 0
-          }}
-        />
-        
-        {/* Lead dot that draws the trace */}
-        {isAnimating && (
-          <circle
-            r={strokeWidth * 1.5}
-            fill="white"
-            style={{
-              filter: `drop-shadow(0 0 ${strokeWidth * 2}px ${lineColor})`,
-            }}
-          >
-            <animateMotion
-              dur="3.5s"
-              path={ekgPath}
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate 
-              attributeName="opacity"
-              values="0.8;0.8;1;0.8;0.8;0"
-              keyTimes="0;0.25;0.3;0.4;0.99;1"
-              dur="3.5s"
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate
-              attributeName="r"
-              values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2.5};${strokeWidth * 1.5};${strokeWidth * 1.5}`}
-              keyTimes="0;0.25;0.3;0.4;1"
-              dur="3.5s"
-              repeatCount="1"
-              fill="freeze"
-            />
-          </circle>
-        )}
-        
-        {/* Eraser dot - identical to the lead dot but with delayed start */}
-        {isAnimating && (
-          <circle
-            r={strokeWidth * 1.5}
-            fill="white"
-            style={{
-              filter: `drop-shadow(0 0 ${strokeWidth * 2}px ${lineColor})`,
-              position: 'relative' // Ensure proper positioning
-            }}
-            opacity="0" // Start invisible
-          >
-            {/* Start this dot when the first one is almost done */}
-            <animateMotion
-              dur="3.5s"
-              path={ekgPath}
-              begin="2.5s" // Start when lead dot is almost done
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate 
-              attributeName="opacity"
-              values="0;0.9;0.9;0"
-              keyTimes="0;0.1;0.9;1"
-              dur="3.5s"
-              begin="2.5s"
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate
-              attributeName="r"
-              values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2};${strokeWidth * 1.5}`}
-              keyTimes="0;0.4;0.5;1"
-              dur="3.5s"
-              begin="2.5s"
-              repeatCount="1"
-              fill="freeze"
-            />
-          </circle>
-        )}
+        {/* Create a random ID to prevent conflicts when multiple instances exist */}
+        {(() => {
+          const maskId = `ekg-mask-${Math.random().toString(36).substring(2, 9)}`;
+          return (
+            <>
+              {/* Define clip path for erasing effect */}
+              <defs>
+                <clipPath id={maskId}>
+                  <rect x="0" y="0" width={width} height={height} />
+                  
+                  {/* Eraser that creates a hole in the clipPath */}
+                  {isAnimating && (
+                    <circle
+                      r={strokeWidth * 5}
+                      cx="0"
+                      cy="0"
+                    >
+                      <animateMotion
+                        dur="3.5s"
+                        path={ekgPath}
+                        begin="2.5s"
+                        repeatCount="1"
+                        fill="freeze"
+                      />
+                    </circle>
+                  )}
+                </clipPath>
+              </defs>
+              
+              {/* Shadow/glow effect with clip path applied */}
+              <path
+                d={ekgPath}
+                fill="none"
+                stroke={lineColor.replace(')', ', 0.3)')}
+                strokeWidth={strokeWidth + 4}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  filter: 'blur(8px)',
+                  opacity: isAnimating ? 0.7 : 0,
+                  strokeDasharray: pathLength,
+                  strokeDashoffset: isAnimating ? 0 : pathLength,
+                  transition: isAnimating ? `stroke-dashoffset 3.5s linear, opacity 0.1s linear` : 'none'
+                }}
+                clipPath={`url(#${maskId})`}
+              />
+              
+              {/* Main ECG trace with clip path applied */}
+              <path
+                ref={mainPathRef}
+                d={ekgPath}
+                fill="none"
+                stroke={lineColor}
+                strokeWidth={strokeWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  strokeDasharray: pathLength,
+                  strokeDashoffset: isAnimating ? 0 : pathLength,
+                  transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
+                  opacity: isAnimating ? 1 : 0
+                }}
+                clipPath={`url(#${maskId})`}
+              />
+              
+              {/* Lead dot that draws the trace - not clipped */}
+              {isAnimating && (
+                <circle
+                  r={strokeWidth * 1.5}
+                  fill="white"
+                  style={{
+                    filter: `drop-shadow(0 0 ${strokeWidth * 2}px ${lineColor})`,
+                  }}
+                >
+                  <animateMotion
+                    dur="3.5s"
+                    path={ekgPath}
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                  <animate 
+                    attributeName="opacity"
+                    values="0.8;0.8;1;0.8;0.8;0"
+                    keyTimes="0;0.25;0.3;0.4;0.99;1"
+                    dur="3.5s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                  <animate
+                    attributeName="r"
+                    values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2.5};${strokeWidth * 1.5};${strokeWidth * 1.5}`}
+                    keyTimes="0;0.25;0.3;0.4;1"
+                    dur="3.5s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                </circle>
+              )}
+              
+              {/* Eraser dot (visible, follows the hole in the clip path) */}
+              {isAnimating && (
+                <circle
+                  r={strokeWidth * 1.5}
+                  fill="white"
+                  style={{
+                    filter: `drop-shadow(0 0 ${strokeWidth * 2}px ${lineColor})`,
+                  }}
+                >
+                  <animateMotion
+                    dur="3.5s"
+                    path={ekgPath}
+                    begin="2.5s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                  <animate 
+                    attributeName="opacity"
+                    values="0;0.9;0.9;0"
+                    keyTimes="0;0.1;0.9;1"
+                    dur="3.5s"
+                    begin="2.5s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                  <animate
+                    attributeName="r"
+                    values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2};${strokeWidth * 1.5}`}
+                    keyTimes="0;0.4;0.5;1"
+                    dur="3.5s"
+                    begin="2.5s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                </circle>
+              )}
+            </>
+          );
+        })()}
       </svg>
     </div>
   );

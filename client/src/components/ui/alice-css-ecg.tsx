@@ -87,112 +87,144 @@ export default function AliceCssEcg({
         viewBox={`0 0 ${width} ${height}`}
         className="transition-opacity duration-300"
       >
-        {/* Shadow path with glow effect */}
-        <path
-          d={ekgPath}
-          fill="none"
-          stroke="rgba(255, 255, 255, 0.3)"
-          strokeWidth={3}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            filter: 'blur(2px)',
-            opacity: isAnimating ? 0.3 : 0,
-            strokeDasharray: pathLength,
-            strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 1s linear, opacity 0.1s linear` : 'none'
-          }}
-        />
-        
-        {/* Main bright visible path */}
-        <path
-          ref={mainPathRef}
-          d={ekgPath}
-          fill="none"
-          stroke={color}
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            strokeDasharray: pathLength,
-            strokeDashoffset: isAnimating ? 0 : pathLength,
-            transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
-            opacity: isAnimating ? 1 : 0
-          }}
-        />
-        
-        {/* Lead dot that draws the path */}
-        {isAnimating && (
-          <circle
-            r={2.5}
-            fill="white"
-            style={{
-              filter: 'drop-shadow(0 0 3px white)',
-            }}
-          >
-            <animateMotion
-              dur="1s"
-              path={ekgPath}
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate 
-              attributeName="opacity"
-              values="0.8;0.8;1;0.8;0.8;0"
-              keyTimes="0;0.4;0.5;0.6;0.99;1"
-              dur="1s"
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate
-              attributeName="r"
-              values="2.5;2.5;3.5;2.5;2.5"
-              keyTimes="0;0.4;0.5;0.6;1"
-              dur="1s"
-              repeatCount="1"
-              fill="freeze"
-            />
-          </circle>
-        )}
-        
-        {/* Eraser dot - identical to the lead dot but with delayed start */}
-        {isAnimating && (
-          <circle
-            r={2.5}
-            fill="white"
-            style={{
-              filter: 'drop-shadow(0 0 3px white)',
-              position: 'relative' // Ensure proper positioning
-            }}
-            opacity="0" // Start invisible
-          >
-            <animateMotion
-              dur="1s"
-              path={ekgPath}
-              begin="0.7s" // Start when lead dot is almost done
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate 
-              attributeName="opacity"
-              values="0;0.8;0.8;0"
-              keyTimes="0;0.1;0.9;1"
-              dur="1s"
-              begin="0.7s"
-              repeatCount="1"
-              fill="freeze"
-            />
-            <animate
-              attributeName="r"
-              values="2.5;2.5;3.5;2.5"
-              keyTimes="0;0.4;0.5;1"
-              dur="1s"
-              begin="0.7s"
-              repeatCount="1"
-              fill="freeze"
-            />
-          </circle>
-        )}
+        {/* Create a random ID to prevent conflicts when multiple instances exist */}
+        {(() => {
+          const maskId = `ecg-mask-${Math.random().toString(36).substring(2, 9)}`;
+          return (
+            <>
+              {/* Define clip path for erasing effect */}
+              <defs>
+                <clipPath id={maskId}>
+                  <rect x="0" y="0" width={width} height={height} />
+                  
+                  {/* Eraser that creates a hole in the clipPath */}
+                  {isAnimating && (
+                    <circle
+                      r={4}
+                      cx="0"
+                      cy="0"
+                    >
+                      <animateMotion
+                        dur="1s"
+                        path={ekgPath}
+                        begin="0.7s"
+                        repeatCount="1"
+                        fill="freeze"
+                      />
+                    </circle>
+                  )}
+                </clipPath>
+              </defs>
+              
+              {/* Shadow path with glow effect */}
+              <path
+                d={ekgPath}
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.3)"
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  filter: 'blur(2px)',
+                  opacity: isAnimating ? 0.3 : 0,
+                  strokeDasharray: pathLength,
+                  strokeDashoffset: isAnimating ? 0 : pathLength,
+                  transition: isAnimating ? `stroke-dashoffset 1s linear, opacity 0.1s linear` : 'none'
+                }}
+                clipPath={`url(#${maskId})`}
+              />
+              
+              {/* Main bright visible path - clipPath will make the eraser dot cut a hole */}
+              <path
+                ref={mainPathRef}
+                d={ekgPath}
+                fill="none"
+                stroke={color}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  strokeDasharray: pathLength,
+                  strokeDashoffset: isAnimating ? 0 : pathLength,
+                  transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
+                  opacity: isAnimating ? 1 : 0
+                }}
+                clipPath={`url(#${maskId})`}
+              />
+              
+              {/* Lead dot that draws the path - not clipped */}
+              {isAnimating && (
+                <circle
+                  r={2.5}
+                  fill="white"
+                  style={{
+                    filter: 'drop-shadow(0 0 3px white)',
+                  }}
+                >
+                  <animateMotion
+                    dur="1s"
+                    path={ekgPath}
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                  <animate 
+                    attributeName="opacity"
+                    values="0.8;0.8;1;0.8;0.8;0"
+                    keyTimes="0;0.4;0.5;0.6;0.99;1"
+                    dur="1s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                  <animate
+                    attributeName="r"
+                    values="2.5;2.5;3.5;2.5;2.5"
+                    keyTimes="0;0.4;0.5;0.6;1"
+                    dur="1s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                </circle>
+              )}
+              
+              {/* Eraser dot - identical to the lead dot but appears after lead is done */}
+              {isAnimating && (
+                <circle
+                  r={2.5}
+                  fill="white"
+                  style={{
+                    filter: 'drop-shadow(0 0 3px white)',
+                  }}
+                >
+                  <animateMotion
+                    dur="1s"
+                    path={ekgPath}
+                    begin="0.7s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                  <animate 
+                    attributeName="opacity"
+                    values="0;0.8;0.8;0"
+                    keyTimes="0;0.1;0.9;1"
+                    dur="1s"
+                    begin="0.7s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                  <animate
+                    attributeName="r"
+                    values="2.5;2.5;3.5;2.5"
+                    keyTimes="0;0.4;0.5;1"
+                    dur="1s"
+                    begin="0.7s"
+                    repeatCount="1"
+                    fill="freeze"
+                  />
+                </circle>
+              )}
+            </>
+          );
+        })()}
       </svg>
     </div>
   );
