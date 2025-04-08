@@ -234,37 +234,27 @@ export default function Chatbot({ bills }: ChatbotProps) {
   };
 
   /**
-   * Improved handler for the Ask button that ensures complete animation cycle
+   * Simple, reliable handler for the Ask button
    */
   const handleSubmitClick = () => {
-    // Prevent double-clicks during animation or API processing
+    // Prevent rapid double-clicks
     if (isPending || isSubmittingRef.current) return;
     
-    // Lock the button to prevent further clicks
+    // Lock the button
     isSubmittingRef.current = true;
     
-    // Clear any existing animation state first
-    setIsPending(false);
+    // Start the animation immediately
+    setIsPending(true);
     
-    // Small delay to ensure complete unmount of animation components
+    // Submit the API call with a slight delay to allow animation to start
     setTimeout(() => {
-      // Start the ECG animation with a clean slate
-      setIsPending(true);
+      handleSubmit();
       
-      // Wait to ensure animation is fully visible before making API call
+      // Reset the lock after the animation duration plus a small buffer
       setTimeout(() => {
-        // Make the API call
-        handleSubmit();
-        
-        // The animation is allowed to complete its full 3 second cycle
-        // regardless of how quickly the API responds
-        setTimeout(() => {
-          // Wait for a full animation cycle (3s) plus a small buffer
-          // before allowing another click
-          isSubmittingRef.current = false;
-        }, 3500); // Animation is 3s + small buffer
-      }, 200);
-    }, 50);
+        isSubmittingRef.current = false;
+      }, 3000);
+    }, 100);
   };
   
   return (

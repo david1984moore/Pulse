@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './ekg-animation.css';
 
 interface AliceEcgProps {
@@ -7,149 +7,128 @@ interface AliceEcgProps {
 }
 
 /**
- * Thoroughly rewritten Alice ECG animation with guaranteed completion and 
- * consistent behavior between cycles
+ * Completely rewritten Alice ECG animation with smooth frame-based animation
  */
 export default function AliceEcg({ active, color = "#FFFFFF" }: AliceEcgProps) {
-  // Use state to ensure proper re-renders
-  const [animationKey, setAnimationKey] = useState<number>(0);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  
-  // Create refs for animation control
-  const pathRef = useRef<SVGPathElement>(null);
-  const dotRef = useRef<SVGCircleElement>(null);
-  const shadowRef = useRef<SVGPathElement>(null);
-  const requestRef = useRef<number | null>(null);
+  const animationRef = useRef<SVGSVGElement>(null);
   const startTimeRef = useRef<number | null>(null);
+  const requestRef = useRef<number | null>(null);
   
   // Scale the animation to fit in the header area
   const width = 100;
   const height = 28;
   const centerY = height / 2;
   
-  // Define the classic ECG segments for a mini header display
-  const segments = [
-    // Start at baseline
-    `M 0,${centerY} H ${width * 0.15}`,
-    
-    // P wave - small bump
-    `C ${width * 0.18},${centerY} ${width * 0.20},${centerY - height * 0.15} ${width * 0.23},${centerY}`,
-    
-    // PR segment - flat
-    `H ${width * 0.35}`,
-    
-    // QRS complex - down, sharp up, down
-    `L ${width * 0.38},${centerY + height * 0.1}`,
-    `L ${width * 0.42},${centerY - height * 0.4}`,
-    `L ${width * 0.46},${centerY + height * 0.2}`,
-    
-    // ST segment - flat
-    `H ${width * 0.55}`,
-    
-    // T wave - smooth rounded bump
-    `C ${width * 0.62},${centerY - height * 0.25} ${width * 0.68},${centerY - height * 0.25} ${width * 0.75},${centerY}`,
-    
-    // Return to baseline and finish
-    `H ${width}`
-  ];
+  // Mini version of the classic ECG waveform path with proper P, QRS, and T waves
+  const ekgPath = `
+    M 0,${centerY}
+    H ${width * 0.15}
+    C ${width * 0.18},${centerY} ${width * 0.2},${centerY - height * 0.2} ${width * 0.25},${centerY}
+    H ${width * 0.35}
+    L ${width * 0.4},${centerY + height * 0.15}
+    L ${width * 0.45},${centerY - height * 0.5}
+    L ${width * 0.5},${centerY + height * 0.25}
+    H ${width * 0.6}
+    C ${width * 0.65},${centerY - height * 0.3} ${width * 0.7},${centerY - height * 0.3} ${width * 0.75},${centerY}
+    H ${width}
+  `;
   
-  // Combine segments into a full path
-  const ekgPath = segments.join(' ');
-  
-  // Animation function using requestAnimationFrame
+  // Animation loop for smooth control
   const animate = (time: number) => {
-    // Skip if any references are missing
-    if (!pathRef.current || !shadowRef.current || !dotRef.current) {
-      if (active) requestRef.current = requestAnimationFrame(animate);
-      return;
-    }
-    
-    // Start time tracking on first frame
     if (startTimeRef.current === null) {
       startTimeRef.current = time;
     }
     
-    // Calculate elapsed time
     const elapsed = time - startTimeRef.current;
     
-    // Use a fixed animation duration
-    const duration = 1500; // 1.5 seconds total for mini version
+    // Animation duration is 1.2 seconds - faster for the header version
+    const duration = 1200;
     
-    // Calculate raw progress
-    const rawProgress = Math.min(elapsed / duration, 1);
-    
-    // Use easing for smoother motion
-    const progress = rawProgress < 0.5
-      ? 2 * rawProgress * rawProgress
-      : 1 - Math.pow(-2 * rawProgress + 2, 2) / 2;
-    
-    // Get the total path length
-    const pathLength = pathRef.current.getTotalLength();
-    
-    // Apply dash offset for drawing effect
-    pathRef.current.style.strokeDasharray = `${pathLength}`;
-    pathRef.current.style.strokeDashoffset = `${pathLength * (1 - progress)}`;
-    
-    shadowRef.current.style.strokeDasharray = `${pathLength}`;
-    shadowRef.current.style.strokeDashoffset = `${pathLength * (1 - progress)}`;
-    
-    // Position and style the dot
-    if (progress > 0 && progress < 1) {
-      // Calculate point position
-      const point = pathRef.current.getPointAtLength(pathLength * progress);
-      dotRef.current.setAttribute('cx', point.x.toString());
-      dotRef.current.setAttribute('cy', point.y.toString());
+    // Make sure the svg ref is available
+    if (animationRef.current) {
+      // Get the path and circle elements
+      const path = animationRef.current.querySelector('.alice-path') as SVGPathElement;
+      const shadow = animationRef.current.querySelector('.alice-shadow') as SVGPathElement;
+      const dot = animationRef.current.querySelector('.alice-dot') as SVGCircleElement;
       
-      // QRS complex is roughly 35-45% into the animation
-      const isInQRS = progress > 0.35 && progress < 0.45;
-      const dotScale = isInQRS ? 1.5 : 1;
-      const dotOpacity = isInQRS ? 1 : 0.8;
-      
-      dotRef.current.style.transform = `scale(${dotScale})`;
-      dotRef.current.style.opacity = dotOpacity.toString();
-    } else {
-      // Hide dot at very beginning or end
-      dotRef.current.style.opacity = '0';
+      if (path && shadow && dot) {
+        // Calculate progress (0 to 1)
+        let progress = Math.min(elapsed / duration, 1);
+        
+        // Smooth out the timing with a slight easing
+        const adjustedProgress = 0.5 - Math.cos(progress * Math.PI) / 2;
+        
+        // Get the path length
+        const pathLength = path.getTotalLength();
+        
+        // Set stroke dasharray and offset for drawing effect
+        path.style.strokeDasharray = `${pathLength}`;
+        path.style.strokeDashoffset = `${pathLength * (1 - adjustedProgress)}`;
+        
+        shadow.style.strokeDasharray = `${pathLength}`;
+        shadow.style.strokeDashoffset = `${pathLength * (1 - adjustedProgress)}`;
+        
+        // Position the dot along the path based on progress
+        if (adjustedProgress > 0 && adjustedProgress < 1) {
+          const point = path.getPointAtLength(pathLength * adjustedProgress);
+          dot.setAttribute('cx', point.x.toString());
+          dot.setAttribute('cy', point.y.toString());
+          
+          // Make dot size pulse at the spike
+          const isInSpike = adjustedProgress > 0.5 && adjustedProgress < 0.7;
+          const dotScale = isInSpike ? 1.2 : 1;
+          
+          dot.style.transform = `scale(${dotScale})`;
+          dot.style.opacity = '1';
+        } else if (adjustedProgress >= 1) {
+          // Hide dot at the end
+          dot.style.opacity = '0';
+        }
+        
+        // If animation is complete, reset for next cycle
+        if (progress >= 1) {
+          startTimeRef.current = null;
+          if (active) {
+            // Keep animation running if still active
+            requestRef.current = requestAnimationFrame(animate);
+          }
+          return;
+        }
+      }
     }
     
-    // Continue animation if not complete
-    if (progress < 1) {
+    // Continue animation
+    if (active) {
+      requestRef.current = requestAnimationFrame(animate);
+    }
+  };
+  
+  // Set up and clean up animation
+  useEffect(() => {
+    if (active) {
+      // Start animation
       requestRef.current = requestAnimationFrame(animate);
     } else {
-      // Properly clean up at completion
+      // Stop animation when inactive
       if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
         requestRef.current = null;
       }
       
-      // Reset for next cycle
+      // Reset state
       startTimeRef.current = null;
-      setIsRunning(false);
-    }
-  };
-  
-  // Set up animation when active state changes
-  useEffect(() => {
-    if (active && !isRunning) {
-      // Reset animation state and start fresh
-      setIsRunning(true);
-      setAnimationKey(prev => prev + 1);
-      startTimeRef.current = null;
-      
-      // Start new animation cycle
-      requestRef.current = requestAnimationFrame(animate);
     }
     
-    // Clean up any running animation
+    // Clean up
     return () => {
-      if (requestRef.current) {
+      if (requestRef.current !== null) {
         cancelAnimationFrame(requestRef.current);
         requestRef.current = null;
       }
     };
-  }, [active, isRunning]);
+  }, [active]);
   
-  // When not active, render empty space with same dimensions
+  // If not active, render empty space
   if (!active) {
     return <div className="ml-2 w-[100px] h-[28px]"></div>;
   }
@@ -164,15 +143,15 @@ export default function AliceEcg({ active, color = "#FFFFFF" }: AliceEcgProps) {
       }}
     >
       <svg 
+        ref={animationRef}
         width="100%" 
         height="100%" 
         viewBox={`0 0 ${width} ${height}`}
         className="transition-opacity duration-300"
-        key={`alice-svg-${animationKey}`} // Force remount with new key
       >
-        {/* Shadow with glow effect */}
+        {/* Shadow path with glow effect */}
         <path
-          ref={shadowRef}
+          className="alice-shadow"
           d={ekgPath}
           fill="none"
           stroke="rgba(255, 255, 255, 0.3)"
@@ -184,9 +163,9 @@ export default function AliceEcg({ active, color = "#FFFFFF" }: AliceEcgProps) {
           }}
         />
         
-        {/* Main visible path */}
+        {/* Main bright visible path */}
         <path
-          ref={pathRef}
+          className="alice-path"
           d={ekgPath}
           fill="none"
           stroke={color}
@@ -195,16 +174,15 @@ export default function AliceEcg({ active, color = "#FFFFFF" }: AliceEcgProps) {
           strokeLinejoin="round"
         />
         
-        {/* Luminous following dot */}
+        {/* Glowing dot that follows the path */}
         <circle
-          ref={dotRef}
+          className="alice-dot"
           r={2.5}
           cx={0}
           cy={centerY}
           fill="white"
           style={{
-            filter: 'drop-shadow(0 0 3px white)',
-            transition: 'transform 0.05s ease-out'
+            filter: 'drop-shadow(0 0 3px white)'
           }}
         />
       </svg>
