@@ -118,7 +118,7 @@ export default function EkgCssAnimation({
           }}
         />
         
-        {/* Glowing dot that follows the trace */}
+        {/* Lead dot that draws the trace */}
         {isAnimating && (
           <circle
             r={strokeWidth * 1.5}
@@ -146,6 +146,66 @@ export default function EkgCssAnimation({
               values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2.5};${strokeWidth * 1.5};${strokeWidth * 1.5}`}
               keyTimes="0;0.25;0.3;0.4;1"
               dur="3.5s"
+              repeatCount="1"
+              fill="freeze"
+            />
+          </circle>
+        )}
+        
+        {/* Eraser dot that follows and cleans up the trace */}
+        {isAnimating && (
+          <circle
+            r={strokeWidth * 4.5}
+            fill="transparent"
+            style={{
+              stroke: 'white',
+              strokeWidth: 2,
+              filter: 'blur(4px)',
+              mixBlendMode: 'difference'
+            }}
+          >
+            <animateMotion
+              dur="3.5s"
+              path={ekgPath}
+              begin="0.7s"
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate 
+              attributeName="opacity"
+              values="0;0.95;0.95;0"
+              keyTimes="0;0.1;0.9;1"
+              dur="3.5s"
+              begin="0.7s"
+              repeatCount="1"
+              fill="freeze"
+            />
+          </circle>
+        )}
+        
+        {/* Second "cleanup" dot with different effect */}
+        {isAnimating && (
+          <circle
+            r={strokeWidth * 3}
+            fill="#ffffff"
+            style={{
+              filter: 'blur(3px)',
+              opacity: 0.7
+            }}
+          >
+            <animateMotion
+              dur="3.5s"
+              path={ekgPath}
+              begin="0.85s"
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate 
+              attributeName="opacity"
+              values="0;0.7;0.7;0"
+              keyTimes="0;0.1;0.9;1"
+              dur="3.5s"
+              begin="0.85s"
               repeatCount="1"
               fill="freeze"
             />

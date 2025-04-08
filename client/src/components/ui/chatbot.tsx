@@ -264,12 +264,12 @@ export default function Chatbot({ bills }: ChatbotProps) {
       // Animation runs independently from API response
       handleSubmit();
       
-      // Set a timer to end the animation right after it completes
+      // Set a timer to end the animation after the eraser dots have completed
       setTimeout(() => {
         setShowAnimation(false);
         setIsPending(false);
         isSubmittingRef.current = false;
-      }, 3600); // Match the 3.5s animation duration plus a tiny buffer
+      }, 4500); // Extend to allow for trailing dots to complete their cycle
     }, 50);
   };
   

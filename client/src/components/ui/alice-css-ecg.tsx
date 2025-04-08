@@ -112,7 +112,7 @@ export default function AliceCssEcg({
           }}
         />
         
-        {/* Glowing dot that follows the path */}
+        {/* Lead dot that draws the path */}
         {isAnimating && (
           <circle
             r={2.5}
@@ -140,6 +140,37 @@ export default function AliceCssEcg({
               values="2.5;2.5;3.5;2.5;2.5"
               keyTimes="0;0.4;0.5;0.6;1"
               dur="1s"
+              repeatCount="1"
+              fill="freeze"
+            />
+          </circle>
+        )}
+        
+        {/* Eraser dot that follows and erases the trace */}
+        {isAnimating && (
+          <circle
+            r={4}
+            fill="transparent"
+            style={{
+              stroke: 'white',
+              strokeWidth: 1,
+              filter: 'blur(3px)',
+              mixBlendMode: 'difference'
+            }}
+          >
+            <animateMotion
+              dur="1s"
+              path={ekgPath}
+              begin="0.3s"
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate 
+              attributeName="opacity"
+              values="0;0.9;0.9;0"
+              keyTimes="0;0.1;0.9;1"
+              dur="1s"
+              begin="0.3s"
               repeatCount="1"
               fill="freeze"
             />
