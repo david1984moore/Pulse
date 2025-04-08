@@ -108,7 +108,7 @@ export default function DashboardPage() {
             <Link href="/">
               <div className="mr-8 cursor-pointer relative group">
                 <div className="absolute inset-0 bg-primary/10 rounded-full filter blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <PulseLogo size="lg" animated={true} showText={true} />
+                <PulseLogo size="lg" showText={true} />
               </div>
             </Link>
             <h1 className="text-lg font-medium text-gray-700 glow-text">{t('dashboard')}</h1>
