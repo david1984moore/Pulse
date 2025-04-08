@@ -107,39 +107,9 @@ export default function AliceCssEcg({
           }}
         />
         
-        {/* Main bright visible path with mask for erasing effect */}
-        <defs>
-          <mask id={maskId}>
-            <rect width="100%" height="100%" fill="white" />
-            {isAnimating && (
-              <circle
-                r={4}
-                fill="black"
-                style={{
-                  filter: 'blur(2px)',
-                }}
-              >
-                <animateMotion
-                  dur="1s"
-                  path={ekgPath}
-                  begin="0.7s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-                <animate 
-                  attributeName="r"
-                  values="4;5;6"
-                  keyTimes="0;0.5;1"
-                  dur="1s"
-                  begin="0.7s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-              </circle>
-            )}
-          </mask>
-        </defs>
+        {/* Draw first, then erase with second path */}
         
+        {/* First path draws the ECG trace */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -153,9 +123,28 @@ export default function AliceCssEcg({
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
             opacity: isAnimating ? 1 : 0,
-            mask: `url(#${maskId})`
           }}
         />
+        
+        {/* Second path with same path but white stroke to "erase" the first path */}
+        {isAnimating && (
+          <path
+            d={ekgPath}
+            fill="none"
+            stroke="white"
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              strokeDasharray: pathLength,
+              strokeDashoffset: pathLength,
+              transition: `stroke-dashoffset 0.5s linear`,
+              opacity: 1,
+              transitionDelay: '0.7s',
+              mixBlendMode: 'difference'
+            }}
+          />
+        )}
         
         {/* Lead dot that draws the path */}
         {isAnimating && (
@@ -191,38 +180,38 @@ export default function AliceCssEcg({
           </circle>
         )}
         
-        {/* Eraser dot - identical to the lead dot but with delayed start */}
+        {/* Eraser dot with bright glowing effect that follows the erasing path */}
         {isAnimating && (
           <circle
             r={2.5}
             fill="white"
             style={{
-              filter: 'drop-shadow(0 0 3px white)',
+              filter: 'drop-shadow(0 0 4px white)',
               position: 'relative' // Ensure proper positioning
             }}
             opacity="0" // Start invisible
           >
             <animateMotion
-              dur="1s"
+              dur="0.5s"
               path={ekgPath}
-              begin="0.7s" // Start when lead dot is almost done
+              begin="0.7s" // Start when erasing begins
               repeatCount="1"
               fill="freeze"
             />
             <animate 
               attributeName="opacity"
-              values="0;0.8;0.8;0"
+              values="0;1;1;0"
               keyTimes="0;0.1;0.9;1"
-              dur="1s"
+              dur="0.5s"
               begin="0.7s"
               repeatCount="1"
               fill="freeze"
             />
             <animate
               attributeName="r"
-              values="2.5;2.5;3.5;2.5"
+              values="2.5;3.5;4;2.5"
               keyTimes="0;0.4;0.5;1"
-              dur="1s"
+              dur="0.5s"
               begin="0.7s"
               repeatCount="1"
               fill="freeze"

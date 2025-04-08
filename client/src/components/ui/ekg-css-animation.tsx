@@ -113,39 +113,9 @@ export default function EkgCssAnimation({
           }}
         />
         
-        {/* Main ECG trace - this will be drawn and erased */}
-        <defs>
-          <mask id={maskId}>
-            <rect width="100%" height="100%" fill="white" />
-            {isAnimating && (
-              <circle
-                r={strokeWidth * 6}
-                fill="black"
-                style={{
-                  filter: 'blur(2px)',
-                }}
-              >
-                <animateMotion
-                  dur="3.5s"
-                  path={ekgPath}
-                  begin="2.5s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-                <animate 
-                  attributeName="r"
-                  values={`${strokeWidth * 6};${strokeWidth * 7};${strokeWidth * 8}`}
-                  keyTimes="0;0.5;1"
-                  dur="3.5s"
-                  begin="2.5s"
-                  repeatCount="1"
-                  fill="freeze"
-                />
-              </circle>
-            )}
-          </mask>
-        </defs>
+        {/* Draw and then erase technique using two paths */}
         
+        {/* First path draws the ECG trace */}
         <path
           ref={mainPathRef}
           d={ekgPath}
@@ -158,10 +128,34 @@ export default function EkgCssAnimation({
             strokeDasharray: pathLength,
             strokeDashoffset: isAnimating ? 0 : pathLength,
             transition: isAnimating ? `stroke-dashoffset 3.5s linear` : 'none',
-            opacity: isAnimating ? 1 : 0,
-            mask: `url(#${maskId})`
+            opacity: isAnimating ? 1 : 0
           }}
         />
+        
+        {/* Second reverse path with white stroke to erase the first path */}
+        {isAnimating && (
+          <path
+            d={ekgPath}
+            fill="none"
+            stroke="white"
+            strokeWidth={strokeWidth * 2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              strokeDasharray: pathLength,
+              strokeDashoffset: pathLength,
+              transition: `stroke-dashoffset 2s linear`,
+              opacity: 1,
+              transitionDelay: '2.5s',
+              mixBlendMode: 'difference'
+            }}
+            onTransitionEnd={() => {
+              if (isAnimating) {
+                // Animation will clean up in useEffect
+              }
+            }}
+          />
+        )}
         
         {/* Lead dot that draws the trace */}
         {isAnimating && (
@@ -197,39 +191,39 @@ export default function EkgCssAnimation({
           </circle>
         )}
         
-        {/* Eraser dot - identical to the lead dot but with delayed start */}
+        {/* Eraser dot with bright glowing effect that follows the erasing path */}
         {isAnimating && (
           <circle
             r={strokeWidth * 1.5}
             fill="white"
             style={{
-              filter: `drop-shadow(0 0 ${strokeWidth * 2}px ${lineColor})`,
+              filter: `drop-shadow(0 0 ${strokeWidth * 2}px white)`,
               position: 'relative' // Ensure proper positioning
             }}
             opacity="0" // Start invisible
           >
-            {/* Start this dot when the first one is almost done */}
+            {/* Start this dot when the erasing effect begins */}
             <animateMotion
-              dur="3.5s"
+              dur="2s"
               path={ekgPath}
-              begin="2.5s" // Start when lead dot is almost done
+              begin="2.5s" // Start when erasing begins
               repeatCount="1"
               fill="freeze"
             />
             <animate 
               attributeName="opacity"
-              values="0;0.9;0.9;0"
+              values="0;1;1;0"
               keyTimes="0;0.1;0.9;1"
-              dur="3.5s"
+              dur="2s"
               begin="2.5s"
               repeatCount="1"
               fill="freeze"
             />
             <animate
               attributeName="r"
-              values={`${strokeWidth * 1.5};${strokeWidth * 1.5};${strokeWidth * 2};${strokeWidth * 1.5}`}
+              values={`${strokeWidth * 1.5};${strokeWidth * 2.5};${strokeWidth * 3};${strokeWidth * 1.5}`}
               keyTimes="0;0.4;0.5;1"
-              dur="3.5s"
+              dur="2s"
               begin="2.5s"
               repeatCount="1"
               fill="freeze"
