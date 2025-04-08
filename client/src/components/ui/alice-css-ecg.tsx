@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 /**
- * AliceCssEcg - A small CSS-based ECG animation next to Alice's name
- * This uses a simpler drawing/erasing technique for reliable animation
+ * AliceCssEcg - A smaller CSS-based ECG animation next to Alice's name
+ * Guaranteed to run once per active prop change
  */
 export default function AliceCssEcg({
   color = "#FFFFFF",
   active = false,
 }) {
-  // Animation state
+  // Keep track if animation has started
   const [isAnimating, setIsAnimating] = useState(false);
+  
+  // Generate unique mask ID to prevent conflicts with multiple animations
+  const maskId = useRef(`alice-mask-${Math.random().toString(36).substr(2, 9)}`).current;
   
   // Scale the animation to fit in the header area
   const width = 100;
   const height = 28;
   const centerY = height / 2;
   
-  // Mini version of the classic ECG waveform path
+  // Mini version of the classic ECG waveform path with proper P, QRS, and T waves
+  // with all waves returning to the horizontal baseline
   const ekgPath = `
     M 0,${centerY}
     H ${width * 0.15}
@@ -31,22 +35,21 @@ export default function AliceCssEcg({
     H ${width}
   `;
   
-  // Animation timing constants
-  const drawingDuration = "1s";
-  const erasingStartOffset = "0.7s";
+  // Calculate the path length for stroke-dasharray/offset
+  const mainPathRef = useRef<SVGPathElement>(null);
+  const [pathLength, setPathLength] = useState(300); // Default estimate
   
   // Start animation when active prop changes to true
   useEffect(() => {
     if (active) {
-      // Start animation with small delay
       const timer = setTimeout(() => {
         setIsAnimating(true);
       }, 50);
       
-      // Cleanup animation state
+      // Ensure animation state is properly cleaned up
       const cleanupTimer = setTimeout(() => {
         setIsAnimating(false);
-      }, 1500);
+      }, 1500); // Give enough time for all animations to finish
       
       return () => {
         clearTimeout(timer);
@@ -56,6 +59,21 @@ export default function AliceCssEcg({
       setIsAnimating(false);
     }
   }, [active]);
+  
+  // Measure the actual path length
+  useEffect(() => {
+    if (mainPathRef.current) {
+      try {
+        const actualLength = mainPathRef.current.getTotalLength();
+        if (actualLength > 0) {
+          setPathLength(actualLength);
+        }
+      } catch (e) {
+        // Fallback if getTotalLength not supported
+        console.log("Using estimated path length");
+      }
+    }
+  }, []);
   
   return (
     <div 
@@ -72,135 +90,146 @@ export default function AliceCssEcg({
         viewBox={`0 0 ${width} ${height}`}
         className="transition-opacity duration-300"
       >
-        {/* DRAWING PHASE - Only visible during first part of animation */}
-        <g style={{ 
-          opacity: isAnimating ? 1 : 0, 
-          transition: isAnimating 
-            ? 'opacity 0.1s ease-in, opacity 0.2s ease-out 0.7s' 
-            : 'none'
-        }}>
-          {/* Main ECG trace that will appear */}
-          <path
-            d={ekgPath}
-            fill="none"
-            stroke={color}
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeDasharray="300"
-            strokeDashoffset="300"
-            style={{
-              animation: isAnimating 
-                ? `dash-alice ${drawingDuration} linear forwards` 
-                : 'none'
-            }}
-          />
-          
-          {/* Dot that leads the drawing */}
-          {isAnimating && (
-            <circle
-              r={2.5}
-              fill="white"
-              style={{ filter: 'drop-shadow(0 0 3px white)' }}
-            >
-              <animateMotion
-                dur={drawingDuration}
-                path={ekgPath}
-                repeatCount="1"
-                fill="freeze"
-              />
-              <animate 
-                attributeName="opacity"
-                values="0.8;0.8;1;0.8;0.8;0"
-                keyTimes="0;0.4;0.5;0.6;0.99;1"
-                dur={drawingDuration}
-                repeatCount="1"
-                fill="freeze"
-              />
-              <animate
-                attributeName="r"
-                values="2.5;2.5;3.5;2.5;2.5"
-                keyTimes="0;0.4;0.5;0.6;1"
-                dur={drawingDuration}
-                repeatCount="1"
-                fill="freeze"
-              />
-            </circle>
-          )}
-        </g>
+        {/* Shadow path with glow effect */}
+        <path
+          d={ekgPath}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.3)"
+          strokeWidth={3}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            filter: 'blur(2px)',
+            opacity: isAnimating ? 0.3 : 0,
+            strokeDasharray: pathLength,
+            strokeDashoffset: isAnimating ? 0 : pathLength,
+            transition: isAnimating ? `stroke-dashoffset 1s linear, opacity 0.1s linear` : 'none'
+          }}
+        />
         
-        {/* ERASING PHASE - This section replaces the drawing with a dot that erases */}
+        {/* Main bright visible path with mask for erasing effect */}
+        <defs>
+          <mask id={maskId}>
+            <rect width="100%" height="100%" fill="white" />
+            {isAnimating && (
+              <circle
+                r={4}
+                fill="black"
+                style={{
+                  filter: 'blur(2px)',
+                }}
+              >
+                <animateMotion
+                  dur="1s"
+                  path={ekgPath}
+                  begin="0.7s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+                <animate 
+                  attributeName="r"
+                  values="4;5;6"
+                  keyTimes="0;0.5;1"
+                  dur="1s"
+                  begin="0.7s"
+                  repeatCount="1"
+                  fill="freeze"
+                />
+              </circle>
+            )}
+          </mask>
+        </defs>
+        
+        <path
+          ref={mainPathRef}
+          d={ekgPath}
+          fill="none"
+          stroke={color}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            strokeDasharray: pathLength,
+            strokeDashoffset: isAnimating ? 0 : pathLength,
+            transition: isAnimating ? `stroke-dashoffset 1s linear` : 'none',
+            opacity: isAnimating ? 1 : 0,
+            mask: `url(#${maskId})`
+          }}
+        />
+        
+        {/* Lead dot that draws the path */}
         {isAnimating && (
-          <g style={{ 
-            opacity: 0, 
-            animation: isAnimating 
-              ? `appear-alice 0.1s ease-in ${erasingStartOffset} forwards` 
-              : 'none' 
-          }}>
-            {/* Eraser dot that follows the path */}
-            <circle
-              r={2.8}
-              fill="white"
-              style={{ filter: 'drop-shadow(0 0 3px white)' }}
-            >
-              <animateMotion
-                dur={drawingDuration}
-                path={ekgPath}
-                begin={erasingStartOffset}
-                repeatCount="1"
-                fill="freeze"
-              />
-              <animate 
-                attributeName="opacity"
-                values="0.9;0.9;0"
-                keyTimes="0;0.9;1"
-                dur={drawingDuration}
-                begin={erasingStartOffset}
-                repeatCount="1"
-                fill="freeze"
-              />
-            </circle>
-            
-            {/* Eraser trail - this cleans up after the dot */}
-            <rect 
-              x="0" 
-              y="0" 
-              width={width} 
-              height={height}
-              fill="none"
-              stroke="transparent"
-              style={{
-                animation: isAnimating 
-                  ? `wipe-right-alice ${drawingDuration} linear ${erasingStartOffset} forwards` 
-                  : 'none'
-              }}
+          <circle
+            r={2.5}
+            fill="white"
+            style={{
+              filter: 'drop-shadow(0 0 3px white)',
+            }}
+          >
+            <animateMotion
+              dur="1s"
+              path={ekgPath}
+              repeatCount="1"
+              fill="freeze"
             />
-          </g>
+            <animate 
+              attributeName="opacity"
+              values="0.8;0.8;1;0.8;0.8;0"
+              keyTimes="0;0.4;0.5;0.6;0.99;1"
+              dur="1s"
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate
+              attributeName="r"
+              values="2.5;2.5;3.5;2.5;2.5"
+              keyTimes="0;0.4;0.5;0.6;1"
+              dur="1s"
+              repeatCount="1"
+              fill="freeze"
+            />
+          </circle>
+        )}
+        
+        {/* Eraser dot - identical to the lead dot but with delayed start */}
+        {isAnimating && (
+          <circle
+            r={2.5}
+            fill="white"
+            style={{
+              filter: 'drop-shadow(0 0 3px white)',
+              position: 'relative' // Ensure proper positioning
+            }}
+            opacity="0" // Start invisible
+          >
+            <animateMotion
+              dur="1s"
+              path={ekgPath}
+              begin="0.7s" // Start when lead dot is almost done
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate 
+              attributeName="opacity"
+              values="0;0.8;0.8;0"
+              keyTimes="0;0.1;0.9;1"
+              dur="1s"
+              begin="0.7s"
+              repeatCount="1"
+              fill="freeze"
+            />
+            <animate
+              attributeName="r"
+              values="2.5;2.5;3.5;2.5"
+              keyTimes="0;0.4;0.5;1"
+              dur="1s"
+              begin="0.7s"
+              repeatCount="1"
+              fill="freeze"
+            />
+          </circle>
         )}
       </svg>
-      
-      {/* CSS Animations - Global styles */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes dash-alice {
-          to {
-            stroke-dashoffset: 0;
-          }
-        }
-        
-        @keyframes appear-alice {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        @keyframes wipe-right-alice {
-          from {
-            clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
-          }
-          to {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-          }
-        }
-      `}} />
     </div>
   );
 }
