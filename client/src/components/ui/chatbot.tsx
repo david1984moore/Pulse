@@ -242,6 +242,14 @@ export default function Chatbot({ bills }: ChatbotProps) {
    * Guaranteed reliable handler that starts the animation independently from API response
    */
   const handleSubmitClick = () => {
+    // Check if there is a valid selection
+    if ((isCustomAmount && !customAmount) || (!isCustomAmount && !selectedAmount)) {
+      // If no valid selection, prompt the user to make a selection
+      const userMessage = "Please select or enter an amount";
+      setMessages((prev) => [...prev, { text: userMessage, sender: "bot", isAnimating: true }]);
+      return;
+    }
+
     // Prevent rapid clicks
     if (isPending || isSubmittingRef.current) return;
 
@@ -553,13 +561,13 @@ export default function Chatbot({ bills }: ChatbotProps) {
               ) : (
                 <Button
                   onClick={handleSubmitClick}
-                  disabled={isCustomAmount ? !customAmount : !selectedAmount}
+                  disabled={false}
                   className={`
-                    w-full sm:w-auto bg-primary-600
-                    text-white font-bold relative 
-                    shadow-lg
-                    rounded-lg py-3.5 px-7 border-2 border-primary-400
-                    ${isCustomAmount && !customAmount || !isCustomAmount && !selectedAmount ? 'opacity-50' : 'opacity-100'}
+                    w-full sm:w-auto bg-blue-600
+                    text-white font-extrabold relative 
+                    shadow-xl
+                    rounded-lg py-4 px-8 border-2 border-blue-400
+                    text-lg
                   `}
                 >
                   <div className="flex items-center justify-center relative z-10">
