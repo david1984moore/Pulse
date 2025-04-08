@@ -145,32 +145,44 @@ export default function LandingPage() {
           </svg>
         </div>
         
-        <div className="relative max-w-7xl mx-auto pt-20 pb-28 px-4 sm:pt-32 sm:pb-40 sm:px-6 lg:px-8">
-          <div className="max-w-4xl z-10 relative">
-            {/* Improved title with accent */}
-            <div className="mb-3">
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary-600 text-sm font-medium">
-                <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
-                Pulse
+        <div className="relative max-w-7xl mx-auto pt-20 pb-32 px-4 sm:pt-32 sm:pb-48 sm:px-6 lg:px-8">
+          {/* Decorative grid patterns for visual interest */}
+          <div className="absolute top-0 right-0 -mt-16 mr-16 hidden lg:block">
+            <div className="w-64 h-64 opacity-10">
+              <div className="w-full h-full bg-gradient-to-br from-primary to-blue-400 rounded-full blur-3xl"></div>
+            </div>
+          </div>
+          
+          <div className="absolute bottom-0 left-0 -mb-16 ml-16 hidden lg:block">
+            <div className="w-48 h-48 opacity-10">
+              <div className="w-full h-full bg-gradient-to-tr from-primary to-blue-400 rounded-full blur-3xl"></div>
+            </div>
+          </div>
+          
+          <div className="relative max-w-4xl z-10">
+            {/* Premium looking title with accent */}
+            <div className="mb-5">
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-semibold">
+                Take Control of Your Finances Today
               </div>
             </div>
             
-            <h1 className="text-4xl font-extrabold text-gray-800 sm:text-5xl lg:text-6xl mb-6 leading-tight">
+            <h1 className="text-4xl font-extrabold text-gray-800 sm:text-5xl lg:text-6xl mb-8 leading-tight">
               {t('heroTitle')}
               <span className="text-primary">.</span>
             </h1>
             
-            <p className="mt-6 max-w-3xl text-lg text-gray-600 leading-relaxed">
+            <p className="max-w-3xl text-lg text-gray-600 leading-relaxed">
               {t('heroDescription')}
             </p>
             
-            {/* Improved CTA buttons */}
+            {/* Enhanced CTA buttons with subtle animation */}
             <div className="mt-12 flex flex-wrap gap-4">
               {!user ? (
                 <>
                   <Link href="/signup">
                     <Button size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl rounded-lg px-8 py-6 transform hover:-translate-y-0.5 transition-all">
-                      {t('getStarted')}
+                      {t('getStarted')} →
                     </Button>
                   </Link>
                   <Link href="/login">
@@ -186,25 +198,25 @@ export default function LandingPage() {
               ) : (
                 <Link href="/dashboard">
                   <Button size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl rounded-lg px-8 py-6 transform hover:-translate-y-0.5 transition-all">
-                    {t('goToDashboard')}
+                    {t('goToDashboard')} →
                   </Button>
                 </Link>
               )}
             </div>
             
-            {/* Stats badges */}
-            <div className="mt-16 grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-lg">
-              <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/70 backdrop-blur-sm border border-gray-100 shadow-sm">
-                <span className="text-2xl font-bold text-primary">100%</span>
-                <span className="text-xs text-gray-500 mt-1 text-center">Free to Use</span>
+            {/* Enhanced stats cards */}
+            <div className="mt-16 grid grid-cols-2 sm:grid-cols-3 gap-5 max-w-lg">
+              <div className="flex flex-col items-center justify-center p-5 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md hover:shadow-lg transition-shadow">
+                <span className="text-3xl font-bold text-primary">100%</span>
+                <span className="text-xs font-medium text-gray-600 mt-2 text-center">Free to Use</span>
               </div>
-              <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/70 backdrop-blur-sm border border-gray-100 shadow-sm">
-                <span className="text-2xl font-bold text-primary">24/7</span>
-                <span className="text-xs text-gray-500 mt-1 text-center">Financial Insights</span>
+              <div className="flex flex-col items-center justify-center p-5 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md hover:shadow-lg transition-shadow">
+                <span className="text-3xl font-bold text-primary">24/7</span>
+                <span className="text-xs font-medium text-gray-600 mt-2 text-center">Financial Insights</span>
               </div>
-              <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/70 backdrop-blur-sm border border-gray-100 shadow-sm sm:col-span-1 col-span-2">
-                <span className="text-2xl font-bold text-primary">AI</span>
-                <span className="text-xs text-gray-500 mt-1 text-center">Powered Assistant</span>
+              <div className="flex flex-col items-center justify-center p-5 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-md hover:shadow-lg transition-shadow sm:col-span-1 col-span-2">
+                <span className="text-3xl font-bold text-primary">AI</span>
+                <span className="text-xs font-medium text-gray-600 mt-2 text-center">Powered Assistant</span>
               </div>
             </div>
           </div>
@@ -216,7 +228,6 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-medium mb-6">
-              <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
               {t('featuresTitle')}
             </div>
             <h2 className="text-3xl font-extrabold text-gray-800 sm:text-4xl lg:text-5xl tracking-tight">
@@ -280,8 +291,7 @@ export default function LandingPage() {
             <div className="mt-20 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="p-8 lg:p-12 flex flex-col justify-center">
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-medium mb-6">
-                    <span className="flex h-2 w-2 rounded-full bg-blue-500 mr-2"></span>
+                  <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary-600 text-sm font-medium mb-6">
                     AI Powered
                   </div>
                   <h3 className="text-2xl font-bold text-gray-800 mb-6">Get smarter financial insights with our AI assistant</h3>
