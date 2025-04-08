@@ -35,7 +35,7 @@ export const AliceMockup: React.FC = () => {
           </div>
           <div className="bg-gray-100 p-1.5 rounded-md">
             <p className="text-gray-800 text-xs">
-              Hello! I'm Alice. Ask me what you can spend.
+              Hi! I'm Alice. I can help with spending decisions.
             </p>
           </div>
         </div>
@@ -44,7 +44,7 @@ export const AliceMockup: React.FC = () => {
         <div className="mb-2 flex justify-end">
           <div className="bg-blue-600 p-1.5 rounded-md">
             <p className="text-white text-xs">
-              Can I spend $75 on dining out this month?
+              Can I afford $50 for a new pair of shoes?
             </p>
           </div>
         </div>
@@ -57,7 +57,7 @@ export const AliceMockup: React.FC = () => {
           </div>
           <div className="bg-gray-100 p-1.5 rounded-md">
             <p className="text-gray-800 text-xs">
-              Yes, you can spend $75 on dining. Your balance after this purchase will be $725, which is enough to cover your upcoming bills.
+              Yes, you can afford to spend $50 on shoes. After this purchase, your balance will be $750, which is still enough to cover all your upcoming bills.
             </p>
           </div>
         </div>

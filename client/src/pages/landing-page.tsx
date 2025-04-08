@@ -270,8 +270,8 @@ export default function LandingPage() {
                     Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.
                   </p>
                   
-                  {/* Alice Chat - Using AliceMockup component */}
-                  <div className="mt-1">
+                  {/* Alice Chat - Using AliceMockup component with adjusted width */}
+                  <div className="mt-1 mx-auto max-w-[280px]">
                     <AliceMockup />
                   </div>
                 </div>
