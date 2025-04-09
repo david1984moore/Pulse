@@ -422,14 +422,11 @@ export default function LandingPage() {
       {/* CTA Section - Sign up */}
       <div className="bg-gradient-to-r from-primary/5 to-primary/10 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-6">
-            {t('getStarted')} {t('to')} Pulse
+          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-10">
+            Ready to check your pulse?
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-            {t('heroDescription')}
-          </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/auth?mode=register">
+            <Link href="/auth">
               <button className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors">
                 {t('signup')}
               </button>
@@ -470,7 +467,7 @@ export default function LandingPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/auth?mode=register">
+                  <Link href="/auth">
                     <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">{t('signup')}</span>
                   </Link>
                 </li>
