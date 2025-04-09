@@ -423,15 +423,15 @@ export default function LandingPage() {
       <div className="bg-gradient-to-r from-primary/5 to-primary/10 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-10">
-            Ready to check your pulse?
+            Ready to check your financial pulse?
           </h2>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/auth">
+            <Link href="/signup">
               <button className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors">
                 {t('signup')}
               </button>
             </Link>
-            <Link href="/auth?mode=login">
+            <Link href="/login">
               <button className="inline-flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-lg text-primary bg-white hover:bg-gray-50 transition-colors">
                 {t('login')}
               </button>
@@ -462,12 +462,12 @@ export default function LandingPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/auth?mode=login">
+                  <Link href="/login">
                     <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">{t('login')}</span>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/auth">
+                  <Link href="/signup">
                     <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">{t('signup')}</span>
                   </Link>
                 </li>
