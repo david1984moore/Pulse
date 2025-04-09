@@ -1,767 +1,521 @@
-import express, { Express, Request, Response, NextFunction } from "express";
-import { Server, createServer } from "http";
+import type { Express, Request, Response, NextFunction } from "express";
+import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupVite, log, serveStatic } from "./vite";
 import { setupAuth } from "./auth";
+import { 
+  insertBillSchema, 
+  insertIncomeSchema, 
+  billFormSchema, 
+  incomeFormSchema 
+} from "@shared/schema";
 import { z } from "zod";
+import csrf from "csurf";
 import rateLimit from "express-rate-limit";
-import csurf from "csurf";
-import cookieParser from "cookie-parser";
 
-/**
- * Setup all the routes for the application
- * @param app Express application
- * @returns HTTP server instance
- */
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Security middleware
-  app.use(cookieParser());
-  
-  // Rate limiting to prevent brute-force attacks
+  // Configure rate limiting first
   const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // 10 requests per windowMs
-    message: { error: "Too many login attempts, please try again later." }
-  });
-
-  // CSRF protection
-  const csrfProtection = csurf({ cookie: true });
-  
-  // Auth setup
-  setupAuth(app);
-
-  // API routes
-  app.post("/api/register", async (req: Request, res: Response) => {
-    try {
-      const schema = z.object({
-        name: z.string().min(2),
-        email: z.string().email(),
-        password: z.string().min(8),
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { name, email, password } = result.data;
-      
-      // Check if the user already exists
-      const existingUser = await storage.getUserByEmail(email);
-      if (existingUser) {
-        return res.status(400).json({ error: "User already exists" });
-      }
-      
-      // Create the user
-      const user = await storage.createUser({ name, email, password });
-      
-      // Log the user in using Passport.js
-      req.login(user, (err) => {
-        if (err) {
-          return res.status(500).json({ error: err });
-        }
-        return res.status(201).json(user);
-      });
-    } catch (error) {
-      log(`Error registering user: ${error}`, "routes");
-      return res.status(500).json({ error: "Error registering user" });
-    }
-  });
-
-  app.post("/api/login", loginLimiter, async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // Check if the email exists
-      const email = req.body.email;
-      const user = await storage.getUserByEmail(email);
-      
-      if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
-      
-      // Check if the account is locked
-      const isLocked = await storage.checkUserLocked(email);
-      if (isLocked) {
-        return res.status(401).json({ error: "Account is locked due to too many failed attempts. Try again later." });
-      }
-      
-      // Continue with Passport.js authentication
-      const passport = (req as any).passport;
-      passport.authenticate("local", async (err: any, user: any, info: any) => {
-        if (err) {
-          return next(err);
-        }
-        if (!user) {
-          // Increment failed login attempts
-          await storage.updateLoginAttempts(email, true);
-          return res.status(401).json({ error: info.message || "Invalid credentials" });
-        }
-        
-        // Reset login attempts on successful login
-        await storage.updateLoginAttempts(email, false);
-        
-        // Update last login time
-        await storage.updateLastLogin(user.id);
-        
-        req.login(user, (err) => {
-          if (err) {
-            return next(err);
-          }
-          return res.json(user);
-        });
-      })(req, res, next);
-    } catch (error) {
-      log(`Error logging in user: ${error}`, "routes");
-      return res.status(500).json({ error: "Error logging in user" });
-    }
-  });
-
-  app.post("/api/logout", (req: Request, res: Response) => {
-    req.logout((err) => {
-      if (err) {
-        return res.status(500).json({ error: err });
-      }
-      req.session.destroy((err) => {
-        if (err) {
-          return res.status(500).json({ error: err });
-        }
-        res.clearCookie("connect.sid");
-        return res.status(200).json({ success: true });
-      });
-    });
-  });
-
-  // Get current user
-  app.get("/api/current-user", (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    return res.json(req.user);
+    max: 10, // limit each IP to 10 login attempts per window
+    message: 'Too many login attempts, please try again after 15 minutes',
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   });
   
-  // Get CSRF token
-  app.get("/api/csrf-token", csrfProtection, (req: Request, res: Response) => {
-    return res.json({ csrfToken: req.csrfToken() });
+  const passwordResetLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 3, // limit each IP to 3 password reset attempts per hour
+    message: 'Too many password reset attempts, please try again after an hour',
+    standardHeaders: true,
+    legacyHeaders: false,
   });
-
-  // Bills API
-  app.get("/api/bills", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
+  
+  // Apply rate limiting to sensitive routes
+  app.use('/api/login', loginLimiter);
+  app.use('/api/password-reset/request', passwordResetLimiter);
+  
+  // Setup CSRF protection with simpler configuration
+  const csrfProtection = csrf({ cookie: true });
+  
+  // Define which routes to exempt from CSRF protection
+  const csrfExemptRoutes = ['/api/login', '/api/register', '/api/logout', '/api/email-check'];
+  
+  // Add route to get CSRF token
+  app.get('/api/csrf-token', csrfProtection, (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+  });
+  
+  // Apply CSRF protection to all non-exempt routes
+  app.use((req, res, next) => {
+    // Skip CSRF for GET requests and exempt routes
+    if (req.method === 'GET' || csrfExemptRoutes.includes(req.path)) {
+      return next();
     }
     
-    try {
-      const bills = await storage.getBillsByUserId(req.user.id);
-      return res.json(bills);
-    } catch (error) {
-      log(`Error fetching bills: ${error}`, "routes");
-      return res.status(500).json({ error: "Error fetching bills" });
-    }
+    // Apply CSRF protection for all other routes
+    csrfProtection(req, res, next);
   });
-
-  app.post("/api/bills", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const schema = z.object({
-        name: z.string().min(1),
-        amount: z.string().min(1),
-        due_date: z.number().int().positive(),
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { name, amount, due_date } = result.data;
-      
-      const bill = await storage.createBill({
-        name,
-        amount,
-        due_date,
-        user_id: req.user.id,
-      });
-      
-      return res.status(201).json(bill);
-    } catch (error) {
-      log(`Error creating bill: ${error}`, "routes");
-      return res.status(500).json({ error: "Error creating bill" });
-    }
-  });
-
-  // Update bill
-  app.put("/api/bills/:id", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const schema = z.object({
-        name: z.string().min(1),
-        amount: z.string().min(1),
-        due_date: z.number().int().positive(),
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { name, amount, due_date } = result.data;
-      const billId = parseInt(req.params.id);
-      
-      const bill = await storage.updateBill({
-        id: billId,
-        name,
-        amount,
-        due_date,
-      });
-      
-      return res.json(bill);
-    } catch (error) {
-      log(`Error updating bill: ${error}`, "routes");
-      return res.status(500).json({ error: "Error updating bill" });
-    }
-  });
-
-  // Delete bill
-  app.delete("/api/bills/:id", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const billId = parseInt(req.params.id);
-      await storage.deleteBill(billId);
-      return res.status(204).send();
-    } catch (error) {
-      log(`Error deleting bill: ${error}`, "routes");
-      return res.status(500).json({ error: "Error deleting bill" });
-    }
-  });
-
-  // Income API
-  app.get("/api/income", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const income = await storage.getIncomeByUserId(req.user.id);
-      return res.json(income);
-    } catch (error) {
-      log(`Error fetching income: ${error}`, "routes");
-      return res.status(500).json({ error: "Error fetching income" });
-    }
-  });
-
-  app.post("/api/income", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const schema = z.object({
-        source: z.string().min(1),
-        amount: z.string().min(1),
-        frequency: z.string().min(1),
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { source, amount, frequency } = result.data;
-      
-      const income = await storage.createIncome({
-        source,
-        amount,
-        frequency,
-        user_id: req.user.id,
-      });
-      
-      return res.status(201).json(income);
-    } catch (error) {
-      log(`Error creating income: ${error}`, "routes");
-      return res.status(500).json({ error: "Error creating income" });
-    }
-  });
-
-  // Update income
-  app.put("/api/income/:id", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const schema = z.object({
-        source: z.string().min(1),
-        amount: z.string().min(1),
-        frequency: z.string().min(1),
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { source, amount, frequency } = result.data;
-      const incomeId = parseInt(req.params.id);
-      
-      const income = await storage.updateIncome({
-        id: incomeId,
-        source,
-        amount,
-        frequency,
-      });
-      
-      return res.json(income);
-    } catch (error) {
-      log(`Error updating income: ${error}`, "routes");
-      return res.status(500).json({ error: "Error updating income" });
-    }
-  });
-
-  // Delete income
-  app.delete("/api/income/:id", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const incomeId = parseInt(req.params.id);
-      await storage.deleteIncome(incomeId);
-      return res.status(204).send();
-    } catch (error) {
-      log(`Error deleting income: ${error}`, "routes");
-      return res.status(500).json({ error: "Error deleting income" });
-    }
-  });
-
-  // Account balance API
-  app.get("/api/account-balance", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const user = await storage.getUser(req.user.id);
-      return res.json({
-        accountBalance: user?.account_balance?.toString() || null,
-        lastUpdate: user?.last_balance_update || null,
-      });
-    } catch (error) {
-      log(`Error fetching account balance: ${error}`, "routes");
-      return res.status(500).json({ error: "Error fetching account balance" });
-    }
-  });
-
-  app.post("/api/account-balance", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const schema = z.object({
-        balance: z.string().min(1),
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { balance } = result.data;
-      
-      // Convert balance to number
-      const numBalance = parseFloat(balance);
-      
-      // Update user balance
-      const updatedUser = await storage.updateUserBalance(req.user.id, numBalance);
-      
-      // Update last balance update time
-      await storage.updateLastBalanceUpdate(req.user.id);
-      
-      return res.json({
-        accountBalance: updatedUser.account_balance?.toString() || null,
-        lastUpdate: updatedUser.last_balance_update || null,
-      });
-    } catch (error) {
-      log(`Error updating account balance: ${error}`, "routes");
-      return res.status(500).json({ error: "Error updating account balance" });
-    }
-  });
-
-  // Financial advisor - spending calculations and advice
-  // Free-form financial advisor endpoint
-  app.post("/api/financial-advisor", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const schema = z.object({
-        query: z.string().min(1)
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { query } = result.data;
-      
-      // Get user data for financial context
-      const user = await storage.getUser(req.user.id);
-      const bills = await storage.getBillsByUserId(req.user.id);
-      const income = await storage.getIncomeByUserId(req.user.id);
-      
-      // Process the financial query
-      const response = processFinancialQuery(query, {
-        balance: Number(user?.account_balance) || 0,
-        bills,
-        income
-      });
-      
-      return res.json({
-        message: response
-      });
-    } catch (error) {
-      log(`Error in financial advisor: ${error}`, "routes");
-      return res.status(500).json({ error: "Error processing financial query" });
-    }
-  });
-
-  app.post("/api/spending-advisor", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const schema = z.object({
-        amount: z.string().min(1),
-      });
-      
-      const result = schema.safeParse(req.body);
-      if (!result.success) {
-        return res.status(400).json({ error: result.error.issues });
-      }
-      
-      const { amount } = result.data;
-      
-      // Get user data
-      const user = await storage.getUser(req.user.id);
-      const bills = await storage.getBillsByUserId(req.user.id);
-      
-      // Convert strings to numbers
-      const amountNum = parseFloat(amount);
-      const balanceNum = user?.account_balance || 0;
-      
-      // Calculate if the user can spend this amount
-      const numBalance = Number(balanceNum);
-      if (amountNum > numBalance) {
-        return res.json({
-          canSpend: false,
-          message: `Sorry, you cannot spend $${amountNum} as it would exceed your current account balance of $${numBalance.toFixed(2)}.`
-        });
-      }
-      
-      // Check upcoming bills
-      const newBalance = Number(balanceNum) - amountNum;
-      let message = `Yes, you can spend $${amountNum}. Your balance after this purchase will be $${newBalance.toFixed(2)}.`;
-      
-      // Sort bills by due date
-      const sortedBills = [...bills].sort((a, b) => a.due_date - b.due_date);
-      
-      // Get total upcoming bills
-      const upcomingBillsTotal = sortedBills.reduce((total, bill) => {
-        return total + parseFloat(bill.amount);
-      }, 0);
-      
-      // If there are upcoming bills, provide more detailed advice
-      if (sortedBills.length > 0) {
-        const nextBill = sortedBills[0];
-        const nextBillAmount = parseFloat(nextBill.amount);
-        
-        // Calculate days until next bill
-        const today = new Date();
-        const dueDate = new Date(today.getFullYear(), today.getMonth(), nextBill.due_date);
-        
-        // Handle case when the bill is due next month
-        if (dueDate.getDate() < today.getDate()) {
-          dueDate.setMonth(dueDate.getMonth() + 1);
-        }
-        
-        const daysUntilDue = Math.round((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-        
-        // Check if remaining balance will cover at least half of upcoming bills
-        if (newBalance < upcomingBillsTotal * 0.5) {
-          message = `You can spend $${amountNum}, but be careful. Your balance after this purchase will be $${newBalance.toFixed(2)}, and you have $${upcomingBillsTotal.toFixed(2)} in upcoming bills which would leave you with $${(newBalance - upcomingBillsTotal).toFixed(2)}.`;
-        } else {
-          message = `Yes, you can spend $${amountNum}. Your balance after this purchase will be $${newBalance.toFixed(2)}. Your next bill ${nextBill.name} ($${nextBillAmount.toFixed(2)}) is due in ${daysUntilDue} days, which will leave you with $${(newBalance - nextBillAmount).toFixed(2)}.`;
-        }
-      }
-      
-      return res.json({
-        canSpend: true,
-        message
-      });
-    } catch (error) {
-      log(`Error in spending advisor: ${error}`, "routes");
-      return res.status(500).json({ error: "Error processing spending request" });
-    }
-  });
-
-
-
-  // Get calculated balance API
-  app.get("/api/calculated-balance", csrfProtection, async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    
-    try {
-      const user = await storage.getUser(req.user.id);
-      const bills = await storage.getBillsByUserId(req.user.id);
-      
-      // Calculate remaining balance after deducting bills
-      const balance = user?.account_balance || 0;
-      const deductedBills = [];
-      
-      // Get today's date
-      const today = new Date();
-      const currentDay = today.getDate();
-      
-      let calculatedBalance = Number(balance);
-      
-      // Sort bills by due date
-      const sortedBills = [...bills].sort((a, b) => a.due_date - b.due_date);
-      
-      // Deduct bills that are due soon (within the next 7 days)
-      for (const bill of sortedBills) {
-        let dueDate = bill.due_date;
-        
-        // Calculate if the bill is due within 7 days
-        let daysDifference = dueDate - currentDay;
-        if (daysDifference < 0) {
-          // Bill is due next month
-          daysDifference += 30;
-        }
-        
-        if (daysDifference <= 7) {
-          const billAmount = parseFloat(bill.amount);
-          calculatedBalance -= billAmount;
-          
-          deductedBills.push({
-            id: bill.id,
-            name: bill.name,
-            amount: bill.amount,
-            due_date: bill.due_date,
-            days_until_due: daysDifference
-          });
-        }
-      }
-      
-      return res.json({
-        calculatedBalance: calculatedBalance.toString(),
-        deductedBills
-      });
-    } catch (error) {
-      log(`Error calculating balance: ${error}`, "routes");
-      return res.status(500).json({ error: "Error calculating balance" });
-    }
-  });
-
-  // Error handler
+  
+  // Custom error handler for CSRF errors - placed after CSRF protection setup
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     if (err.code === 'EBADCSRFTOKEN') {
-      return res.status(403).json({ error: 'Invalid CSRF token' });
+      console.error('CSRF token validation failed');
+      // Handle CSRF token errors
+      return res.status(403).json({ 
+        message: 'Invalid or expired form submission. Please refresh the page and try again.' 
+      });
     }
-    log(`Error in routes: ${err}`, "routes");
-    res.status(500).json({ error: 'Server error' });
+    next(err);
+  });
+  
+  // Setup auth routes
+  setupAuth(app);
+  
+  // Email availability check endpoint
+  app.get("/api/email-check", async (req, res) => {
+    try {
+      const email = req.query.email as string;
+      
+      if (!email) {
+        return res.status(400).json({ 
+          message: "Email parameter is required" 
+        });
+      }
+      
+      // Normalize email for consistent comparison
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      // Check if email exists in the database
+      const existingUser = await storage.getUserByEmail(normalizedEmail);
+      
+      // Return result (don't expose user details, just whether email exists)
+      res.json({
+        exists: !!existingUser
+      });
+    } catch (error) {
+      console.error("Email check error:", error);
+      res.status(500).json({ message: "Error checking email availability" });
+    }
   });
 
-  // Create a server instance
-  const server = createServer(app);
-  
-  // Set up Vite server in development mode
-  await setupVite(app, server);
-  
-  return server;
-}
+  // Bill routes
+  app.get("/api/bills", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    const userId = req.user!.id;
+    const bills = await storage.getBillsByUserId(userId);
+    res.json(bills);
+  });
 
-/**
- * Processes a natural language financial query and returns relevant financial advice
- * based on the user's financial situation.
- */
-function processFinancialQuery(query: string, context: { balance: number, bills: any[], income: any[] }) {
-  const { balance, bills, income } = context;
-  
-  // Convert query to lowercase for easier matching
-  const normalizedQuery = query.toLowerCase();
-  
-  // Calculate some financial metrics for giving advice
-  const totalMonthlyBills = bills.reduce((sum, bill) => sum + parseFloat(bill.amount), 0);
-  const totalMonthlyIncome = income.reduce((sum, inc) => {
-    const amount = parseFloat(inc.amount);
-    // Adjust frequency to monthly equivalent
-    switch(inc.frequency.toLowerCase()) {
-      case 'weekly':
-        return sum + (amount * 4.33); // Average weeks in a month
-      case 'biweekly':
-      case 'bi-weekly':  
-        return sum + (amount * 2.17); // Biweekly to monthly
-      case 'yearly':
-        return sum + (amount / 12); // Yearly to monthly
-      default: // monthly or unspecified
-        return sum + amount;
-    }
-  }, 0);
-  
-  // Sort bills by due date
-  const sortedBills = [...bills].sort((a, b) => a.due_date - b.due_date);
-  
-  // Get next due bill
-  const today = new Date();
-  const currentDay = today.getDate();
-  let nextDueBill = null;
-  let daysUntilNextBill = Infinity;
-  
-  for (const bill of sortedBills) {
-    let dueDate = bill.due_date;
-    let daysDifference = dueDate - currentDay;
-    
-    if (daysDifference < 0) {
-      // Bill is due next month
-      daysDifference += 30;
+  app.post("/api/bills", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
     
-    if (daysDifference < daysUntilNextBill) {
-      daysUntilNextBill = daysDifference;
-      nextDueBill = bill;
-    }
-  }
-  
-  // Calculate monthly surplus/deficit
-  const monthlySurplus = totalMonthlyIncome - totalMonthlyBills;
-  
-  // Savings rate (if positive surplus)
-  const savingsRate = monthlySurplus > 0 ? (monthlySurplus / totalMonthlyIncome) * 100 : 0;
-  
-  // Debt-to-income ratio (using bills as proxy for debt)
-  const debtToIncomeRatio = totalMonthlyBills > 0 ? totalMonthlyIncome > 0 ? 
-    (totalMonthlyBills / totalMonthlyIncome) * 100 : 100 : 0;
-  
-  // Handle different types of financial questions
-  
-  // Balance or general financial status questions
-  if (normalizedQuery.includes('balance') || normalizedQuery.includes('how much do i have') || 
-      normalizedQuery.includes('financial status') || normalizedQuery.includes('my money')) {
-    return `Your current account balance is $${balance.toFixed(2)}. You have ${bills.length} bills totaling $${totalMonthlyBills.toFixed(2)} per month and ${income.length} income sources totaling approximately $${totalMonthlyIncome.toFixed(2)} per month.`;
-  }
-  
-  // Spending capacity questions
-  if (normalizedQuery.includes('how much can i spend') || normalizedQuery.includes('can i afford') || 
-      normalizedQuery.includes('afford to buy') || normalizedQuery.includes('spend on')) {
-    // Extract amount if present in the query
-    const amountMatch = normalizedQuery.match(/\$?(\d+(\.\d+)?)/);
-    if (amountMatch) {
-      const amount = parseFloat(amountMatch[1]);
-      if (amount > balance) {
-        return `You cannot afford to spend $${amount.toFixed(2)} right now as it exceeds your current balance of $${balance.toFixed(2)}.`;
-      } else if (amount > balance * 0.5 && bills.length > 0) {
-        return `You technically have enough to spend $${amount.toFixed(2)}, but I would be cautious as it represents a significant portion of your current balance ($${balance.toFixed(2)}) and you have upcoming bills to consider.`;
-      } else {
-        return `Yes, you can afford to spend $${amount.toFixed(2)} as your current balance is $${balance.toFixed(2)}.`;
-      }
-    } else {
-      // No specific amount mentioned
-      const safeSpendingAmount = Math.max(0, balance - totalMonthlyBills);
-      return `Based on your current balance of $${balance.toFixed(2)} and considering your upcoming bills, you could safely spend up to $${safeSpendingAmount.toFixed(2)}.`;
-    }
-  }
-  
-  // Budget or spending allocation questions
-  if (normalizedQuery.includes('budget') || normalizedQuery.includes('allocate') || 
-      normalizedQuery.includes('spending plan') || normalizedQuery.includes('how should i spend')) {
-    if (monthlySurplus > 0) {
-      return `Based on your finances, you have a monthly surplus of $${monthlySurplus.toFixed(2)}. A good approach would be to allocate 50% to needs, 30% to wants, and 20% to savings or debt payment. For your situation, that means about $${(monthlySurplus * 0.5).toFixed(2)} for needs, $${(monthlySurplus * 0.3).toFixed(2)} for wants, and $${(monthlySurplus * 0.2).toFixed(2)} for savings.`;
-    } else {
-      return `You're currently spending more than you earn by $${Math.abs(monthlySurplus).toFixed(2)} per month. I would recommend reviewing your bills to find potential savings, and consider increasing your income if possible. Focus on essential expenses first and minimize discretionary spending until your income exceeds your expenses.`;
-    }
-  }
-  
-  // Savings goal questions
-  if (normalizedQuery.includes('save') || normalizedQuery.includes('saving') || 
-      normalizedQuery.includes('emergency fund') || normalizedQuery.includes('save for')) {
-    const emergencyFundNeeded = totalMonthlyBills * 3; // 3 months of expenses
-    
-    if (monthlySurplus <= 0) {
-      return `With your current income and expenses, you're not able to save. You need to either increase your income or reduce your expenses to create capacity for saving.`;
-    } else {
-      const monthsToEmergencyFund = emergencyFundNeeded / monthlySurplus;
-      return `Your current saving capacity is $${monthlySurplus.toFixed(2)} per month. I recommend building an emergency fund of $${emergencyFundNeeded.toFixed(2)} (3 months of expenses), which would take about ${Math.ceil(monthsToEmergencyFund)} months at your current rate.`;
-    }
-  }
-  
-  // Bill payment or upcoming expense questions
-  if (normalizedQuery.includes('bills') || normalizedQuery.includes('due') || 
-      normalizedQuery.includes('payment') || normalizedQuery.includes('upcoming expenses')) {
-    if (bills.length === 0) {
-      return `You don't have any bills registered in your account.`;
-    } else if (nextDueBill) {
-      return `Your next bill is ${nextDueBill.name} for $${parseFloat(nextDueBill.amount).toFixed(2)}, due in ${daysUntilNextBill} days. In total, you have ${bills.length} bills totaling $${totalMonthlyBills.toFixed(2)} per month.`;
-    } else {
-      return `You have ${bills.length} bills totaling $${totalMonthlyBills.toFixed(2)} per month.`;
-    }
-  }
-  
-  // Financial health questions
-  if (normalizedQuery.includes('financial health') || normalizedQuery.includes('doing financially') || 
-      normalizedQuery.includes('financial situation')) {
-    let healthAnalysis = '';
-    
-    // Analyze savings rate
-    if (savingsRate >= 20) {
-      healthAnalysis += `Your savings rate of ${savingsRate.toFixed(0)}% is excellent. `;
-    } else if (savingsRate >= 10) {
-      healthAnalysis += `Your savings rate of ${savingsRate.toFixed(0)}% is good. `;
-    } else if (savingsRate > 0) {
-      healthAnalysis += `Your savings rate of ${savingsRate.toFixed(0)}% is positive but could be improved. `;
-    } else {
-      healthAnalysis += `You're not currently saving any money, which is concerning. `;
-    }
-    
-    // Analyze debt-to-income
-    if (debtToIncomeRatio <= 30) {
-      healthAnalysis += `Your debt-to-income ratio of ${debtToIncomeRatio.toFixed(0)}% is healthy. `;
-    } else if (debtToIncomeRatio <= 40) {
-      healthAnalysis += `Your debt-to-income ratio of ${debtToIncomeRatio.toFixed(0)}% is acceptable but could be better. `;
-    } else {
-      healthAnalysis += `Your debt-to-income ratio of ${debtToIncomeRatio.toFixed(0)}% is high and should be addressed. `;
-    }
-    
-    return `${healthAnalysis}You have a balance of $${balance.toFixed(2)}, monthly income of approximately $${totalMonthlyIncome.toFixed(2)}, and monthly expenses of $${totalMonthlyBills.toFixed(2)}.`;
-  }
-  
-  // Income-related questions
-  if (normalizedQuery.includes('income') || normalizedQuery.includes('earn') || 
-      normalizedQuery.includes('make') || normalizedQuery.includes('salary')) {
-    if (income.length === 0) {
-      return `You don't have any income sources registered in your account.`;
-    } else {
-      const primaryIncome = income.reduce((highest, inc) => {
-        const amount = parseFloat(inc.amount);
-        return amount > highest.amount ? { source: inc.source, amount } : highest;
-      }, { source: '', amount: 0 });
+    try {
+      const userId = req.user!.id;
       
-      return `You have ${income.length} income sources totaling approximately $${totalMonthlyIncome.toFixed(2)} per month. Your primary income source is ${primaryIncome.source} at $${primaryIncome.amount.toFixed(2)} per ${income.find(inc => inc.source === primaryIncome.source)?.frequency.toLowerCase() || 'period'}.`;
+      // First validate the request body with billFormSchema (client-side schema)
+      const formData = billFormSchema.parse(req.body);
+      
+      console.log("Validated form data:", formData);
+      
+      // Prepare data for database insertion
+      const billData = {
+        user_id: userId,
+        name: formData.name,
+        amount: formData.amount,
+        due_date: formData.due_date
+      };
+      
+      console.log("Prepared bill data for insertion:", billData);
+      
+      const bill = await storage.createBill(billData);
+      console.log("Created bill:", bill);
+      
+      res.status(201).json(bill);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
+        return res.status(400).json({ message: "Invalid bill data", details: error.errors });
+      }
+      console.error("Bill creation error:", error);
+      res.status(500).json({ message: "Failed to create bill" });
     }
-  }
+  });
+
+  app.delete("/api/bills/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const billId = parseInt(req.params.id);
+      if (isNaN(billId)) {
+        return res.status(400).json({ message: "Invalid bill ID" });
+      }
+      
+      await storage.deleteBill(billId);
+      res.status(200).json({ message: "Bill deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete bill" });
+    }
+  });
   
-  // Default response for unrecognized queries
-  return `Based on your financial situation: You have a balance of $${balance.toFixed(2)}, ${bills.length} bills totaling $${totalMonthlyBills.toFixed(2)} per month, and ${income.length} income sources totaling approximately $${totalMonthlyIncome.toFixed(2)} per month. Your monthly cash flow is ${monthlySurplus >= 0 ? 'positive' : 'negative'} at ${monthlySurplus >= 0 ? '+' : ''}$${monthlySurplus.toFixed(2)}.`;
+  app.put("/api/bills/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const billId = parseInt(req.params.id);
+      if (isNaN(billId)) {
+        return res.status(400).json({ message: "Invalid bill ID" });
+      }
+      
+      // Validate the request body with billFormSchema
+      const formData = billFormSchema.parse(req.body);
+      
+      // Prepare data for database update
+      const billData = {
+        id: billId,
+        name: formData.name,
+        amount: formData.amount,
+        due_date: formData.due_date
+      };
+      
+      console.log("Updating bill:", billData);
+      
+      const updatedBill = await storage.updateBill(billData);
+      
+      res.status(200).json(updatedBill);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
+        return res.status(400).json({ message: "Invalid bill data", details: error.errors });
+      }
+      console.error("Bill update error:", error);
+      res.status(500).json({ message: "Failed to update bill" });
+    }
+  });
+
+  // Income routes
+  app.get("/api/income", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    const userId = req.user!.id;
+    const income = await storage.getIncomeByUserId(userId);
+    res.json(income);
+  });
+
+  app.post("/api/income", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const userId = req.user!.id;
+      
+      // First validate the request body with incomeFormSchema (client-side schema)
+      const formData = incomeFormSchema.parse(req.body);
+      
+      console.log("Validated income form data:", formData);
+      
+      // Prepare data for database insertion
+      const incomeData = {
+        user_id: userId,
+        source: formData.source,
+        amount: formData.amount,
+        frequency: formData.frequency
+      };
+      
+      console.log("Prepared income data for insertion:", incomeData);
+      
+      const income = await storage.createIncome(incomeData);
+      console.log("Created income:", income);
+      
+      res.status(201).json(income);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error("Income validation error:", error.errors);
+        return res.status(400).json({ message: "Invalid income data", details: error.errors });
+      }
+      console.error("Income creation error:", error);
+      res.status(500).json({ message: "Failed to create income" });
+    }
+  });
+
+  app.delete("/api/income/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const incomeId = parseInt(req.params.id);
+      if (isNaN(incomeId)) {
+        return res.status(400).json({ message: "Invalid income ID" });
+      }
+      
+      await storage.deleteIncome(incomeId);
+      res.status(200).json({ message: "Income deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete income" });
+    }
+  });
+  
+  app.put("/api/income/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const incomeId = parseInt(req.params.id);
+      if (isNaN(incomeId)) {
+        return res.status(400).json({ message: "Invalid income ID" });
+      }
+      
+      // Validate the request body with incomeFormSchema
+      const formData = incomeFormSchema.parse(req.body);
+      
+      // Prepare data for database update
+      const incomeData = {
+        id: incomeId,
+        source: formData.source,
+        amount: formData.amount,
+        frequency: formData.frequency
+      };
+      
+      console.log("Updating income:", incomeData);
+      
+      const updatedIncome = await storage.updateIncome(incomeData);
+      
+      res.status(200).json(updatedIncome);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
+        return res.status(400).json({ message: "Invalid income data", details: error.errors });
+      }
+      console.error("Income update error:", error);
+      res.status(500).json({ message: "Failed to update income" });
+    }
+  });
+
+  // Account balance routes
+  app.get("/api/account-balance", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const userId = req.user!.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({ 
+        accountBalance: user.account_balance,
+        lastUpdate: user.last_balance_update
+      });
+    } catch (error) {
+      console.error("Get account balance error:", error);
+      res.status(500).json({ message: "Failed to get account balance" });
+    }
+  });
+
+  app.post("/api/account-balance", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const userId = req.user!.id;
+      const { balance } = req.body;
+      
+      if (balance === undefined || isNaN(Number(balance))) {
+        return res.status(400).json({ message: "Valid balance is required" });
+      }
+      
+      // Make sure we're working with a numeric value, not a string
+      const numericBalance = Number(balance);
+      console.log("Updating balance for user", userId, "to", numericBalance);
+      
+      // Update the user's balance
+      const user = await storage.updateUserBalance(userId, numericBalance);
+      
+      console.log("Updated user balance:", user);
+      
+      res.json({ 
+        accountBalance: user.account_balance,
+        lastUpdate: user.last_balance_update
+      });
+    } catch (error) {
+      console.error("Update account balance error:", error);
+      res.status(500).json({ message: "Failed to update account balance" });
+    }
+  });
+
+  // Calculate balance after bill deductions based on current date
+  app.get("/api/calculated-balance", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const userId = req.user!.id;
+      const user = await storage.getUser(userId);
+      const bills = await storage.getBillsByUserId(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      if (!user.account_balance) {
+        return res.json({ calculatedBalance: null, deductedBills: [] });
+      }
+      
+      const currentDate = new Date().getDate(); // Get current day of month (1-31)
+      const lastUpdateDate = user.last_balance_update ? new Date(user.last_balance_update).getDate() : 0;
+      
+      // Find bills that are due between the last update and current date
+      const billsToPay = bills.filter(bill => {
+        // If bill due date is between last update and today
+        // or if last update was in previous month and bill is due between 1 and today
+        return (bill.due_date > lastUpdateDate && bill.due_date <= currentDate) ||
+               (lastUpdateDate > currentDate && bill.due_date <= currentDate); 
+      });
+      
+      // Calculate new balance
+      const totalDeductions = billsToPay.reduce((sum, bill) => sum + Number(bill.amount), 0);
+      const initialBalance = Number(user.account_balance);
+      const calculatedBalance = initialBalance - totalDeductions;
+      
+      // If there were deductions, update the user's balance
+      if (totalDeductions > 0) {
+        await storage.updateUserBalance(userId, calculatedBalance);
+      } else {
+        await storage.updateLastBalanceUpdate(userId);
+      }
+      
+      res.json({
+        calculatedBalance: calculatedBalance.toFixed(2),
+        previousBalance: initialBalance.toFixed(2),
+        deductedBills: billsToPay.map(bill => ({
+          id: bill.id,
+          name: bill.name,
+          amount: Number(bill.amount).toFixed(2),
+          dueDate: bill.due_date
+        }))
+      });
+    } catch (error) {
+      console.error("Calculate balance error:", error);
+      res.status(500).json({ message: "Failed to calculate balance" });
+    }
+  });
+
+  // Chatbot spending recommendation API
+  app.post("/api/spending-advisor", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    try {
+      const userId = req.user!.id;
+      const { amount } = req.body;
+      
+      if (!amount || isNaN(Number(amount))) {
+        return res.status(400).json({ message: "Valid amount is required" });
+      }
+      
+      const spendAmount = Number(amount);
+      const user = await storage.getUser(userId);
+      const userBills = await storage.getBillsByUserId(userId);
+      
+      if (!user || !user.account_balance) {
+        return res.status(400).json({ 
+          message: "Account balance not set. Please update your balance first." 
+        });
+      }
+      
+      // Get account balance
+      const accountBalance = Number(user.account_balance);
+      
+      // Get the current date to find upcoming bills
+      const today = new Date();
+      const currentDate = today.getDate();
+      
+      // Find upcoming bills
+      const upcomingBills = userBills.filter(bill => bill.due_date > currentDate);
+      
+      // Calculate total of upcoming bills
+      const upcomingBillsTotal = upcomingBills.reduce((sum, bill) => sum + Number(bill.amount), 0);
+      
+      // Calculate available balance considering upcoming bills
+      const availableBalance = accountBalance;
+      // Make spending recommendation based on current balance and upcoming bills
+      const safeToSpend = spendAmount <= (availableBalance - upcomingBillsTotal*0.5); // Keep half of upcoming bills as buffer
+      const riskToSpend = !safeToSpend && spendAmount <= availableBalance;
+      
+      // Calculate the balance after spending
+      const newBalance = availableBalance - spendAmount;
+      
+      // Find the upcoming bill for additional context in response
+      let upcomingBill = upcomingBills.length > 0 
+          ? upcomingBills.sort((a, b) => a.due_date - b.due_date)[0]
+          : userBills.sort((a, b) => a.due_date - b.due_date)[0];
+      
+      if (safeToSpend) {
+        // Can safely spend with enough buffer for upcoming bills
+        if (upcomingBill) {
+          const daysUntilBill = upcomingBill.due_date > currentDate 
+            ? upcomingBill.due_date - currentDate 
+            : upcomingBill.due_date + (30 - currentDate);
+          
+          const balanceAfterBill = newBalance - Number(upcomingBill.amount);
+          
+          res.json({
+            canSpend: true,
+            message: `Yes, you can spend $${spendAmount}. Your balance after this purchase will be $${newBalance.toFixed(2)}. Your next bill ${upcomingBill.name} ($${Number(upcomingBill.amount).toFixed(2)}) is due in ${daysUntilBill} days, which will leave you with $${balanceAfterBill.toFixed(2)}.`
+          });
+        } else {
+          res.json({
+            canSpend: true,
+            message: `Yes, you can spend $${spendAmount}. Your balance after this purchase will be $${newBalance.toFixed(2)}.`
+          });
+        }
+      } else if (riskToSpend) {
+        // Can spend but it might be tight with upcoming bills
+        if (upcomingBills.length > 0) {
+          const totalUpcoming = upcomingBills.reduce((sum, bill) => sum + Number(bill.amount), 0);
+          const balanceAfterAll = newBalance - totalUpcoming;
+          
+          res.json({
+            canSpend: true,
+            message: `You can spend $${spendAmount}, but be careful. Your balance after this purchase will be $${newBalance.toFixed(2)}, and you have $${totalUpcoming.toFixed(2)} in upcoming bills which would leave you with $${balanceAfterAll.toFixed(2)}.`
+          });
+        } else {
+          res.json({
+            canSpend: true,
+            message: `Yes, you can spend $${spendAmount}. Your balance after this purchase will be $${newBalance.toFixed(2)}.`
+          });
+        }
+      } else {
+        // Cannot spend this amount
+        res.json({
+          canSpend: false,
+          message: `Sorry, you cannot spend $${spendAmount} as it would exceed your current account balance of $${availableBalance.toFixed(2)}.`
+        });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get spending recommendation" });
+    }
+  });
+
+  const httpServer = createServer(app);
+  return httpServer;
 }
