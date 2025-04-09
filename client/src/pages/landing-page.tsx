@@ -225,9 +225,9 @@ export default function LandingPage() {
                   <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
                     <CircleDollarSign className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">Income & Bill Management</h3>
+                  <h3 className="text-lg font-bold mb-2">{t('featureIncomeBillsTitle')}</h3>
                   <p className="text-gray-600 text-sm mb-4">
-                    Easily track your income sources and upcoming bills. Get a clear picture of your financial obligations.
+                    {t('featureIncomeBillsDescription')}
                   </p>
                   
                   {/* Income Pill from screenshot */}
@@ -247,9 +247,9 @@ export default function LandingPage() {
                   <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
                     <Calendar className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">Calendar View</h3>
+                  <h3 className="text-lg font-bold mb-2">{t('featureCalendarTitle')}</h3>
                   <p className="text-gray-600 text-sm mb-4">
-                    See all your bills on a monthly calendar to plan ahead and never miss a payment.
+                    {t('featureCalendarDescription')}
                   </p>
                   
                   {/* Calendar - Using CalendarMockup component */}
@@ -265,9 +265,9 @@ export default function LandingPage() {
                   <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
                     <MessageSquare className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">Alice</h3>
+                  <h3 className="text-lg font-bold mb-2">{t('spendingAssistantTitle')}</h3>
                   <p className="text-gray-600 text-sm mb-4">
-                    Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.
+                    {t('featureAliceDescription')}
                   </p>
                   
                   {/* Alice Chat - Using AliceMockup component with adjusted width */}
@@ -286,10 +286,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-              Track Your Finances with Elegance
+              {t('trackFinancesTitle')}
             </h2>
             <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-              Powerful tools that give you complete visibility and control over your financial life.
+              {t('trackFinancesDescription')}
             </p>
           </div>
           
@@ -297,28 +297,28 @@ export default function LandingPage() {
             <div className="flex flex-col space-y-4">
               <div className="rounded-xl bg-white shadow-md p-6 border border-gray-100 relative overflow-hidden">
                 <div className="absolute right-0 top-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3 relative z-10">Financial Dashboard</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-3 relative z-10">{t('financialDashboardTitle')}</h3>
                 <p className="text-gray-600 mb-6 relative z-10">
-                  See your complete financial picture at a glance with our intuitive dashboard.
+                  {t('financialDashboardDescription')}
                 </p>
                 <ul className="space-y-3 relative z-10">
                   <li className="flex items-center">
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
                       <Check className="h-5 w-5" />
                     </div>
-                    <span className="text-gray-700">Visual income and expense tracking</span>
+                    <span className="text-gray-700">{t('visualTracking')}</span>
                   </li>
                   <li className="flex items-center">
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
                       <Check className="h-5 w-5" />
                     </div>
-                    <span className="text-gray-700">Monthly bill calendar</span>
+                    <span className="text-gray-700">{t('monthlyBillCalendar')}</span>
                   </li>
                   <li className="flex items-center">
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
                       <Check className="h-5 w-5" />
                     </div>
-                    <span className="text-gray-700">Customizable spending categories</span>
+                    <span className="text-gray-700">{t('customizableAlerts')}</span>
                   </li>
                 </ul>
               </div>

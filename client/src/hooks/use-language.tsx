@@ -147,6 +147,18 @@ type TranslationData = {
   getStarted: string;
   signIn: string;
   goToDashboard: string;
+  trackFinancesTitle: string;
+  trackFinancesDescription: string;
+  featureIncomeBillsTitle: string;
+  featureIncomeBillsDescription: string;
+  featureCalendarTitle: string;
+  featureCalendarDescription: string;
+  featureAliceDescription: string;
+  financialDashboardTitle: string;
+  financialDashboardDescription: string;
+  visualTracking: string;
+  monthlyBillCalendar: string;
+  customizableAlerts: string;
 };
 
 type Translations = {
@@ -181,6 +193,18 @@ const translations: Translations = {
     getStarted: "Get Started",
     signIn: "Sign In",
     goToDashboard: "Go to Dashboard",
+    trackFinancesTitle: "Track Your Finances with Elegance",
+    trackFinancesDescription: "Powerful tools that give you complete visibility and control over your financial life.",
+    featureIncomeBillsTitle: "Income & Bill Management",
+    featureIncomeBillsDescription: "Easily track your income sources and upcoming bills. Get a clear picture of your financial obligations.",
+    featureCalendarTitle: "Calendar View",
+    featureCalendarDescription: "See all your bills on a monthly calendar to plan ahead and never miss a payment.",
+    featureAliceDescription: "Ask our chatbot if you can afford to make a purchase. Get smart advice based on your current financial situation.",
+    financialDashboardTitle: "Financial Dashboard",
+    financialDashboardDescription: "See your complete financial picture at a glance with our intuitive dashboard.",
+    visualTracking: "Visual income and expense tracking",
+    monthlyBillCalendar: "Monthly bill calendar",
+    customizableAlerts: "Customizable spending alerts",
     
     // Auth page
     rememberMe: "Remember me",
@@ -349,6 +373,18 @@ const translations: Translations = {
     getStarted: "Comenzar",
     signIn: "Iniciar Sesión",
     goToDashboard: "Ir al Panel",
+    trackFinancesTitle: "Controla tus finanzas con elegancia",
+    trackFinancesDescription: "Herramientas poderosas que te brindan visibilidad y control total sobre tu vida financiera.",
+    featureIncomeBillsTitle: "Gestión de Ingresos y Facturas",
+    featureIncomeBillsDescription: "Seguimiento fácil de tus fuentes de ingresos y facturas próximas. Obtén una imagen clara de tus obligaciones financieras.",
+    featureCalendarTitle: "Vista de Calendario",
+    featureCalendarDescription: "Mira todas tus facturas en un calendario mensual para planificar con anticipación y nunca perder un pago.",
+    featureAliceDescription: "Pregunta a nuestro chatbot si puedes permitirte hacer una compra. Obtén consejos inteligentes basados en tu situación financiera actual.",
+    financialDashboardTitle: "Panel Financiero",
+    financialDashboardDescription: "Observa tu panorama financiero completo de un vistazo con nuestro panel intuitivo.",
+    visualTracking: "Seguimiento visual de ingresos y gastos",
+    monthlyBillCalendar: "Calendario mensual de facturas",
+    customizableAlerts: "Alertas de gastos personalizables",
     
     // Auth page
     rememberMe: "Recordarme",
