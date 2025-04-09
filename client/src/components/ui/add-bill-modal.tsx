@@ -3,7 +3,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { billFormSchema } from "@shared/schema";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { secureApiRequest } from "@/lib/csrf";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
 import { useBillFormState } from "@/hooks/use-bill-form-state";
@@ -63,16 +64,11 @@ export default function AddBillModal({ open, onOpenChange, defaultDueDate }: Add
     setIsSubmitting(true);
     try {
       console.log("Submitting bill with data:", data);
-      const response = await apiRequest("POST", "/api/bills", {
+      const response = await secureApiRequest("POST", "/api/bills", {
         name: data.name,
         amount: data.amount,
         due_date: data.due_date,
       });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add bill");
-      }
       
       // Invalidate bills query to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/bills"] });
