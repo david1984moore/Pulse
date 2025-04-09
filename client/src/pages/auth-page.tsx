@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
 import { Loader2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PulseLogo } from "@/components/ui/pulse-logo";
 import LanguageToggle from "@/components/ui/language-toggle";
 
 // Email validation regex - basic format check
@@ -284,10 +285,12 @@ export default function AuthPage() {
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
-      {/* Home button with pulse text */}
+      {/* Home button with pulse logo */}
       <div className="absolute top-4 left-4 flex items-center space-x-2">
         <Link href="/">
-          <span className="text-primary font-bold text-2xl cursor-pointer">pulse</span>
+          <div className="cursor-pointer">
+            <PulseLogo size="md" />
+          </div>
         </Link>
       </div>
       
