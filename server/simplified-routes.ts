@@ -1,6 +1,5 @@
 import express, { Express, Request, Response, NextFunction } from "express";
-import { Server } from "http";
-import http from "http";
+import { Server, createServer } from "http";
 import { storage } from "./storage";
 import { setupVite, log } from "./vite";
 import { setupAuth } from "./auth";
@@ -50,7 +49,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Convert strings to numbers
       const amountNum = parseFloat(amount);
-      const balanceNum = user?.account_balance || 0;
+      const balanceNum = Number(user?.account_balance) || 0;
       
       // Calculate if the user can spend this amount
       if (amountNum > balanceNum) {
@@ -132,7 +131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Simple query processing
       let message = "";
       const lowerQuery = query.toLowerCase();
-      const balance = user?.account_balance || 0;
+      const balance = Number(user?.account_balance) || 0;
       
       if (lowerQuery.includes("balance") || lowerQuery.includes("how much money")) {
         message = `Your current account balance is $${balance}. You have ${bills.length} bills registered.`;
@@ -232,7 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create a HTTP server
-  const server = http.createServer(app);
+  const server = createServer(app);
   
   // Set up Vite server
   await setupVite(app, server);

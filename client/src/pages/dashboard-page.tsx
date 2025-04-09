@@ -17,7 +17,7 @@ interface AccountBalanceData {
   lastUpdate: string | null;
 }
 import CalendarView from "@/components/ui/calendar-view";
-import ChatbotNew from "@/components/ui/chatbot-new";
+import ChatbotNew from "@/components/ui/chatbot-fixed";
 import IncomeBills from "@/components/ui/income-bills";
 import AddBillModal from "@/components/ui/add-bill-modal";
 //import RemoveBillModal from "@/components/ui/remove-bill-modal"; // Removed
