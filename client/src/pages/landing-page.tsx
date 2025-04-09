@@ -235,7 +235,7 @@ export default function LandingPage() {
                     <div className="w-4 h-4 bg-green-500 rounded-full mr-2 flex items-center justify-center">
                       <Check className="h-2.5 w-2.5 text-white" />
                     </div>
-                    <span className="text-xs font-medium mr-2">Income</span>
+                    <span className="text-xs font-medium mr-2">{t('income')}</span>
                     <span className="text-xs font-medium text-green-600">+$2,400</span>
                   </div>
                 </div>

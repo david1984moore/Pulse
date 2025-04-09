@@ -162,6 +162,11 @@ type TranslationData = {
   incomeTracking: string;
   billManagement: string;
   aiSpendingAssistant: string;
+  aliceName: string;
+  aliceGreeting: string;
+  aliceQuestion: string;
+  aliceResponse: string;
+  askAlice: string;
 };
 
 type Translations = {
@@ -211,6 +216,11 @@ const translations: Translations = {
     incomeTracking: "Income Tracking",
     billManagement: "Bill Management",
     aiSpendingAssistant: "AI Spending Assistant",
+    aliceName: "Alice",
+    aliceGreeting: "Hi! I'm Alice. I can help with spending decisions.",
+    aliceQuestion: "Can I afford $50 for a new pair of shoes?",
+    aliceResponse: "Yes, you can afford to spend $50 on shoes. After this purchase, your balance will be $750, which is still enough to cover all your upcoming bills.",
+    askAlice: "Ask Alice...",
     
     // Auth page
     rememberMe: "Remember me",
@@ -394,6 +404,11 @@ const translations: Translations = {
     incomeTracking: "Seguimiento de Ingresos",
     billManagement: "Gestión de Facturas",
     aiSpendingAssistant: "Asistente de Gastos IA",
+    aliceName: "Alicia",
+    aliceGreeting: "¡Hola! Soy Alicia. Puedo ayudarte con decisiones de gastos.",
+    aliceQuestion: "¿Puedo gastar $50 en un par de zapatos nuevos?",
+    aliceResponse: "Sí, puedes gastar $50 en zapatos. Después de esta compra, tu saldo será de $750, lo que aún es suficiente para cubrir todas tus facturas pendientes.",
+    askAlice: "Pregunta a Alicia...",
     
     // Auth page
     rememberMe: "Recordarme",

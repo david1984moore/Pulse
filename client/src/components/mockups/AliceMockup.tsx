@@ -1,7 +1,9 @@
 import React from 'react';
 import { DollarSign } from 'lucide-react';
+import { useLanguage } from '@/hooks/use-language';
 
 export const AliceMockup: React.FC = () => {
+  const { t } = useLanguage();
   return (
     <div className="bg-white rounded-md overflow-hidden shadow-sm border border-gray-100">
       {/* Alice header - Identical to screenshot */}
@@ -12,7 +14,7 @@ export const AliceMockup: React.FC = () => {
             <span className="text-white font-bold text-base">A</span>
           </div>
           <div>
-            <span className="font-bold text-black text-lg">Alice</span>
+            <span className="font-bold text-black text-lg">{t('aliceName')}</span>
             <span className="text-xs text-gray-600 ml-1">v1.0</span>
           </div>
         </div>
@@ -35,7 +37,7 @@ export const AliceMockup: React.FC = () => {
           </div>
           <div className="bg-gray-100 p-1.5 rounded-md">
             <p className="text-gray-800 text-xs">
-              Hi! I'm Alice. I can help with spending decisions.
+              {t('aliceGreeting')}
             </p>
           </div>
         </div>
@@ -44,7 +46,7 @@ export const AliceMockup: React.FC = () => {
         <div className="mb-2 flex justify-end">
           <div className="bg-blue-600 p-1.5 rounded-md">
             <p className="text-white text-xs">
-              Can I afford $50 for a new pair of shoes?
+              {t('aliceQuestion')}
             </p>
           </div>
         </div>
@@ -57,7 +59,7 @@ export const AliceMockup: React.FC = () => {
           </div>
           <div className="bg-gray-100 p-1.5 rounded-md">
             <p className="text-gray-800 text-xs">
-              Yes, you can afford to spend $50 on shoes. After this purchase, your balance will be $750, which is still enough to cover all your upcoming bills.
+              {t('aliceResponse')}
             </p>
           </div>
         </div>
@@ -66,10 +68,10 @@ export const AliceMockup: React.FC = () => {
       {/* Input area - Matching screenshot with "Ask" button */}
       <div className="border-t border-gray-200 p-1.5 flex items-center">
         <div className="flex-1 px-2 text-gray-400 text-xs">
-          Ask Alice...
+          {t('askAlice')}
         </div>
         <button className="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-medium" disabled>
-          Ask
+          {t('ask')}
         </button>
       </div>
     </div>
