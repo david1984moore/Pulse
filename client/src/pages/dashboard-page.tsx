@@ -8,6 +8,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Bill, Income } from "@shared/schema";
 import { Trash } from "lucide-react"; // Import trash icon
 import { useToast } from "@/hooks/use-toast";
+import { secureApiRequest } from "@/lib/csrf";
 import LanguageToggle from "@/components/ui/language-toggle";
 import { PulseLogo } from "@/components/ui/pulse-logo";
 
@@ -36,14 +37,12 @@ export default function DashboardPage() {
   // Add logout mutation
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (!response.ok) {
+      try {
+        await secureApiRequest("POST", "/api/logout");
+        return true;
+      } catch (error) {
         throw new Error("Failed to logout");
       }
-      return true;
     },
     onSuccess: () => {
       window.location.href = "/";
@@ -201,36 +200,26 @@ export default function DashboardPage() {
               bills={bills || []} 
               income={income || []} 
               onAddBill={() => setAddBillOpen(true)}
-              onDeleteBill={(billId) => {
-                fetch(`/api/bills/${billId}`, {
-                  method: 'DELETE',
-                }).then(response => {
-                  if (response.ok) {
-                    refetchBills();
-                    toast({ title: 'Bill deleted successfully!'});
-                  } else {
-                    toast({ title: 'Failed to delete bill', variant: 'destructive' });
-                  }
-                }).catch(error => {
+              onDeleteBill={async (billId) => {
+                try {
+                  await secureApiRequest('DELETE', `/api/bills/${billId}`);
+                  refetchBills();
+                  toast({ title: 'Bill deleted successfully!'});
+                } catch (error) {
                   console.error("Error deleting bill:", error);
                   toast({ title: 'Failed to delete bill', variant: 'destructive' });
-                });
+                }
               }}
               onAddIncome={() => setAddIncomeOpen(true)}
-              onDeleteIncome={(incomeId) => {
-                fetch(`/api/income/${incomeId}`, {
-                  method: 'DELETE',
-                }).then(response => {
-                  if (response.ok) {
-                    refetchIncome();
-                    toast({ title: 'Income deleted successfully!'});
-                  } else {
-                    toast({ title: 'Failed to delete income', variant: 'destructive' });
-                  }
-                }).catch(error => {
+              onDeleteIncome={async (incomeId) => {
+                try {
+                  await secureApiRequest('DELETE', `/api/income/${incomeId}`);
+                  refetchIncome();
+                  toast({ title: 'Income deleted successfully!'});
+                } catch (error) {
                   console.error("Error deleting income:", error);
                   toast({ title: 'Failed to delete income', variant: 'destructive' });
-                });
+                }
               }}
               onUpdateBalance={() => setBalanceModalOpen(true)}
             />

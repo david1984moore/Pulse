@@ -3,7 +3,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { incomeFormSchema } from "@shared/schema";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { secureApiRequest } from "@/lib/csrf";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
 import {
@@ -50,16 +51,11 @@ export default function AddIncomeModal({ open, onOpenChange }: AddIncomeModalPro
     setIsSubmitting(true);
     try {
       console.log("Submitting income with data:", data);
-      const response = await apiRequest("POST", "/api/income", {
+      const response = await secureApiRequest("POST", "/api/income", {
         source: data.source,
         amount: data.amount,
         frequency: data.frequency,
       });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add income");
-      }
       
       // Invalidate income query to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/income"] });
