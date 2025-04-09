@@ -159,6 +159,9 @@ type TranslationData = {
   visualTracking: string;
   monthlyBillCalendar: string;
   customizableAlerts: string;
+  incomeTracking: string;
+  billManagement: string;
+  aiSpendingAssistant: string;
 };
 
 type Translations = {
@@ -205,6 +208,9 @@ const translations: Translations = {
     visualTracking: "Visual income and expense tracking",
     monthlyBillCalendar: "Monthly bill calendar",
     customizableAlerts: "Customizable spending alerts",
+    incomeTracking: "Income Tracking",
+    billManagement: "Bill Management",
+    aiSpendingAssistant: "AI Spending Assistant",
     
     // Auth page
     rememberMe: "Remember me",
@@ -385,6 +391,9 @@ const translations: Translations = {
     visualTracking: "Seguimiento visual de ingresos y gastos",
     monthlyBillCalendar: "Calendario mensual de facturas",
     customizableAlerts: "Alertas de gastos personalizables",
+    incomeTracking: "Seguimiento de Ingresos",
+    billManagement: "Gestión de Facturas",
+    aiSpendingAssistant: "Asistente de Gastos IA",
     
     // Auth page
     rememberMe: "Recordarme",

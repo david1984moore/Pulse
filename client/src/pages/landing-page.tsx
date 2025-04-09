@@ -325,9 +325,9 @@ export default function LandingPage() {
               
               <div className="rounded-xl bg-white shadow-md p-6 border border-gray-100 relative overflow-hidden">
                 <div className="absolute left-0 bottom-0 w-32 h-32 bg-blue-50 rounded-full -ml-16 -mb-16"></div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3 relative z-10">AI-Powered Insights</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-3 relative z-10">{t('spendingAssistantTitle')}</h3>
                 <p className="text-gray-600 mb-6 relative z-10">
-                  Alice, your financial assistant, provides real-time spending recommendations.
+                  {t('spendingAssistantDescription')}
                 </p>
                 <ul className="space-y-3 relative z-10">
                   <li className="flex items-center">
@@ -366,7 +366,7 @@ export default function LandingPage() {
                       
                       <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3 flex items-center relative z-10">
                         <span className="inline-block w-2 h-2 bg-primary rounded-full mr-2"></span>
-                        Financial Summary
+                        {t('financialSummary')}
                       </h3>
                       
                       <div className="space-y-2 relative z-10">
@@ -377,7 +377,7 @@ export default function LandingPage() {
                                 <path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
                               </svg>
                             </span>
-                            Monthly Income
+                            {t('monthlyIncome')}
                           </span>
                           <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">
                             +$2,400.00
@@ -391,7 +391,7 @@ export default function LandingPage() {
                                 <path fillRule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             </span>
-                            Monthly Bills
+                            {t('monthlyBills')}
                           </span>
                           <span className="text-sm font-bold text-red-600 bg-red-50 px-2 py-1 rounded-lg border border-red-100">
                             -$1,600.00
@@ -403,7 +403,7 @@ export default function LandingPage() {
                             <span className="w-6 h-6 bg-primary rounded-full mr-2 flex items-center justify-center shadow-sm">
                               <CircleDollarSign className="h-3 w-3 text-white" />
                             </span>
-                            Available to Spend
+                            {t('availableToSpend')}
                           </span>
                           <span className="text-sm font-bold text-white bg-primary px-2 py-1 rounded-lg">
                             $800.00
@@ -428,41 +428,41 @@ export default function LandingPage() {
                 <PulseLogo size="md" />
               </div>
               <p className="text-gray-600 mb-6 max-w-md">
-                Your personal finance tracker with intelligent insights. Manage your money smarter.
+                {t('heroDescription')}
               </p>
               <p className="text-gray-500 text-sm">{t('copyright')}</p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-800 mb-4">Quick Links</h3>
+              <h3 className="font-medium text-gray-800 mb-4">{t('dashboard')}</h3>
               <ul className="space-y-3">
                 <li>
                   <Link href="/dashboard">
-                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">Dashboard</span>
+                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">{t('dashboard')}</span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/auth?mode=login">
-                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">Login</span>
+                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">{t('login')}</span>
                   </Link>
                 </li>
                 <li>
                   <Link href="/auth?mode=register">
-                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">Sign Up</span>
+                    <span className="text-gray-600 hover:text-primary transition-colors cursor-pointer">{t('signup')}</span>
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium text-gray-800 mb-4">Features</h3>
+              <h3 className="font-medium text-gray-800 mb-4">{t('featuresTitle')}</h3>
               <ul className="space-y-3">
                 <li>
-                  <span className="text-gray-600">Income Tracking</span>
+                  <span className="text-gray-600">{t('incomeTracking')}</span>
                 </li>
                 <li>
-                  <span className="text-gray-600">Bill Management</span>
+                  <span className="text-gray-600">{t('billManagement')}</span>
                 </li>
                 <li>
-                  <span className="text-gray-600">AI Spending Assistant</span>
+                  <span className="text-gray-600">{t('aiSpendingAssistant')}</span>
                 </li>
               </ul>
             </div>
