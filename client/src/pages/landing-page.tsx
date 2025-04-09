@@ -47,10 +47,10 @@ export default function LandingPage() {
                 </>
               ) : (
                 <>
-                  <Link href="/auth?mode=login">
+                  <Link href="/login">
                     <Button variant="ghost">{t('login')}</Button>
                   </Link>
-                  <Link href="/auth?mode=register">
+                  <Link href="/signup">
                     <Button>{t('signup')}</Button>
                   </Link>
                 </>
@@ -108,12 +108,12 @@ export default function LandingPage() {
                       </>
                     ) : (
                       <>
-                        <Link href="/auth?mode=login">
+                        <Link href="/login">
                           <Button variant="ghost" className="w-full justify-start">
                             {t('login')}
                           </Button>
                         </Link>
-                        <Link href="/auth?mode=register">
+                        <Link href="/signup">
                           <Button className="w-full justify-start">
                             {t('signup')}
                           </Button>
@@ -163,14 +163,14 @@ export default function LandingPage() {
                   ) : (
                     <>
                       <div className="rounded-md shadow">
-                        <Link href="/auth?mode=register">
+                        <Link href="/signup">
                           <Button className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 md:py-4 md:text-lg md:px-10">
                             {t('getStarted')}
                           </Button>
                         </Link>
                       </div>
                       <div className="mt-3 sm:mt-0 sm:ml-3">
-                        <Link href="/auth?mode=login">
+                        <Link href="/login">
                           <Button variant="outline" className="w-full flex items-center justify-center px-8 py-3 text-base font-medium rounded-md md:py-4 md:text-lg md:px-10">
                             {t('signIn')}
                           </Button>
