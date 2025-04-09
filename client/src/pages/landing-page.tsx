@@ -334,19 +334,19 @@ export default function LandingPage() {
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
                       <Check className="h-5 w-5" />
                     </div>
-                    <span className="text-gray-700">Smart spending recommendations</span>
+                    <span className="text-gray-700">{t('smartSpendingRecommendations')}</span>
                   </li>
                   <li className="flex items-center">
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
                       <Check className="h-5 w-5" />
                     </div>
-                    <span className="text-gray-700">Instant answers to financial questions</span>
+                    <span className="text-gray-700">{t('instantAnswersToFinancialQuestions')}</span>
                   </li>
                   <li className="flex items-center">
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-primary/10 text-primary mr-3">
                       <Check className="h-5 w-5" />
                     </div>
-                    <span className="text-gray-700">Personalized financial advice</span>
+                    <span className="text-gray-700">{t('personalizedFinancialAdvice')}</span>
                   </li>
                 </ul>
               </div>

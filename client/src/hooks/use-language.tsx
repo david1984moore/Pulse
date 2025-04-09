@@ -167,6 +167,10 @@ type TranslationData = {
   aliceQuestion: string;
   aliceResponse: string;
   askAlice: string;
+  smartSpendingRecommendations: string;
+  instantAnswersToFinancialQuestions: string;
+  personalizedFinancialAdvice: string;
+  askOurChatbot: string;
 };
 
 type Translations = {
@@ -221,6 +225,10 @@ const translations: Translations = {
     aliceQuestion: "Can I afford $50 for a new pair of shoes?",
     aliceResponse: "Yes, you can afford to spend $50 on shoes. After this purchase, your balance will be $750, which is still enough to cover all your upcoming bills.",
     askAlice: "Ask Alice...",
+    smartSpendingRecommendations: "Smart spending recommendations",
+    instantAnswersToFinancialQuestions: "Instant answers to financial questions",
+    personalizedFinancialAdvice: "Personalized financial advice",
+    askOurChatbot: "Ask our chatbot if you can afford to make a purchase. Get intelligent advice based on your current financial situation.",
     
     // Auth page
     rememberMe: "Remember me",
@@ -409,6 +417,10 @@ const translations: Translations = {
     aliceQuestion: "¿Puedo gastar $50 en un par de zapatos nuevos?",
     aliceResponse: "Sí, puedes gastar $50 en zapatos. Después de esta compra, tu saldo será de $750, lo que aún es suficiente para cubrir todas tus facturas pendientes.",
     askAlice: "Pregunta a Alicia...",
+    smartSpendingRecommendations: "Recomendaciones inteligentes de gastos",
+    instantAnswersToFinancialQuestions: "Respuestas instantáneas a preguntas financieras",
+    personalizedFinancialAdvice: "Asesoramiento financiero personalizado",
+    askOurChatbot: "Pregunta a nuestro chatbot si puedes permitirte hacer una compra. Obtén consejos inteligentes basados en tu situación financiera actual.",
     
     // Auth page
     rememberMe: "Recordarme",
